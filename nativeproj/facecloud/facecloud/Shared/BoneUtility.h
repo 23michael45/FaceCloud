@@ -48,23 +48,13 @@ public:
 
 };
 
-class JsonRoleBone
+class JsonRole
 {
 public:
-	void LoadFromFile(string filename)
+	void Load(Json::Value jsonvalue)
 	{
 
-		Json::CharReaderBuilder rbuilder;
-		rbuilder["collectComments"] = false;
-		std::string errs;
-		Json::Value root;
-		std::ifstream ifs;
-		ifs.open(filename);
-		bool ok = Json::parseFromStream(rbuilder, ifs, &root, &errs);
-		ifs.close();
-
-
-		Json::Value entity = root[0];
+		Json::Value entity = jsonvalue;
 
 		id = entity["id"].asString();
 		assetbundle = entity["assetbundle"].asString();
@@ -86,7 +76,7 @@ public:
 		for (vector<string>::iterator it = namesvec.begin(); it != namesvec.end(); it++)
 		{
 			string key = *it;
-			if (startsWith(key,string("fix_")))
+			if (startsWith(key, string("fix_")))
 			{
 				fixvec.push_back(key);
 			}
@@ -111,7 +101,7 @@ public:
 			float x = entity[*it]["x"].asFloat();
 			float y = entity[*it]["y"].asFloat();
 			float z = entity[*it]["z"].asFloat();
-			bonespos_map[*it] = Vector3f(x, y,z);
+			bonespos_map[*it] = Vector3f(x, y, z);
 		}
 		for (vector<string>::iterator it = offsetvec.begin(); it != offsetvec.end(); it++)
 		{
@@ -139,7 +129,8 @@ public:
 		else
 			return false;
 	}
-public:
+
+
 	string id;
 	string assetbundle;
 	float face_zero_pointy;
@@ -149,7 +140,34 @@ public:
 	map<string, float> fix_map;
 	map<string, Vector3f> bonespos_map;
 	map<string, Vector3f> offsets_map;
+};
+class JsonRoles
+{
+public:
+	void LoadFromFile(string filename)
+	{
 
+		Json::CharReaderBuilder rbuilder;
+		rbuilder["collectComments"] = false;
+		std::string errs;
+		Json::Value root;
+		std::ifstream ifs;
+		ifs.open(filename);
+		bool ok = Json::parseFromStream(rbuilder, ifs, &root, &errs);
+		ifs.close();
+
+		for (int i = 0; i < root.size(); i++)
+		{
+			Json::Value entity = root[i];
+			JsonRole r;
+			r.Load(entity);
+
+			roles[r.id] = r;
+		}
+
+	}
+
+	map<string,JsonRole> roles;
 };
 
 class JsonFaceInfo
@@ -179,6 +197,10 @@ public:
 		face_rectangle.z = width;
 		face_rectangle.w = height;
 
+		yaw_angle = root["face_pose"]["yaw_angle"].asFloat();
+		roll_angle = root["face_pose"]["roll_angle"].asFloat();
+		pitch_angle = root["face_pose"]["pitch_angle"].asFloat();
+
 		Json::Value landmarkdataValue = root["landmark"]["data"];
 		vector<string> namesvec = landmarkdataValue.getMemberNames();
 		for (vector<string>::iterator it = namesvec.begin() ; it != namesvec.end();it++)
@@ -201,6 +223,59 @@ public:
 	map<string, Vector2f> landmarkdata;
 };
 
+class KP
+{
+public:
+	KP() {};
+	~KP() {};
+
+	string bonename;
+	string facekeypointname;
+	string offsetname;
+
+private:
+
+};
+
+class JsonKeyPointBonePairs
+{
+	
+public:
+	void LoadFromFile(string filename)
+	{
+
+		Json::CharReaderBuilder rbuilder;
+		rbuilder["collectComments"] = false;
+		std::string errs;
+		Json::Value root;
+		std::ifstream ifs;
+		ifs.open(filename);
+		bool ok = Json::parseFromStream(rbuilder, ifs, &root, &errs);
+		ifs.close();
+
+		int count = root.size();
+
+		vector<string> fixvec;
+		vector<string> bonesvec;
+		vector<string> offsetvec;
+
+		for (int i = 0;i< count;i++)
+		{
+			KP kp;
+			kp.bonename = root[i][0].asString();
+			kp.facekeypointname = root[i][1].asString();
+			kp.offsetname = root[i][2].asString();
+
+			pairs.push_back(kp);
+		}
+		
+
+	}
+	
+public:
+	vector<KP> pairs;
+
+};
 
 class BoneUtility
 {
@@ -210,8 +285,9 @@ public:
 	int ReadJsonFromFile(const char* filename);
 
 
-	void CalculateFaceBone(SkinnedMesh* pmesh, JsonRoleBone bonfdef, JsonFaceInfo faceinfo);
+	void CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonfdef, JsonFaceInfo faceinfo);
 
 	void ResetBone();
-	void MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo faceinfo, string facekeypoint, JsonRoleBone bonedef, string boneoffsetname, Vector3f headCenter,float offsetrate = 0.01f);
+	void MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo faceinfo, string facekeypoint, JsonRole bonedef, string boneoffsetname, Vector3f headCenter, float offsetrate = 0.01f);
+	void MoveBonePYR(SkinnedMesh* pmesh, string bonename, JsonFaceInfo faceinfo, string facekeypoint, JsonRole bonedef, string boneoffsetname, Vector3f headCenter, float offsetrate = 0.01f);
 };

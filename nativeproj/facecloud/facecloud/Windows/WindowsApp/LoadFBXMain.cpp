@@ -42,6 +42,10 @@ Tutorial 38 - Skinning
 #include "ogldev_skinned_mesh.h"
 #include "BoneUtility.h"
 
+
+#include "opencv2/imgcodecs.hpp"
+#include "opencv2/highgui.hpp"
+#include <opencv2/core/core.hpp>
 using namespace std;
 
 #define WINDOW_WIDTH  1280  
@@ -65,6 +69,30 @@ struct Vertex
 
 class SkinningApp : public ICallbacks, public OgldevApp
 {
+private:
+	GLuint VBO;
+	GLuint IBO;
+
+	GLuint quad_vertexbuffer;
+	SkinningTechnique * m_pEffect;
+
+	CommonTechnique * m_pCommonEffect;
+	RenderTextureTechnique * m_pRTEffect;
+	Texture * m_pTextureColor;
+	Texture * m_pTextureDetail;
+	Camera* m_pGameCamera;
+	DirectionalLight m_directionalLight;
+	SkinnedMesh m_mesh;
+	Vector3f m_position;
+	PersProjInfo m_persProjInfo;
+
+	GLuint m_RenderTexture;
+
+
+
+	JsonFaceInfo jsonfaceinfo;
+	JsonRoles JsonRoles;
+	BoneUtility boneutility;
 public:
 
 	SkinningApp()
@@ -99,7 +127,7 @@ public:
 	bool Init()
 	{
 
-		Vector3f Pos(0.0f, 10.0f, -50.0f);
+		Vector3f Pos(0.0f, 18.0f, -5.0f);
 		Vector3f Target(0.0f, 0.0f, 1.0f);
 		Vector3f Up(0.0, 1.0f, 0.0f);
 
@@ -148,21 +176,20 @@ public:
 		printf("Mesh load failed\n");
 		return false;
 		} */
-		if (!m_mesh.LoadMesh("data/womenhead_split.FBX")) {
+		if (!m_mesh.LoadMesh("data/face/women_head_fix.FBX")) {
 			printf("Mesh load failed\n");
 //			return false;
 		}
 
 
-		JsonFaceInfo jsonfaceinfo;
-		jsonfaceinfo.LoadFromFile("data/jsonfaceinfo.json");
+		jsonfaceinfo.LoadFromFile("data/face/photojson.json");
 
-		JsonRoleBone jsonrolebone;
-		jsonrolebone.LoadFromFile("data/jsonrolebone.json");
+		JsonRoles.LoadFromFile("data/face/modeljson.json");
 
-		BoneUtility boneutility;
 		boneutility.Init();
-		//boneutility.CalculateFaceBone(&m_mesh, jsonrolebone, jsonfaceinfo);
+
+		
+
 #ifndef WIN32
 		if (!m_fontRenderer.InitFontRenderer()) {
 			return false;
@@ -173,10 +200,29 @@ public:
 
 	void Run()
 	{
-		//CreateRenderTarget();
+		CreateRenderTarget();
 		GLUTBackendRun(this);
 	}
+	void DrawQuad()
+	{
+		// 1rst attribute buffer : vertices
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, quad_vertexbuffer);
+		glVertexAttribPointer(
+			0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+			3,                  // size
+			GL_FLOAT,           // type
+			GL_FALSE,           // normalized?
+			0,                  // stride
+			(void*)0            // array buffer offset
 
+		);
+
+		// Draw the triangles !
+		glDrawArrays(GL_TRIANGLES, 0, 6); // 2*3 indices starting at 0 -> 2 triangles
+
+		glDisableVertexAttribArray(0);
+	}
 	virtual void DrawTriangle()
 	{
 		glEnableVertexAttribArray(0);
@@ -208,6 +254,9 @@ public:
 
 		m_pCommonEffect->Enable();
 		m_pCommonEffect->SetWVP(p.GetWVPTrans());
+
+
+		m_pTextureColor->Bind(GL_TEXTURE0);
 		DisplayGrid();
 
 		Vector3f Pos(m_position);
@@ -221,17 +270,25 @@ public:
 		//m_pCommonEffect->SetSampler(m_pTextureColor);
 
 
-		//m_pTextureColor->Bind(GL_TEXTURE0);
+		m_pTextureColor->Bind(GL_TEXTURE0);
 		m_pTextureDetail->Bind(GL_TEXTURE1);
 
 
-		glActiveTexture(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE0, m_RenderTexture);
 		
 		DrawTriangle();
-
 		
 
+		p.WorldPos(5.0f, 10, 0.0f);
+
+		m_pCommonEffect->SetWVP(p.GetWVPTrans());
+
+		//glActiveTexture(GL_TEXTURE0);
+		//glBindTexture(GL_TEXTURE_2D, m_RenderTexture);
+
+
+		DrawQuad();
+
+		p.WorldPos(0.0f, 0, 0.0f);
 		p.Scale(0.1f, 0.1f, 0.1f);
 		p.Rotate(0.0f, 180.0f, 0.0f);
 
@@ -241,22 +298,26 @@ public:
 
 		m_pEffect->Enable();
 
+
 		vector<Matrix4f> Transforms;
 
 		float RunningTime = GetRunningTime();
 
+	
+		m_pEffect->SetEyeWorldPos(m_pGameCamera->GetPos());
+		m_pEffect->SetWVP(p.GetWVPTrans());
+		m_pEffect->SetWorldMatrix(p.GetWorldTrans());
+
+
+
+		boneutility.CalculateFaceBone(&m_mesh, JsonRoles.roles["10002"], jsonfaceinfo);
+
 		m_mesh.BoneTransform(RunningTime, Transforms);
+
 
 		for (uint i = 0; i < Transforms.size(); i++) {
 			m_pEffect->SetBoneTransform(i, Transforms[i]);
 		}
-
-		m_pEffect->SetEyeWorldPos(m_pGameCamera->GetPos());
-
-	
-		m_pEffect->SetWVP(p.GetWVPTrans());
-		m_pEffect->SetWorldMatrix(p.GetWorldTrans());
-
 
 		m_mesh.Render();
 
@@ -342,6 +403,26 @@ public:
 		glGenBuffers(1, &IBO);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices), Indices, GL_STATIC_DRAW);
+
+
+		// The fullscreen quad's FBO
+
+		static const GLfloat g_quad_vertex_buffer_data[] = {
+			-1.0f, -1.0f, 0.0f,
+			1.0f, -1.0f, 0.0f,
+			-1.0f,  1.0f, 0.0f,
+			-1.0f,  1.0f, 0.0f,
+			1.0f, -1.0f, 0.0f,
+			1.0f,  1.0f, 0.0f,
+		};
+
+
+
+		glGenBuffers(1, &quad_vertexbuffer);
+		glBindBuffer(GL_ARRAY_BUFFER, quad_vertexbuffer);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(g_quad_vertex_buffer_data), g_quad_vertex_buffer_data, GL_STATIC_DRAW);
+
+
 	}
 
 
@@ -393,9 +474,25 @@ public:
 										  // Clear the screen
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			DisplayGrid();
 
+			m_pGameCamera->OnRender();
+			Pipeline p;
+			p.SetCamera(m_pGameCamera->GetPos(), m_pGameCamera->GetTarget(), m_pGameCamera->GetUp());
+			p.SetPerspectiveProj(m_persProjInfo);
+
+			
+			m_pCommonEffect->Enable();
+			m_pCommonEffect->SetWVP(p.GetWVPTrans());
+			
+			m_pTextureDetail->Bind(GL_TEXTURE0);
+			DrawTriangle();
+			DisplayGrid();
+			glutSwapBuffers();
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+			SaveTextureToFile(m_RenderTexture,1024,1024);
+
 			return true;
 		}
 		return false;
@@ -437,22 +534,125 @@ public:
 		delete[] pixels;
 
 	}
-private:
-	GLuint VBO;
-	GLuint IBO;
-	SkinningTechnique * m_pEffect;
 
-	CommonTechnique * m_pCommonEffect;
-	RenderTextureTechnique * m_pRTEffect;
-	Texture * m_pTextureColor; 
-	Texture * m_pTextureDetail;
-	Camera* m_pGameCamera;
-	DirectionalLight m_directionalLight;
-	SkinnedMesh m_mesh;
-	Vector3f m_position;
-	PersProjInfo m_persProjInfo;
+	void SaveTextureToFile(GLuint texture,int width,int height)
+	{
+		width = 2048;
+		height = 2048;
+		long size = width * height * 3;
+		unsigned char* output_image = new unsigned char[size];
 
-	GLuint m_RenderTexture;
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture);
+		//m_pTextureColor->Bind(GL_TEXTURE0);
+
+		GLint wtex, htex, comp, rs, gs, bs, as;
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH,  &wtex);
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &htex);  
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &comp);
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_RED_SIZE, &rs);
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_GREEN_SIZE, &gs);
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_BLUE_SIZE, &bs);
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_ALPHA_SIZE, &as);
+
+		glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, output_image);
+
+		GLenum error = glGetError();
+		const GLubyte * eb = gluErrorString(error);
+		string errorstring((char*)eb);
+
+		/*ofstream rawfile;
+		rawfile.open("data/rendertexture.raw");
+		rawfile.write((const char*)output_image, size);
+		rawfile.close();*/
+		WriteTGA((char*)"data/rendertexture.tga", wtex, htex, output_image);
+		
+		cv::Mat  img = cv::Mat(wtex ,htex , CV_8UC3, (unsigned*)output_image);
+		cv::Mat flipimg;
+
+		/*	flipCode	Anno
+				1	水平翻转
+				0	垂直翻转
+				- 1	水平垂直翻转*/
+		cv::flip(img, flipimg, 0);
+		cv::imwrite("data/rendertexture.jpg", flipimg);
+
+
+		
+		delete output_image;
+
+	}
+
+	bool WriteTGA(char *file, short int width, short int height, unsigned char *outImage)
+	{
+		// To save a screen shot is just like reading in a image. All you do
+		// is the opposite. Istead of calling fread to read in data you call
+		// fwrite to save it.
+
+		FILE *pFile; // The file pointer.
+		unsigned char uselessChar; // used for useless char.
+		short int uselessInt; // used for useless int.
+		unsigned char imageType; // Type of image we are saving.
+		int index; // used with the for loop.
+		unsigned char bits; // Bit depth.
+		long Size; // Size of the picture.
+		int colorMode;
+		unsigned char tempColors;
+
+		// Open file for output.
+		pFile = fopen(file, "wb");
+
+		// Check if the file opened or not.
+		if (!pFile) { fclose(pFile); return false; }
+
+		// Set the image type, the color mode, and the bit depth.
+		imageType = 2; colorMode = 3; bits = 24;
+
+		// Set these two to 0.
+		uselessChar = 0; uselessInt = 0;
+
+		// Write useless data.
+		fwrite(&uselessChar, sizeof(unsigned char), 1, pFile);
+		fwrite(&uselessChar, sizeof(unsigned char), 1, pFile);
+
+		// Now image type.
+		fwrite(&imageType, sizeof(unsigned char), 1, pFile);
+
+		// Write useless data.
+		fwrite(&uselessInt, sizeof(short int), 1, pFile);
+		fwrite(&uselessInt, sizeof(short int), 1, pFile);
+		fwrite(&uselessChar, sizeof(unsigned char), 1, pFile);
+		fwrite(&uselessInt, sizeof(short int), 1, pFile);
+		fwrite(&uselessInt, sizeof(short int), 1, pFile);
+
+		// Write the size that you want.
+		fwrite(&width, sizeof(short int), 1, pFile);
+		fwrite(&height, sizeof(short int), 1, pFile);
+		fwrite(&bits, sizeof(unsigned char), 1, pFile);
+
+		// Write useless data.
+		fwrite(&uselessChar, sizeof(unsigned char), 1, pFile);
+
+		// Get image size.
+		Size = width * height * colorMode;
+
+		// Now switch image from RGB to BGR.
+		for (index = 0; index < Size; index += colorMode)
+		{
+			tempColors = outImage[index];
+			outImage[index] = outImage[index + 2];
+			outImage[index + 2] = tempColors;
+		}
+
+		// Finally write the image.
+		fwrite(outImage, sizeof(unsigned char), Size, pFile);
+
+		// close the file.
+		fclose(pFile);
+
+		return true;
+	}
+
 };
 
 SkinningApp* pApp;

@@ -132,6 +132,8 @@ bool SkinnedMesh::InitFromScene(const aiScene* pScene, const string& Filename)
         m_Entries[i].NumIndices    = pScene->mMeshes[i]->mNumFaces * 3;
         m_Entries[i].BaseVertex    = NumVertices;
         m_Entries[i].BaseIndex     = NumIndices;
+		m_Entries[i].Name = pScene->mMeshes[i]->mName.data;
+		m_Entries[i].NumBones = pScene->mMeshes[i]->mNumBones;
         
         NumVertices += pScene->mMeshes[i]->mNumVertices;
         NumIndices  += m_Entries[i].NumIndices;
@@ -147,8 +149,12 @@ bool SkinnedMesh::InitFromScene(const aiScene* pScene, const string& Filename)
         
     // Initialize the meshes in the scene one by one
     for (uint i = 0 ; i < m_Entries.size() ; i++) {
-        const aiMesh* paiMesh = pScene->mMeshes[i];
-        InitMesh(i, paiMesh, Positions, Normals, TexCoords, TexCoords2, Bones, Indices);
+
+		if (m_Entries[i].NumBones > 80)
+		{
+			const aiMesh* paiMesh = pScene->mMeshes[i];
+			InitMesh(i, paiMesh, Positions, Normals, TexCoords, TexCoords2, Bones, Indices);
+		}
     }
 
     //if (!InitMaterials(pScene, Filename)) {
@@ -235,13 +241,24 @@ void SkinnedMesh::LoadBones(uint MeshIndex, const aiMesh* pMesh, vector<VertexBo
         uint BoneIndex = 0;        
         string BoneName(pMesh->mBones[i]->mName.data);
         
+		
+		if (BoneName == "face_eyeLids_Lf_joint1")
+		{
+			Matrix4f mat;
+		}
+
+
+
+
         if (m_BoneMapping.find(BoneName) == m_BoneMapping.end()) {
             // Allocate an index for a new bone
             BoneIndex = m_NumBones;
             m_NumBones++;            
 	        BoneInfo bi;	
 			m_BoneInfo.push_back(bi);
-            m_BoneInfo[BoneIndex].BoneOffset = pMesh->mBones[i]->mOffsetMatrix;            
+            m_BoneInfo[BoneIndex].BoneOffset = pMesh->mBones[i]->mOffsetMatrix;  
+			m_BoneInfo[BoneIndex].pMesh = (aiMesh*)pMesh;
+			m_BoneInfo[BoneIndex].BoneIndex = i;
             m_BoneMapping[BoneName] = BoneIndex;
         }
         else {
@@ -255,64 +272,21 @@ void SkinnedMesh::LoadBones(uint MeshIndex, const aiMesh* pMesh, vector<VertexBo
         }
     }  
 
-	FindBoneParent(m_pScene->mRootNode);
 
 }
-void SkinnedMesh::FindBoneParent(const aiNode* pNode)
+SkinnedMesh::BoneInfo SkinnedMesh::GetBoneInfo(string bonename)
 {
-	if (m_BoneMapping.find(pNode->mName.data) != m_BoneMapping.end())
+	if (m_BoneMapping.find(bonename) != m_BoneMapping.end())
 	{
-		uint index = m_BoneMapping[pNode->mName.data];
 
-		Matrix4f parentTransformation;
-		if (pNode->mParent == NULL)
-		{
-			parentTransformation.InitIdentity();
-		}
-		else
-		{
-			parentTransformation = Matrix4f(pNode->mParent->mTransformation);
-
-		}
-
-		m_BoneInfo[index].PrarentTransformation = parentTransformation;
-		
-		
-		/*if (m_BoneMapping.find(pNode->mParent->mName.data) != m_BoneMapping.end())
-		{
-			uint parentindex = m_BoneMapping[pNode->mParent->mName.data];
-
-			m_BoneInfo[index].PrarentTransformation = parentindex;
-		}
-		else
-		{
-
-			m_BoneInfo[index].PrarentBoneID = -1;
-		}*/
+		uint index = m_BoneMapping[bonename];
+		return m_BoneInfo[index];
 	}
-
-	for (uint i = 0; i < pNode->mNumChildren; i++) {
-		FindBoneParent(pNode->mChildren[i]);
+	else
+	{
+		BoneInfo info;
+		return info;
 	}
-}
-Matrix4f SkinnedMesh::GetParentBoneOffsetMatrix(string bonename)
-{
-	bonename = "face_" + bonename;
-	uint index = m_BoneMapping[bonename];
-
-	return m_BoneInfo[index].PrarentTransformation;
-}
-Matrix4f SkinnedMesh::GetBoneOffsetMatrix(string bonename)
-{
-	bonename = "face_" + bonename;
-	uint index = m_BoneMapping[bonename];
-	return m_BoneInfo[index].BoneOffset;
-}
-void SkinnedMesh::SetBoneOffsetMatrix(string bonename, Matrix4f mat)
-{
-	bonename = "face_" + bonename;
-	uint index = m_BoneMapping[bonename];
-	m_BoneInfo[index].BoneOffset = mat;
 }
 
 bool SkinnedMesh::InitMaterials(const aiScene* pScene, const string& Filename)
@@ -375,19 +349,25 @@ void SkinnedMesh::Render()
     glBindVertexArray(m_VAO);
     
     for (uint i = 0 ; i < m_Entries.size() ; i++) {
-        const uint MaterialIndex = m_Entries[i].MaterialIndex;
-
-        assert(MaterialIndex < m_Textures.size());
         
-        if (m_Textures[MaterialIndex]) {
-            m_Textures[MaterialIndex]->Bind(GL_TEXTURE0);
-        }
+		if (m_Entries[i].NumBones > 80)
+		{
+			const uint MaterialIndex = m_Entries[i].MaterialIndex;
 
-		glDrawElementsBaseVertex(GL_TRIANGLES, 
-                                 m_Entries[i].NumIndices, 
-                                 GL_UNSIGNED_INT, 
-                                 (void*)(sizeof(uint) * m_Entries[i].BaseIndex), 
-                                 m_Entries[i].BaseVertex);
+			assert(MaterialIndex < m_Textures.size());
+
+			if (m_Textures[MaterialIndex]) {
+				m_Textures[MaterialIndex]->Bind(GL_TEXTURE0);
+			}
+
+			glDrawElementsBaseVertex(GL_TRIANGLES,
+				m_Entries[i].NumIndices,
+				GL_UNSIGNED_INT,
+				(void*)(sizeof(uint) * m_Entries[i].BaseIndex),
+				m_Entries[i].BaseVertex);
+		}
+		
+	
     }
 
     // Make sure the VAO is not changed from the outside    
@@ -505,39 +485,58 @@ void SkinnedMesh::CalcInterpolatedScaling(aiVector3D& Out, float AnimationTime, 
 void SkinnedMesh::ReadNodeHeirarchy(float AnimationTime, const aiNode* pNode, const Matrix4f& ParentTransform)
 {    
     string NodeName(pNode->mName.data);
-    
-    const aiAnimation* pAnimation = m_pScene->mAnimations[0];
-        
-    Matrix4f NodeTransformation(pNode->mTransformation);
-     
-    const aiNodeAnim* pNodeAnim = FindNodeAnim(pAnimation, NodeName);
-    
-    if (pNodeAnim) {
-        // Interpolate scaling and generate scaling transformation matrix
-        aiVector3D Scaling;
-        CalcInterpolatedScaling(Scaling, AnimationTime, pNodeAnim);
-        Matrix4f ScalingM;
-        ScalingM.InitScaleTransform(Scaling.x, Scaling.y, Scaling.z);
-        
-        // Interpolate rotation and generate rotation transformation matrix
-        aiQuaternion RotationQ;
-        CalcInterpolatedRotation(RotationQ, AnimationTime, pNodeAnim);        
-        Matrix4f RotationM = Matrix4f(RotationQ.GetMatrix());
 
-        // Interpolate translation and generate translation transformation matrix
-        aiVector3D Translation;
-        CalcInterpolatedPosition(Translation, AnimationTime, pNodeAnim);
-        Matrix4f TranslationM;
-        TranslationM.InitTranslationTransform(Translation.x, Translation.y, Translation.z);
+	Matrix4f NodeTransformation(pNode->mTransformation);
+
+	if (m_pScene->mAnimations != NULL)
+	{
+
+		const aiAnimation* pAnimation = m_pScene->mAnimations[0];
+
+
+		const aiNodeAnim* pNodeAnim = FindNodeAnim(pAnimation, NodeName);
+
+		if (pNodeAnim) {
+			// Interpolate scaling and generate scaling transformation matrix
+			aiVector3D Scaling;
+			CalcInterpolatedScaling(Scaling, AnimationTime, pNodeAnim);
+			Matrix4f ScalingM;
+			ScalingM.InitScaleTransform(Scaling.x, Scaling.y, Scaling.z);
+
+			// Interpolate rotation and generate rotation transformation matrix
+			aiQuaternion RotationQ;
+			CalcInterpolatedRotation(RotationQ, AnimationTime, pNodeAnim);
+			Matrix4f RotationM = Matrix4f(RotationQ.GetMatrix());
+
+			// Interpolate translation and generate translation transformation matrix
+			aiVector3D Translation;
+			CalcInterpolatedPosition(Translation, AnimationTime, pNodeAnim);
+			Matrix4f TranslationM;
+			TranslationM.InitTranslationTransform(Translation.x, Translation.y, Translation.z);
+
+			// Combine the above transformations
+			NodeTransformation = TranslationM * RotationM * ScalingM;
+		}
+	}
+	else
+	{
+
+	}
+
+	if (NodeName == "face_eyeLids_Lf_joint1")
+	{
+		Matrix4f mat = pNode->mTransformation;
+	}
         
-        // Combine the above transformations
-        NodeTransformation = TranslationM * RotationM * ScalingM;
-    }
+   
        
     Matrix4f GlobalTransformation = ParentTransform * NodeTransformation;
     
     if (m_BoneMapping.find(NodeName) != m_BoneMapping.end()) {
-        uint BoneIndex = m_BoneMapping[NodeName];
+		uint BoneIndex = m_BoneMapping[NodeName];
+		m_BoneInfo[BoneIndex].NodeTransformation = NodeTransformation;
+		m_BoneInfo[BoneIndex].Parentformation = ParentTransform;
+		m_BoneInfo[BoneIndex].GlobalInverseTransform = m_GlobalInverseTransform;
         m_BoneInfo[BoneIndex].FinalTransformation = m_GlobalInverseTransform * GlobalTransformation * m_BoneInfo[BoneIndex].BoneOffset;
     }
     
@@ -561,7 +560,7 @@ void SkinnedMesh::BoneTransform(float TimeInSeconds, vector<Matrix4f>& Transform
 	}
 	else
 	{
-		//ReadNodeHeirarchy(0, m_pScene->mRootNode, Identity);
+		ReadNodeHeirarchy(0, m_pScene->mRootNode, Identity);
 	}
 
     Transforms.resize(m_NumBones);

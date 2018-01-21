@@ -52,3 +52,7 @@ void Texture::Bind(GLenum TextureUnit)
     glActiveTexture(TextureUnit);
     glBindTexture(m_textureTarget, m_textureObj);
 }
+GLuint Texture::GetTextureObj()
+{
+	return m_textureObj;
+}

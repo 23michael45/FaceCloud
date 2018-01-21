@@ -36,6 +36,25 @@ using namespace std;
 class SkinnedMesh
 {
 public:
+	struct BoneInfo
+	{
+		aiMesh* pMesh;
+		int BoneIndex;
+		Matrix4f GlobalInverseTransform;
+		Matrix4f NodeTransformation;
+		Matrix4f Parentformation;
+		Matrix4f BoneOffset;
+		Matrix4f FinalTransformation;
+
+		BoneInfo()
+		{
+			BoneOffset.SetZero();
+			FinalTransformation.SetZero();
+
+			pMesh = NULL;
+		}
+	};
+
     SkinnedMesh();
 
     ~SkinnedMesh();
@@ -49,25 +68,12 @@ public:
         return m_NumBones;
     }
     
-    void BoneTransform(float TimeInSeconds, vector<Matrix4f>& Transforms);
-	Matrix4f GetBoneOffsetMatrix(string bonename);
-	void SetBoneOffsetMatrix(string bonename, Matrix4f mat);
-	Matrix4f GetParentBoneOffsetMatrix(string bonename);
+	void BoneTransform(float TimeInSeconds, vector<Matrix4f>& Transforms);
+	BoneInfo GetBoneInfo(string bonename);
 private:
     #define NUM_BONES_PER_VEREX 4
 
-    struct BoneInfo
-    {
-		Matrix4f PrarentTransformation;
-        Matrix4f BoneOffset;
-        Matrix4f FinalTransformation;        
-
-        BoneInfo()
-        {
-            BoneOffset.SetZero();
-            FinalTransformation.SetZero();            
-        }
-    };
+   
     
     struct VertexBoneData
     {        
@@ -106,7 +112,7 @@ private:
                   vector<VertexBoneData>& Bones,
                   vector<unsigned int>& Indices);
     void LoadBones(uint MeshIndex, const aiMesh* paiMesh, vector<VertexBoneData>& Bones);
-	void FindBoneParent(const aiNode* pNode);
+	
 
     bool InitMaterials(const aiScene* pScene, const string& Filename);
     void Clear();
@@ -138,7 +144,9 @@ enum VB_TYPES {
         unsigned int NumIndices;
         unsigned int BaseVertex;
         unsigned int BaseIndex;
-        unsigned int MaterialIndex;
+		unsigned int MaterialIndex;
+		unsigned int NumBones;
+		string Name;
     };
     
     vector<MeshEntry> m_Entries;

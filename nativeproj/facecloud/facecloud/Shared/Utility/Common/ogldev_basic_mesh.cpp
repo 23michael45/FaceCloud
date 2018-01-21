@@ -119,6 +119,7 @@ bool BasicMesh::InitFromScene(const aiScene* pScene, const string& Filename)
 
     // Initialize the meshes in the scene one by one
     for (unsigned int i = 0 ; i < m_Entries.size() ; i++) {
+
         const aiMesh* paiMesh = pScene->mMeshes[i];
         InitMesh(paiMesh, Positions, Normals, TexCoords, Indices);
     }

@@ -32,7 +32,7 @@ public:
     bool Load();
 
     void Bind(GLenum TextureUnit);
-
+	GLuint GetTextureObj();
 private:
     std::string m_fileName;
     GLenum m_textureTarget;
