@@ -55,6 +55,7 @@ JsonModelFormat::~JsonModelFormat()
 void BoneUtility::Init()
 {
 
+	pairs.LoadFromFile("data/face/kp.json");
 
 }
 
@@ -181,8 +182,6 @@ void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFa
 	Vector3f headCenter = (leftpos + rightpos) * 0.5f;
 
 
-	JsonKeyPointBonePairs pairs;
-	pairs.LoadFromFile("data/face/kp.json");
 
 	for (int i = 0; i < pairs.pairs.size(); i++)
 	{
@@ -191,6 +190,45 @@ void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFa
 	}
 
 
+	MoveUV(pmesh,bonedef);
+
+}
+void BoneUtility::MoveUV(SkinnedMesh* pmesh, JsonRole bonedef)
+{
+
+	uint NumVertices = 0;
+	int len = 0;
+	int startpos;
+	for (uint i = 0; i < pmesh->m_Entries.size(); i++) {
+
+		if (pmesh->m_Entries[i].NumBones > 80)
+		{
+			len = pmesh->m_Entries[i].BaseVertex;
+			startpos = NumVertices;
+		}
+
+
+		NumVertices += pmesh->m_pScene->mMeshes[i]->mNumVertices;
+	}
+
+	vector<Vector2f> uvs2;
+	uvs2.reserve(len);
+	for (int i = 0 ; i< len;i++)
+	{
+		float uvsize = bonedef.uvsize;
+		float offset_y = bonedef.offset_y / 100;
+		Vector2f uv(pmesh->TotalPositions[startpos + i].x / uvsize + 0.5f, -pmesh->TotalPositions[startpos + i].y / uvsize - offset_y + 0.27);
+		uvs2.push_back(uv);
+	}
+
+	vector<Vector2f> newuv2 = pmesh->TotalTexCoords2;
+
+	for (int i = 0; i < len; i++)
+	{
+		newuv2[startpos + i] = uvs2[i];
+	}
+
+	pmesh->RefreshUV2(newuv2);
 }
 
 
@@ -332,26 +370,26 @@ void BoneUtility::MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo fac
 
 	float zepos = bonedef.face_zero_pointy;
 
-
 	float sizeuv = bonedef.uvsize;
 	float scale_1024_to_model = sizeuv / 1024;
 	// zero_px = planpos.x - sizeuv / 2;   原来依赖的片片，现在不用了
 	// zero_py = planpos.y - sizeuv / 2;
 
-	float zero_px = headCenter.x - 15;
-	float zero_py = headCenter.y - 15;
+	float zero_px = headCenter.x - sizeuv/2;//open 右手坐标 unity 左手坐标 
+	float zero_py = headCenter.y + sizeuv/2;
 
 	Vector3f zero(zero_px, zero_py, trspos.z);
 
-	trspos = zero + Vector3f(faceinfo.landmarkdata[facekeypoint].x, faceinfo.landmarkdata[facekeypoint].y,0) * scale_1024_to_model;
+	trspos = zero + Vector3f(faceinfo.landmarkdata[facekeypoint].x, -faceinfo.landmarkdata[facekeypoint].y, 0) *scale_1024_to_model;
 
 	//Debug.LogError(face.landmark.Get(pos));
 	//Debug.LogError(tr.position);
-
 	//trspos += bonedef.offsets_map[boneoffsetname] * offsetrate;
 
 
 
+	Vector3f offset = bonedef.offsets_map[boneoffsetname] * offsetrate;
+	//trspos += Vector3f(-offset.x, offset.y, offset.z);
 	Pipeline p;
 	p.Scale(trsscale);
 	p.Rotate(trsrot);
@@ -362,19 +400,27 @@ void BoneUtility::MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo fac
 	Vector3f lpos = localtrans.ExtractTranslation();
 	Vector3f lrot = localtrans.ExtractRotation();
 	Vector3f lscale = localtrans.ExtractScale();*/
-
-
-	//lpos += bonedef.offsets_map[boneoffsetname] * offsetrate;
+	//return;
 
 	boneinfo.BoneOffset = p.GetWorldTrans();
 
-	if (boneinfo.pMesh != NULL)
+	int i = 0;
+	for (vector<aiMesh*>::iterator it= boneinfo.pMeshVec.begin(); it < boneinfo.pMeshVec.end();it++)
 	{
-		boneinfo.pMesh->mBones[boneinfo.BoneIndex]->mOffsetMatrix = boneinfo.BoneOffset.GetaiMatrix4x4();
+		if (*it != NULL)
+		{
+			(*it)->mBones[boneinfo.BoneIndexVec[i]]->mOffsetMatrix = boneinfo.BoneOffset.GetaiMatrix4x4();
+			
+			/*Matrix4f identity;
+			identity.InitIdentity();
+			(*it)->mBones[boneinfo.BoneIndexVec[i]]->mOffsetMatrix = identity.GetaiMatrix4x4();
+			boneinfo.BoneOffset = identity;*/
+
+			pmesh->m_BoneInfo[pmesh->m_BoneMapping[bonename]] = boneinfo;
+		}
+		i++;
 
 	}
-
-	
 
 	//boneinfo.FinalTransformation = boneinfo.GlobalInverseTransform * boneinfo.Parentformation * boneinfo.NodeTransformation * boneinfo.BoneOffset;
 

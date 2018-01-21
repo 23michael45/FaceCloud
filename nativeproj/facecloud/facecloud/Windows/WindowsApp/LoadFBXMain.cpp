@@ -127,8 +127,8 @@ public:
 	bool Init()
 	{
 
-		Vector3f Pos(0.0f, 18.0f, -5.0f);
-		Vector3f Target(0.0f, 0.0f, 1.0f);
+		Vector3f Pos(0.0f, 180.0f, 50.0f);
+		Vector3f Target(0.0f, 0.0f, -1.0f);
 		Vector3f Up(0.0, 1.0f, 0.0f);
 
 		m_pGameCamera = new Camera(WINDOW_WIDTH, WINDOW_HEIGHT, Pos, Target, Up);
@@ -157,7 +157,7 @@ public:
 		if (!m_pTextureColor->Load()) {
 			return 1;
 		}
-		m_pTextureDetail = new Texture(GL_TEXTURE_2D, "data/test.png");
+		m_pTextureDetail = new Texture(GL_TEXTURE_2D, "data/face/photoface.jpg");
 		if (!m_pTextureDetail->Load()) {
 			return 1;
 		}
@@ -289,8 +289,8 @@ public:
 		DrawQuad();
 
 		p.WorldPos(0.0f, 0, 0.0f);
-		p.Scale(0.1f, 0.1f, 0.1f);
-		p.Rotate(0.0f, 180.0f, 0.0f);
+		p.Scale(1.0f, 1.0f, 1.0f);
+		p.Rotate(0.0f, 0, 0.0f);
 
 		m_pCommonEffect->SetWVP(p.GetWVPTrans());
 

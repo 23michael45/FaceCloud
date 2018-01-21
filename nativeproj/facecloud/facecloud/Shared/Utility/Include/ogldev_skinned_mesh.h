@@ -38,8 +38,8 @@ class SkinnedMesh
 public:
 	struct BoneInfo
 	{
-		aiMesh* pMesh;
-		int BoneIndex;
+		vector<aiMesh*> pMeshVec;
+		vector<int> BoneIndexVec;
 		Matrix4f GlobalInverseTransform;
 		Matrix4f NodeTransformation;
 		Matrix4f Parentformation;
@@ -51,7 +51,6 @@ public:
 			BoneOffset.SetZero();
 			FinalTransformation.SetZero();
 
-			pMesh = NULL;
 		}
 	};
 
@@ -70,7 +69,7 @@ public:
     
 	void BoneTransform(float TimeInSeconds, vector<Matrix4f>& Transforms);
 	BoneInfo GetBoneInfo(string bonename);
-private:
+
     #define NUM_BONES_PER_VEREX 4
 
    
@@ -117,6 +116,8 @@ private:
     bool InitMaterials(const aiScene* pScene, const string& Filename);
     void Clear();
 
+	void RefreshUV2(vector<Vector2f> uv2);
+
 #define INVALID_MATERIAL 0xFFFFFFFF
   
 enum VB_TYPES {
@@ -159,6 +160,10 @@ enum VB_TYPES {
     
     const aiScene* m_pScene;
     Assimp::Importer m_Importer;
+
+
+	vector<Vector3f> TotalPositions;
+	vector<Vector2f> TotalTexCoords2;
 };
 
 

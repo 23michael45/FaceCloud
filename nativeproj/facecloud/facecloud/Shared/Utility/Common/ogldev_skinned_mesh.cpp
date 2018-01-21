@@ -150,13 +150,13 @@ bool SkinnedMesh::InitFromScene(const aiScene* pScene, const string& Filename)
     // Initialize the meshes in the scene one by one
     for (uint i = 0 ; i < m_Entries.size() ; i++) {
 
-		if (m_Entries[i].NumBones > 80)
-		{
-			const aiMesh* paiMesh = pScene->mMeshes[i];
-			InitMesh(i, paiMesh, Positions, Normals, TexCoords, TexCoords2, Bones, Indices);
-		}
+		const aiMesh* paiMesh = pScene->mMeshes[i];
+		InitMesh(i, paiMesh, Positions, Normals, TexCoords, TexCoords2, Bones, Indices);
+
     }
 
+	TotalTexCoords2 = TexCoords2;
+	TotalPositions = Positions;
     //if (!InitMaterials(pScene, Filename)) {
     //   // return false;
     //}
@@ -257,11 +257,14 @@ void SkinnedMesh::LoadBones(uint MeshIndex, const aiMesh* pMesh, vector<VertexBo
 	        BoneInfo bi;	
 			m_BoneInfo.push_back(bi);
             m_BoneInfo[BoneIndex].BoneOffset = pMesh->mBones[i]->mOffsetMatrix;  
-			m_BoneInfo[BoneIndex].pMesh = (aiMesh*)pMesh;
-			m_BoneInfo[BoneIndex].BoneIndex = i;
+			m_BoneInfo[BoneIndex].pMeshVec.push_back((aiMesh*)pMesh);
+			m_BoneInfo[BoneIndex].BoneIndexVec.push_back(i);
             m_BoneMapping[BoneName] = BoneIndex;
         }
         else {
+
+			m_BoneInfo[BoneIndex].pMeshVec.push_back((aiMesh*)pMesh);
+			m_BoneInfo[BoneIndex].BoneIndexVec.push_back(i);
             BoneIndex = m_BoneMapping[BoneName];
         }                      
         
@@ -582,4 +585,12 @@ const aiNodeAnim* SkinnedMesh::FindNodeAnim(const aiAnimation* pAnimation, const
     }
     
     return NULL;
+}
+void SkinnedMesh::RefreshUV2(vector<Vector2f> uv2)
+{
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_UV2);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(uv2[0]) * uv2.size(), &uv2[0], GL_STATIC_DRAW);
+	glEnableVertexAttribArray(TEX_COORD_2_LOCATION);
+	glVertexAttribPointer(TEX_COORD_2_LOCATION, 2, GL_FLOAT, GL_FALSE, 0, 0);
 }

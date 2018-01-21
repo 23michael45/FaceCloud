@@ -279,7 +279,9 @@ public:
 
 class BoneUtility
 {
+public:
 
+	JsonKeyPointBonePairs pairs;
 public:
 	void Init();
 	int ReadJsonFromFile(const char* filename);
@@ -290,4 +292,6 @@ public:
 	void ResetBone();
 	void MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo faceinfo, string facekeypoint, JsonRole bonedef, string boneoffsetname, Vector3f headCenter, float offsetrate = 0.01f);
 	void MoveBonePYR(SkinnedMesh* pmesh, string bonename, JsonFaceInfo faceinfo, string facekeypoint, JsonRole bonedef, string boneoffsetname, Vector3f headCenter, float offsetrate = 0.01f);
+
+	void MoveUV(SkinnedMesh* pmesh, JsonRole bonedef);
 };
