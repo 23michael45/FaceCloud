@@ -13,7 +13,7 @@ out vec2 TexCoord1;
 out vec3 Normal0;                                                                   
 out vec3 WorldPos0;                                                                 
 
-const int MAX_BONES = 200;
+const int MAX_BONES = 254;
 
 uniform mat4 gWVP;
 uniform mat4 gWorld;
