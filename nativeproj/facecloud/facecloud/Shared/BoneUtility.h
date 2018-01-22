@@ -282,6 +282,7 @@ class BoneUtility
 public:
 
 	JsonKeyPointBonePairs pairs;
+	bool hasMoveBones;
 public:
 	void Init();
 	int ReadJsonFromFile(const char* filename);

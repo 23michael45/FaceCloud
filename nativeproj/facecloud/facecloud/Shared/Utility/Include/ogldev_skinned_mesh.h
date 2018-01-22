@@ -111,7 +111,8 @@ public:
                   vector<VertexBoneData>& Bones,
                   vector<unsigned int>& Indices);
     void LoadBones(uint MeshIndex, const aiMesh* paiMesh, vector<VertexBoneData>& Bones);
-	
+	void LoadNodeMap(map<string, aiNode*>& map,const aiNode* pNode);
+	Matrix4f GetNodeGlobalTransformation(const aiNode* pNode);
 
     bool InitMaterials(const aiScene* pScene, const string& Filename);
     void Clear();
@@ -164,6 +165,10 @@ enum VB_TYPES {
 
 	vector<Vector3f> TotalPositions;
 	vector<Vector2f> TotalTexCoords2;
+
+	map<string, aiNode*> m_NodeMap;
+	map<string, aiNode*> m_BoneNodeMap;
+	map<string, Matrix4f> m_BoneOffsetMap;
 };
 
 

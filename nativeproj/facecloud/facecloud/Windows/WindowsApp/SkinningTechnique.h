@@ -83,7 +83,7 @@ public:
 
 	static const uint MAX_POINT_LIGHTS = 2;
 	static const uint MAX_SPOT_LIGHTS = 2;
-	static const uint MAX_BONES = 256;
+	static const uint MAX_BONES = 254;
 
 	SkinningTechnique();
 

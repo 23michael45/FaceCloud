@@ -48,8 +48,8 @@ Tutorial 38 - Skinning
 #include <opencv2/core/core.hpp>
 using namespace std;
 
-#define WINDOW_WIDTH  1280  
-#define WINDOW_HEIGHT 1024
+#define WINDOW_WIDTH  400  
+#define WINDOW_HEIGHT 300
 
 
 struct Vertex
@@ -85,6 +85,7 @@ private:
 	SkinnedMesh m_mesh;
 	Vector3f m_position;
 	PersProjInfo m_persProjInfo;
+	OrthoProjInfo m_orthoProjInfo;
 
 	GLuint m_RenderTexture;
 
@@ -112,6 +113,14 @@ public:
 		m_persProjInfo.zNear = 0.1f;
 		m_persProjInfo.zFar = 10000.0f;
 
+
+		m_orthoProjInfo.b = -15;
+		m_orthoProjInfo.t = 15;
+		m_orthoProjInfo.l = -20;
+		m_orthoProjInfo.r = 20;
+		m_orthoProjInfo.n = -100;
+		m_orthoProjInfo.f = 100;
+
 		m_position = Vector3f(0.0f, 0.0f, 6.0f);
 	}
 
@@ -126,9 +135,14 @@ public:
 
 	bool Init()
 	{
+		
+				Vector3f Pos(0.0f, 175, 10.0f);
+				Vector3f Target(0.0f, 0.0f, -1.0f);
 
-		Vector3f Pos(0.0f, 180.0f, 50.0f);
-		Vector3f Target(0.0f, 0.0f, -1.0f);
+
+				/*Vector3f Pos(10.0f, 175, 0.0f);
+				Vector3f Target(1.0f, 0.0f, .0f);*/
+
 		Vector3f Up(0.0, 1.0f, 0.0f);
 
 		m_pGameCamera = new Camera(WINDOW_WIDTH, WINDOW_HEIGHT, Pos, Target, Up);
@@ -182,9 +196,9 @@ public:
 		}
 
 
-		jsonfaceinfo.LoadFromFile("data/face/photojson.json");
+		jsonfaceinfo.LoadFromFile("data/face/mytest1.info");
 
-		JsonRoles.LoadFromFile("data/face/modeljson.json");
+		JsonRoles.LoadFromFile("data/face/a_role.bytes");
 
 		boneutility.Init();
 
@@ -249,8 +263,8 @@ public:
 
 		Pipeline p;
 		p.SetCamera(m_pGameCamera->GetPos(), m_pGameCamera->GetTarget(), m_pGameCamera->GetUp());
-		p.SetPerspectiveProj(m_persProjInfo);
-		
+		//p.SetPerspectiveProj(m_persProjInfo);
+		p.SetOrthographicProj(m_orthoProjInfo);
 
 		m_pCommonEffect->Enable();
 		m_pCommonEffect->SetWVP(p.GetWVPTrans());
@@ -264,9 +278,10 @@ public:
 		p.WorldPos(0.0f, 10, 0.0f);
 		p.Rotate(0.0f, 180.0f, 0.0f);
 
+		
 
-
-		m_pCommonEffect->SetWVP(p.GetWVPTrans());
+		m_pCommonEffect->SetWVP(p.GetWVOrthoPTrans());
+		//m_pCommonEffect->SetWVP(p.GetWVPTrans());
 		//m_pCommonEffect->SetSampler(m_pTextureColor);
 
 
@@ -305,10 +320,12 @@ public:
 
 	
 		m_pEffect->SetEyeWorldPos(m_pGameCamera->GetPos());
-		m_pEffect->SetWVP(p.GetWVPTrans());
+		//m_pEffect->SetWVP(p.GetWVPTrans());
+
+		m_pEffect->SetWVP(p.GetWVOrthoPTrans());
 		m_pEffect->SetWorldMatrix(p.GetWorldTrans());
 
-
+		
 
 		boneutility.CalculateFaceBone(&m_mesh, JsonRoles.roles["10002"], jsonfaceinfo);
 
@@ -342,7 +359,7 @@ public:
 
 	virtual void PassiveMouseCB(int x, int y)
 	{
-		m_pGameCamera->OnMouse(x, y);
+		//m_pGameCamera->OnMouse(x, y);
 	}
 
 	void DisplayGrid()

@@ -54,7 +54,7 @@ JsonModelFormat::~JsonModelFormat()
 
 void BoneUtility::Init()
 {
-
+	hasMoveBones = false;
 	pairs.LoadFromFile("data/face/kp.json");
 
 }
@@ -94,6 +94,11 @@ int BoneUtility::ReadJsonFromFile(const char* filename)
 
 void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFaceInfo faceinfo)
 {
+	if (hasMoveBones)
+	{
+		return;
+	}
+	hasMoveBones = true;
 	//for (uint i = 0; i < pMesh->mNumBones; i++) {
 	//	uint BoneIndex = 0;
 	//	string BoneName(pMesh->mBones[i]->mName.data);
@@ -359,68 +364,156 @@ void BoneUtility::MoveBonePYR(SkinnedMesh* pmesh,string bonename, JsonFaceInfo f
 //面部骨骼变形
 void BoneUtility::MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo faceinfo, string facekeypoint, JsonRole bonedef, string boneoffsetname, Vector3f headCenter, float offsetrate)
 {
-	SkinnedMesh::BoneInfo boneinfo = pmesh->GetBoneInfo(bonename);
 
+	bool isbone = false;
+	Matrix4f transformtochange;
+	if (pmesh->m_BoneMapping.find(bonename) != pmesh->m_BoneMapping.end())
+	{
+		uint index = pmesh->m_BoneMapping[bonename];
+		transformtochange = pmesh->m_BoneInfo[index].BoneOffset;
 
+		//transformtochange.Inverse();
+		isbone = true;
+	}
+	else
+	{
+		transformtochange = pmesh->GetNodeGlobalTransformation(pmesh->m_BoneNodeMap[bonename]);
+		isbone = false;
 
-	Matrix4f finaltransold = boneinfo.BoneOffset;
-	Vector3f trspos = finaltransold.ExtractTranslation();
-	Vector3f trsrot = finaltransold.ExtractRotation();
-	Vector3f trsscale = finaltransold.ExtractScale();
+	}
+	Vector3f trspos = transformtochange.ExtractTranslation();
+	Vector3f trsrot = transformtochange.ExtractRotation();
+	Vector3f trsscale = transformtochange.ExtractScale();
 
 	float zepos = bonedef.face_zero_pointy;
 
 	float sizeuv = bonedef.uvsize;
 	float scale_1024_to_model = sizeuv / 1024;
-	// zero_px = planpos.x - sizeuv / 2;   原来依赖的片片，现在不用了
-	// zero_py = planpos.y - sizeuv / 2;
 
-	float zero_px = headCenter.x - sizeuv/2;//open 右手坐标 unity 左手坐标 
-	float zero_py = headCenter.y + sizeuv/2;
+	float zero_px = headCenter.x - sizeuv / 2;//open 右手坐标 unity 左手坐标 
+	float zero_py = headCenter.y + sizeuv / 2;
 
 	Vector3f zero(zero_px, zero_py, trspos.z);
+	if (isbone)
+	{
 
-	trspos = zero + Vector3f(faceinfo.landmarkdata[facekeypoint].x, -faceinfo.landmarkdata[facekeypoint].y, 0) *scale_1024_to_model;
-
-	//Debug.LogError(face.landmark.Get(pos));
-	//Debug.LogError(tr.position);
-	//trspos += bonedef.offsets_map[boneoffsetname] * offsetrate;
-
+		Vector3f zero(zero_px, zero_py, trspos.z);
+		trspos = zero + Vector3f(faceinfo.landmarkdata[facekeypoint].x, -faceinfo.landmarkdata[facekeypoint].y, 0) *scale_1024_to_model;
 
 
-	Vector3f offset = bonedef.offsets_map[boneoffsetname] * offsetrate;
-	//trspos += Vector3f(-offset.x, offset.y, offset.z);
+		/*Vector3f zero(zero_px, -zero_py, trspos.z);
+		trspos = zero + Vector3f(faceinfo.landmarkdata[facekeypoint].x, faceinfo.landmarkdata[facekeypoint].y, 0) *scale_1024_to_model;*/
+	}
+	else
+	{
+		Vector3f zero(zero_px, -zero_py, trspos.z);
+		trspos = zero + Vector3f(faceinfo.landmarkdata[facekeypoint].x, faceinfo.landmarkdata[facekeypoint].y, 0) *scale_1024_to_model;
+
+	}
+
+	//Vector3f offset = bonedef.offsets_map[boneoffsetname] * offsetrate;
+	//trspos += offset;
+
+
 	Pipeline p;
 	p.Scale(trsscale);
 	p.Rotate(trsrot);
 	p.WorldPos(trspos);
 
+	Matrix4f mat = p.GetWorldTrans();
 
-	/*Matrix4f localtrans = boneinfo.Parentformation.Inverse() * finaltransnew;
-	Vector3f lpos = localtrans.ExtractTranslation();
-	Vector3f lrot = localtrans.ExtractRotation();
-	Vector3f lscale = localtrans.ExtractScale();*/
-	//return;
+	Matrix4f nodetranformation = pmesh->m_BoneNodeMap[bonename]->mTransformation;
 
-	boneinfo.BoneOffset = p.GetWorldTrans();
-
-	int i = 0;
-	for (vector<aiMesh*>::iterator it= boneinfo.pMeshVec.begin(); it < boneinfo.pMeshVec.end();it++)
+	if (isbone)
 	{
-		if (*it != NULL)
-		{
-			(*it)->mBones[boneinfo.BoneIndexVec[i]]->mOffsetMatrix = boneinfo.BoneOffset.GetaiMatrix4x4();
-			
-			/*Matrix4f identity;
-			identity.InitIdentity();
-			(*it)->mBones[boneinfo.BoneIndexVec[i]]->mOffsetMatrix = identity.GetaiMatrix4x4();
-			boneinfo.BoneOffset = identity;*/
 
-			pmesh->m_BoneInfo[pmesh->m_BoneMapping[bonename]] = boneinfo;
-		}
-		i++;
+		uint index = pmesh->m_BoneMapping[bonename];
+		pmesh->m_BoneInfo[index].BoneOffset = mat;
 
+
+		/*Matrix4f identity;
+		identity.InitIdentity();
+
+		uint index = pmesh->m_BoneMapping[bonename];
+		pmesh->m_BoneInfo[index].BoneOffset = identity;*/
+
+		/*
+		aiMatrix4x4 aicurrentMat = pmesh->m_BoneNodeMap[bonename]->mTransformation;
+		Matrix4f currentMat = Matrix4f(aicurrentMat);
+		Vector3f cpos = transformtochange.ExtractTranslation();
+		Vector3f crot = transformtochange.ExtractRotation();
+		Vector3f cscale = transformtochange.ExtractScale();
+		Pipeline cp;
+		cp.Scale(cscale);
+		cp.Rotate(crot);
+		Matrix4f crs = cp.GetWorldTrans();
+		Matrix4f crsinv = crs;
+		crsinv.Inverse();
+
+
+		Matrix4f parentMat = pmesh->GetNodeGlobalTransformation(pmesh->m_BoneNodeMap[bonename]->mParent);
+
+
+		Matrix4f parentinv = parentMat;
+		parentinv.Inverse();
+		Matrix4f x = parentinv * mat;*/
+
+		//x = x * crs;
+
+
+		//pmesh->m_BoneNodeMap[bonename]->mTransformation = x.GetaiMatrix4x4();
 	}
+	else
+	{
+		aiMatrix4x4 parentMat = pmesh->m_BoneNodeMap[bonename]->mParent->mTransformation;
+		Matrix4f parentinv(parentMat.Inverse());
+		Matrix4f x = parentinv * mat;
+		pmesh->m_BoneNodeMap[bonename]->mTransformation = x.GetaiMatrix4x4();
+	}
+	return;
+
+	//int i = 0;
+
+	//if (boneinfo.pMeshVec.size() > 0)
+	//{
+	//	for (vector<aiMesh*>::iterator it = boneinfo.pMeshVec.begin(); it < boneinfo.pMeshVec.end(); it++)
+	//	{
+	//		if (*it != NULL)
+	//		{
+	//			//(*it)->mBones[boneinfo.BoneIndexVec[i]]->mOffsetMatrix = boneinfo.BoneOffset.GetaiMatrix4x4();
+
+	//			/*Matrix4f identity;
+	//			identity.InitIdentity();
+	//			(*it)->mBones[boneinfo.BoneIndexVec[i]]->mOffsetMatrix = identity.GetaiMatrix4x4();
+	//			boneinfo.BoneOffset = identity;*/
+
+
+	//			//pmesh->m_BoneInfo[pmesh->m_BoneMapping[bonename]].NodeTransformation = mat;
+	//			//pmesh->m_NodeMap[bonename]->mTransformation = mat.GetaiMatrix4x4();
+
+
+
+	//			//pmesh->m_BoneInfo[pmesh->m_BoneMapping[bonename]] = boneinfo;
+	//		}
+	//		i++;
+
+	//	}
+
+	//	boneinfo.BoneOffset = mat;// .Inverse();
+	//	pmesh->m_BoneInfo[pmesh->m_BoneMapping[bonename]] = boneinfo;
+	//}
+	//else
+	//{
+	//	Matrix4f identity;
+	//	identity.InitIdentity();
+	//	boneinfo.BoneOffset = mat;
+
+
+	//	//printf(bonename.c_str());
+	//}
+
+
+
 
 	//boneinfo.FinalTransformation = boneinfo.GlobalInverseTransform * boneinfo.Parentformation * boneinfo.NodeTransformation * boneinfo.BoneOffset;
 
