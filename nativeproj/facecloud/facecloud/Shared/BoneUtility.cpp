@@ -4,6 +4,7 @@
 
 #include <json/json.h>
 #include <fstream>
+#include <sstream>
 
 void JsonModelFormat::LoadFromFile(string filename)
 {
@@ -11,7 +12,6 @@ void JsonModelFormat::LoadFromFile(string filename)
 	Json::CharReaderBuilder rbuilder;
 	rbuilder["collectComments"] = false;
 	std::string errs;
-	Json::Value root;
 	std::ifstream ifs;
 	ifs.open(filename);
 	bool ok = Json::parseFromStream(rbuilder, ifs, &root, &errs);
@@ -41,9 +41,44 @@ void JsonModelFormat::Load(Json::Value root)
 
 
 
-	Json::Value nodes = root["hierarchy"]["nodes"];
-	int nodescount = nodes.size();
+	Json::Value jnodes = root["hierarchy"]["nodes"];
+	int nodescount = jnodes.size();
 
+	for (int i = 0 ; i< nodescount;i++)
+	{
+		Json::Value jnode = jnodes[i];
+		JsonModelFormat::node node;
+		node.name = jnode["name"].asString();
+		node.parent = jnode["parent"].asInt();
+		node.pos = Vector3f(jnode["pos"][0].asFloat(), jnode["pos"][1].asFloat(), jnode["pos"][2].asFloat());
+		node.scl = Vector3f(jnode["scl"][0].asFloat(), jnode["scl"][1].asFloat(), jnode["scl"][2].asFloat());
+		node.rot = Vector4f(jnode["rot"][0].asFloat(), jnode["rot"][1].asFloat(), jnode["rot"][2].asFloat(), jnode["rot"][3].asFloat());
+
+		nodemap[node.name] = node;
+	}
+
+}
+void JsonModelFormat::Save(string filename)
+{
+
+	Json::Value jnodes = root["hierarchy"]["nodes"];
+	for (int i = 0; i < jnodes.size(); i++)
+	{
+		jnodes[i]["pos"][0] = Json::Value(nodemap[jnodes[i]["name"].asString()].pos.x);
+		jnodes[i]["pos"][1] = Json::Value(nodemap[jnodes[i]["name"].asString()].pos.y);
+		jnodes[i]["pos"][2] = Json::Value(nodemap[jnodes[i]["name"].asString()].pos.z);
+	}
+
+
+
+	Json::StreamWriterBuilder  builder;
+	builder.settings_["commentStyle"] = "None";
+	//builder.settings_["indentation"] = "All";
+	std::string s = Json::writeString(builder, root);
+	ofstream write;
+	write.open(filename.c_str(), ios::out | ios::binary);
+	write.write(s.c_str(), s.length());
+	write.close();
 }
 JsonModelFormat::~JsonModelFormat()
 {
@@ -56,7 +91,7 @@ void BoneUtility::Init()
 {
 	hasMoveBones = false;
 	pairs.LoadFromFile("data/face/kp.json");
-
+	jsonModelFormat.LoadFromFile("data/face/women_head_fix.JD");
 }
 
 int BoneUtility::ReadJsonFromFile(const char* filename)
@@ -86,6 +121,9 @@ int BoneUtility::ReadJsonFromFile(const char* filename)
 
 
 	float face_rectangle = root["face_rectangle"]["top"].asFloat();
+
+
+
 
 
 	return 0;
@@ -123,9 +161,9 @@ void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFa
 	//	}
 	//}
 
-	Matrix4f tooth_MID = pmesh->GetBoneInfo("face_mouthLip_up_joint2").BoneOffset;
-	Matrix4f toothup_Lf = pmesh->GetBoneInfo("face_mouthLip_Lf_joint1").BoneOffset;
-	Matrix4f toothdown_Rt = pmesh->GetBoneInfo("face_mouthLip_Rt_joint1").BoneOffset;
+	Matrix4f tooth_MID = pmesh->GetBoneNode("face_mouthLip_up_joint2");
+	Matrix4f toothup_Lf = pmesh->GetBoneNode("face_mouthLip_Lf_joint1");
+	Matrix4f toothdown_Rt = pmesh->GetBoneNode("face_mouthLip_Rt_joint1");
 
 	Vector3f tooth_MID_pos1 = tooth_MID.ExtractTranslation();
 	Vector3f toothup_Lf_pos1 = toothup_Lf.ExtractTranslation();
@@ -133,8 +171,8 @@ void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFa
 
 	//额头偏移
 
-	Matrix4f forehead_RT = pmesh->GetBoneInfo("face_temple_Rt_joint1").BoneOffset;
-	Matrix4f forehead_LF = pmesh->GetBoneInfo("face_temple_Lf_joint1").BoneOffset;
+	Matrix4f forehead_RT = pmesh->GetBoneNode("face_temple_Rt_joint1");
+	Matrix4f forehead_LF = pmesh->GetBoneNode("face_temple_Lf_joint1");
 
 
 	Vector3f forhead_RT_pos1 = forehead_RT.ExtractTranslation();
@@ -142,59 +180,68 @@ void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFa
 
 	//眉毛修正
 
-	Matrix4f brow_LF02 = pmesh->GetBoneInfo("face_brow_Lf_joint2").BoneOffset;
-	Matrix4f brow_LF03 = pmesh->GetBoneInfo("face_brow_Lf_joint3").BoneOffset;
+	Matrix4f brow_LF02 = pmesh->GetBoneNode("face_brow_Lf_joint2");
+	Matrix4f brow_LF03 = pmesh->GetBoneNode("face_brow_Lf_joint3");
 
 	Vector3f brow_LF02_pos1 = brow_LF02.ExtractTranslation();
 	Vector3f brow_LF03_pos1 = brow_LF03.ExtractTranslation();
 
 	//鼻子修正
-	Matrix4f nose_tr = pmesh->GetBoneInfo("face_nose_joint2").BoneOffset;
+	Matrix4f nose_tr = pmesh->GetBoneNode("face_nose_joint2");
 	Vector3f nose_tr_pos1 = nose_tr.ExtractTranslation();
 
 
 	//嘴巴修正
 
-	SkinnedMesh::BoneInfo mouth_tr =  pmesh->GetBoneInfo("face_mouthLip_up_joint0");
-	Vector3f mouth_tr_pos1 = mouth_tr.BoneOffset.ExtractTranslation();
+	Vector3f mouth_tr_pos1 = pmesh->GetBoneNode("face_mouthLip_up_joint0").ExtractTranslation();
 
 	//眼睛修正
-	float righteye_conner_pos1 = pmesh->GetBoneInfo("face_eyeLids_Rt_joint1").BoneOffset.ExtractTranslation().x;
-	float righteye_conner_pos2 = pmesh->GetBoneInfo("face_eyeLids_Rt_joint2").BoneOffset.ExtractTranslation().x;
-	float Lefteye_conner_pos1 = pmesh->GetBoneInfo("face_eyeLids_Lf_joint1").BoneOffset.ExtractTranslation().x;
-	float Lefteye_conner_pos2 = pmesh->GetBoneInfo("face_eyeLids_Lf_joint2").BoneOffset.ExtractTranslation().x;
+	float righteye_conner_pos1 = pmesh->GetBoneNode("face_eyeLids_Rt_joint1").ExtractTranslation().x;
+	float righteye_conner_pos2 = pmesh->GetBoneNode("face_eyeLids_Rt_joint2").ExtractTranslation().x;
+	float Lefteye_conner_pos1 = pmesh->GetBoneNode("face_eyeLids_Lf_joint1").ExtractTranslation().x;
+	float Lefteye_conner_pos2 = pmesh->GetBoneNode("face_eyeLids_Lf_joint2").ExtractTranslation().x;
 
 	float Eye_Rt_dis = righteye_conner_pos1 - righteye_conner_pos2;
 	float Eye_LF_dis = Lefteye_conner_pos1 - Lefteye_conner_pos2;
 
 
-	Vector3f fixmouthlipdistance01 = pmesh->GetBoneInfo("face_mouthLip_Lf_joint5").BoneOffset.ExtractTranslation() - pmesh->GetBoneInfo("face_mouthLip_Lf_joint7").BoneOffset.ExtractTranslation();
-	Vector3f fixmouthlipdistance02 = pmesh->GetBoneInfo("face_mouthLip_Rt_joint5").BoneOffset.ExtractTranslation() - pmesh->GetBoneInfo("face_mouthLip_Rt_joint7").BoneOffset.ExtractTranslation();
-	Vector3f fixmouthlipdistance03 = pmesh->GetBoneInfo("face_mouthLip_dn_joint2").BoneOffset.ExtractTranslation() - pmesh->GetBoneInfo("face_mouthLip_up_joint2").BoneOffset.ExtractTranslation();
+	Vector3f fixmouthlipdistance01 = pmesh->GetBoneNode("face_mouthLip_Lf_joint5").ExtractTranslation() - pmesh->GetBoneNode("face_mouthLip_Lf_joint7").ExtractTranslation();
+	Vector3f fixmouthlipdistance02 = pmesh->GetBoneNode("face_mouthLip_Rt_joint5").ExtractTranslation() - pmesh->GetBoneNode("face_mouthLip_Rt_joint7").ExtractTranslation();
+	Vector3f fixmouthlipdistance03 = pmesh->GetBoneNode("face_mouthLip_dn_joint2").ExtractTranslation() - pmesh->GetBoneNode("face_mouthLip_up_joint2").ExtractTranslation();
 
 
 	//  Debug.Log("Eye_Rt_dis" + Eye_Rt_dis+ "Eye_LF_dis"+ Eye_LF_dis);
 
-	Vector3f fixnose_lf1 = pmesh->GetBoneInfo("face_nosewing_Lf_joint1").BoneOffset.ExtractTranslation();
-	Vector3f fixnose_RT1 = pmesh->GetBoneInfo("face_nosewing_Rt_joint1").BoneOffset.ExtractTranslation();
+	Vector3f fixnose_lf1 = pmesh->GetBoneNode("face_nosewing_Lf_joint1").ExtractTranslation();
+	Vector3f fixnose_RT1 = pmesh->GetBoneNode("face_nosewing_Rt_joint1").ExtractTranslation();
 
 
-	SkinnedMesh::BoneInfo boneinfo = pmesh->GetBoneInfo("face_eyeLids_Lf_joint1");
-	SkinnedMesh::BoneInfo boneinfo1 = pmesh->GetBoneInfo("face_eyeBall_Lf_joint1");
+	Matrix4f  face_eyeLids_Lf_joint1  = pmesh->GetBoneNode("face_eyeLids_Lf_joint1");
+	Matrix4f face_eyeBall_Lf_joint1 = pmesh->GetBoneNode("face_eyeBall_Lf_joint1");
 
-	Vector3f leftpos = pmesh->GetBoneInfo("face_eyeLids_Lf_joint1").BoneOffset.ExtractTranslation();
-	Vector3f rightpos = pmesh->GetBoneInfo("face_eyeLids_Rt_joint1").BoneOffset.ExtractTranslation();
+	Vector3f leftpos = pmesh->GetBoneNode("face_eyeLids_Lf_joint1").ExtractTranslation();
+	Vector3f rightpos = pmesh->GetBoneNode("face_eyeLids_Rt_joint1").ExtractTranslation();
 	Vector3f headCenter = (leftpos + rightpos) * 0.5f;
 
 
-
+	rtjson.clear();
 	for (int i = 0; i < pairs.pairs.size(); i++)
 	{
 		KP kp = pairs.pairs[i];
 		MoveBone(pmesh, kp.bonename, faceinfo, kp.facekeypointname, bonedef, kp.offsetname, headCenter);
 	}
 
+	int jcount = rtjson.size();
+	Json::StreamWriterBuilder  builder;
+	builder.settings_["commentStyle"] = "All";
+	std::string s = Json::writeString(builder, rtjson);
+	ofstream write;
+	string filename = "d:/cppjr.json";
+	write.open(filename.c_str(), ios::out | ios::binary);
+	write.write(s.c_str(), s.length());
+	write.close();
 
+	jsonModelFormat.Save("d:/facemodeljson.json");
 	MoveUV(pmesh,bonedef);
 
 }
@@ -222,7 +269,7 @@ void BoneUtility::MoveUV(SkinnedMesh* pmesh, JsonRole bonedef)
 	{
 		float uvsize = bonedef.uvsize;
 		float offset_y = bonedef.offset_y / 100;
-		Vector2f uv(pmesh->TotalPositions[startpos + i].x / uvsize + 0.5f, -pmesh->TotalPositions[startpos + i].y / uvsize - offset_y + 0.27);
+		Vector2f uv(pmesh->TotalPositions[startpos + i].x / uvsize + 0.5f, -pmesh->TotalPositions[startpos + i].y / uvsize - offset_y);
 		uvs2.push_back(uv);
 	}
 
@@ -249,9 +296,9 @@ void BoneUtility::MoveBonePYR(SkinnedMesh* pmesh,string bonename, JsonFaceInfo f
 
 
 	Matrix4f finaltransold = boneinfo.BoneOffset;
-	Vector3f trspos = finaltransold.ExtractTranslation();
-	Vector3f trsrot = finaltransold.ExtractRotation();
-	Vector3f trsscale = finaltransold.ExtractScale();
+	Vector3f trspos, trsscl;
+	Matrix4f trsrot;
+	finaltransold.MatrixDecompose(trspos, trsscl, trsrot);
 
 	float zepos = bonedef.face_zero_pointy;
 
@@ -325,151 +372,201 @@ void BoneUtility::MoveBonePYR(SkinnedMesh* pmesh,string bonename, JsonFaceInfo f
 
 	Vector3f faceOffset(xf, yf, zf);
 
-	//  Debug.LogError(faceOffset);
-
-
-
-
-	
 	
 	Vector3f finalpos = zero + Vector3f(face2dpos.x * scale_1024_to_model, face2dpos.y * scale_1024_to_model,0);
 
 
-
-
-	Pipeline p;
-	p.Scale(trsscale);
-	p.Rotate(trsrot);
-	p.WorldPos(finalpos);
-
-
-	//Matrix4f finaltransnew = p.GetWorldTrans();
-
-	/*Matrix4f localtrans = boneinfo.Parentformation.Inverse() * finaltransnew;
-	Vector3f lpos = localtrans.ExtractTranslation();
-	Vector3f lrot = localtrans.ExtractRotation();
-	Vector3f lscale = localtrans.ExtractScale();*/
-
-
-	//lpos += bonedef.offsets_map[boneoffsetname] * offsetrate;
-
-	boneinfo.BoneOffset = p.GetWorldTrans();
-
-	boneinfo.FinalTransformation = boneinfo.GlobalInverseTransform * boneinfo.Parentformation * boneinfo.NodeTransformation * boneinfo.BoneOffset;
 	
 }
 
 
+Matrix4f BoneUtility::GetLocalMatrixFromGlobal(SkinnedMesh* pmesh,string bonename, Matrix4f globalmat)
+{
+	Matrix4f parentMat = pmesh->GetNodeGlobalTransformation(pmesh->m_BoneNodeMap[bonename]->mParent);
+
+	Matrix4f parentinv = parentMat;
+	parentinv.Inverse();
+
+	Matrix4f x = parentMat * globalmat;
+	return x;
+
+}
 
 //面部骨骼变形
 void BoneUtility::MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo faceinfo, string facekeypoint, JsonRole bonedef, string boneoffsetname, Vector3f headCenter, float offsetrate)
 {
 
-	bool isbone = false;
+	Json::Value jresult;
+
 	Matrix4f transformtochange;
+	Matrix4f currentlocalMat;
+
+	transformtochange = pmesh->GetNodeGlobalTransformation(pmesh->m_BoneNodeMap[bonename]);
+
+	aiMatrix4x4 aicurrentMat = pmesh->m_BoneNodeMap[bonename]->mTransformation;
+	currentlocalMat = Matrix4f(aicurrentMat);
+
+
+
 	if (pmesh->m_BoneMapping.find(bonename) != pmesh->m_BoneMapping.end())
 	{
 		uint index = pmesh->m_BoneMapping[bonename];
-		transformtochange = pmesh->m_BoneInfo[index].BoneOffset;
-
-		//transformtochange.Inverse();
-		isbone = true;
-	}
-	else
-	{
-		transformtochange = pmesh->GetNodeGlobalTransformation(pmesh->m_BoneNodeMap[bonename]);
-		isbone = false;
+		Matrix4f currentlocaloffset = pmesh->m_BoneInfo[index].BoneOffset;
+		if (bonename == "face_chin_Lf_joint09")
+		{
+			printf("");
+		}
 
 	}
-	Vector3f trspos = transformtochange.ExtractTranslation();
-	Vector3f trsrot = transformtochange.ExtractRotation();
-	Vector3f trsscale = transformtochange.ExtractScale();
+
+
+	Vector3f trspos, trsscl;
+	Matrix4f trsrot;
+	transformtochange.MatrixDecompose(trspos, trsscl, trsrot);
+
+
+
+	jresult.append(bonename);
+
+	std::ostringstream prewrdb;
+	prewrdb << trspos.x << "," << trspos.y << "," << trspos.z;
+	jresult.append("prewrdposition:" + prewrdb.str());
+
+
+	std::ostringstream prelocb;
+	Vector3f preloct = currentlocalMat.ExtractTranslation();
+	prelocb << preloct.x << "," << preloct.y << "," << preloct.z;
+	jresult.append("prelocposition:" + prelocb.str());
+
+
+
+
+
 
 	float zepos = bonedef.face_zero_pointy;
 
 	float sizeuv = bonedef.uvsize;
 	float scale_1024_to_model = sizeuv / 1024;
 
-	float zero_px = headCenter.x - sizeuv / 2;//open 右手坐标 unity 左手坐标 
-	float zero_py = headCenter.y + sizeuv / 2;
+	float zero_px = headCenter.x + sizeuv / 2;//open 右手坐标 unity 左手坐标 
+	float zero_py = headCenter.y - sizeuv / 2;
 
 	Vector3f zero(zero_px, zero_py, trspos.z);
-	if (isbone)
-	{
+	trspos = zero + Vector3f(-faceinfo.landmarkdata[facekeypoint].x, faceinfo.landmarkdata[facekeypoint].y, 0) *scale_1024_to_model;
 
-		Vector3f zero(zero_px, zero_py, trspos.z);
-		trspos = zero + Vector3f(faceinfo.landmarkdata[facekeypoint].x, -faceinfo.landmarkdata[facekeypoint].y, 0) *scale_1024_to_model;
+	std::ostringstream aftwrdb;
+	aftwrdb << trspos.x << "," << trspos.y << "," << trspos.z;
+	jresult.append("aftwrdposition:" + aftwrdb.str());
 
-
-		/*Vector3f zero(zero_px, -zero_py, trspos.z);
-		trspos = zero + Vector3f(faceinfo.landmarkdata[facekeypoint].x, faceinfo.landmarkdata[facekeypoint].y, 0) *scale_1024_to_model;*/
-	}
-	else
-	{
-		Vector3f zero(zero_px, -zero_py, trspos.z);
-		trspos = zero + Vector3f(faceinfo.landmarkdata[facekeypoint].x, faceinfo.landmarkdata[facekeypoint].y, 0) *scale_1024_to_model;
-
-	}
 
 	//Vector3f offset = bonedef.offsets_map[boneoffsetname] * offsetrate;
 	//trspos += offset;
 
+	Matrix4f parentMat = pmesh->GetNodeGlobalTransformation(pmesh->m_BoneNodeMap[bonename]->mParent);
 
-	Pipeline p;
-	p.Scale(trsscale);
-	p.Rotate(trsrot);
-	p.WorldPos(trspos);
+	Pipeline ps;
+	ps.Scale(trsscl);
 
-	Matrix4f mat = p.GetWorldTrans();
 
-	Matrix4f nodetranformation = pmesh->m_BoneNodeMap[bonename]->mTransformation;
+	Pipeline pt;
+	pt.WorldPos(trspos);
+	Matrix4f mt = pt.GetWorldTrans();
 
-	if (isbone)
+
+	Matrix4f mat = mt  * trsrot * ps.GetWorldTrans();
+
+
+	/*uint index = pmesh->m_BoneMapping[bonename];
+	pmesh->m_BoneInfo[index].BoneOffset = mat;*/
+
+
+	Matrix4f identity;
+	identity.InitIdentity();
+
+	/*uint index = pmesh->m_BoneMapping[bonename];
+	pmesh->m_BoneInfo[index].BoneOffset = identity;*/
+
+
+	Vector3f cpos, cscale;
+	Matrix4f crot;
+	currentlocalMat.MatrixDecompose(cpos, cscale, crot);
+
+	Pipeline cp;
+	cp.Scale(cscale);
+	Matrix4f crs = crot * cp.GetWorldTrans();
+	Matrix4f crsinv = crs;
+	crsinv.Inverse();
+
+
+
+	Matrix4f parentinv = parentMat;
+	parentinv.Inverse();
+
+	Matrix4f x = parentinv * mat;
+
+	Matrix4f tx = x * crsinv;
+
+
+
+	Vector3f offset = bonedef.offsets_map[boneoffsetname] * offsetrate;
+	tx.m[0][3] += -offset.x;
+	tx.m[1][3] += offset.y;
+	tx.m[2][3] += offset.z;
+
+
+
+	Matrix4f final = tx * crs;
+
+
+
+	std::ostringstream aftlocb;
+	Vector3f aftloct = final.ExtractTranslation();
+	aftlocb << aftloct.x << "," << aftloct.y << "," << aftloct.z;
+	jresult.append("aftlocposition:" + aftlocb.str());
+
+
+	if (pmesh->m_BoneNodeMap.find(bonename) != pmesh->m_BoneNodeMap.end())
 	{
+		pmesh->m_BoneNodeMap[bonename]->mTransformation = x.GetaiMatrix4x4();
+		
+		Matrix4f totalfinal = parentMat * final;
+		pmesh->m_BoneGlobalTrasMap[bonename] = totalfinal;
+		Vector3f diff = totalfinal.ExtractTranslation() - transformtochange.ExtractTranslation();
 
-		uint index = pmesh->m_BoneMapping[bonename];
-		pmesh->m_BoneInfo[index].BoneOffset = mat;
+		jsonModelFormat.nodemap[bonename].pos = diff;
+		
+		Matrix4f test = parentMat * x;
 
+		if (test != mat)
+		{
+			printf("");
 
-		/*Matrix4f identity;
-		identity.InitIdentity();
-
-		uint index = pmesh->m_BoneMapping[bonename];
-		pmesh->m_BoneInfo[index].BoneOffset = identity;*/
-
-		/*
-		aiMatrix4x4 aicurrentMat = pmesh->m_BoneNodeMap[bonename]->mTransformation;
-		Matrix4f currentMat = Matrix4f(aicurrentMat);
-		Vector3f cpos = transformtochange.ExtractTranslation();
-		Vector3f crot = transformtochange.ExtractRotation();
-		Vector3f cscale = transformtochange.ExtractScale();
-		Pipeline cp;
-		cp.Scale(cscale);
-		cp.Rotate(crot);
-		Matrix4f crs = cp.GetWorldTrans();
-		Matrix4f crsinv = crs;
-		crsinv.Inverse();
-
-
-		Matrix4f parentMat = pmesh->GetNodeGlobalTransformation(pmesh->m_BoneNodeMap[bonename]->mParent);
-
-
-		Matrix4f parentinv = parentMat;
-		parentinv.Inverse();
-		Matrix4f x = parentinv * mat;*/
-
-		//x = x * crs;
-
-
-		//pmesh->m_BoneNodeMap[bonename]->mTransformation = x.GetaiMatrix4x4();
+		}
 	}
 	else
 	{
-		aiMatrix4x4 parentMat = pmesh->m_BoneNodeMap[bonename]->mParent->mTransformation;
-		Matrix4f parentinv(parentMat.Inverse());
-		Matrix4f x = parentinv * mat;
-		pmesh->m_BoneNodeMap[bonename]->mTransformation = x.GetaiMatrix4x4();
+		printf("");
 	}
+
+	if (pmesh->m_BoneMapping.find(bonename) != pmesh->m_BoneMapping.end())
+	{
+		uint index = pmesh->m_BoneMapping[bonename];
+		Matrix4f matinv = mat;
+		matinv.Inverse();
+		//pmesh->m_BoneInfo[index].BoneOffset = matinv;
+
+
+		Matrix4f globalm = Matrix4f(pmesh->GetNodeGlobalTransformation(pmesh->m_BoneNodeMap[bonename]));
+
+		Matrix4f test = globalm * pmesh->m_BoneInfo[index].BoneOffset;
+		printf("");
+	}
+	else
+	{
+		printf("");
+	}
+
+	rtjson.append(jresult);
 	return;
 
 	//int i = 0;

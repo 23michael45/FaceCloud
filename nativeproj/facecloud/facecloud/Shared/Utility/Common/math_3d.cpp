@@ -21,6 +21,7 @@
 
 #include "ogldev_util.h"
 #include "ogldev_math_3d.h"
+#include <math.h>
 
 #define EPSILON 0.01f
 
@@ -31,6 +32,10 @@ Vector3f Vector3f::Cross(const Vector3f& v) const
     const float _z = x * v.y - y * v.x;
 
     return Vector3f(_x, _y, _z);
+}
+float Vector3f::Length() 
+{
+	return sqrtf(x * x + y * y + z * z);
 }
 
 Vector3f& Vector3f::Normalize()
@@ -234,14 +239,9 @@ Matrix4f& Matrix4f::Inverse()
 	return *this;
 }
 
-Vector3f Matrix4f::ExtractTranslation() 
+Vector3f Matrix4f::ExtractTranslation()
 {
 	return Vector3f(m[0][3], m[1][3], m[2][3]);
-}
-Vector3f Matrix4f::ExtractScale()
-{
-
-	return Vector3f(m[0][0], m[1][1], m[2][2]);
 }
 Vector3f Matrix4f::ExtractRotation()
 {
@@ -269,6 +269,70 @@ Vector3f Matrix4f::ExtractRotation()
 	angles.x = atan2(sinPitch, cosPitch) * 180 / M_PI;
 	angles.z = atan2(sinRoll, cosRoll) * 180 / M_PI;
 	return angles;
+}
+
+void Matrix4f::MatrixDecompose(	Vector3f& vTrans,	Vector3f& vScale, Matrix4f& mRot)
+{
+	vTrans.x = m[0][3];
+	vTrans.y = m[1][3];
+	vTrans.z = m[2][3];
+
+	Vector3f vCols[3] = {
+		Vector3f(m[0][0],m[1][0],m[2][0]),
+		Vector3f(m[0][1],m[1][1],m[2][1]),
+		Vector3f(m[0][2],m[1][2],m[2][2])
+	};
+
+	vScale.x = vCols[0].Length();
+	vScale.y = vCols[1].Length();
+	vScale.z = vCols[2].Length();
+
+	if (vScale.x != 0)
+	{
+		vCols[0].x /= vScale.x;
+		vCols[0].y /= vScale.x;
+		vCols[0].z /= vScale.x;
+	}
+	if (vScale.y != 0)
+	{
+		vCols[1].x /= vScale.y;
+		vCols[1].y /= vScale.y;
+		vCols[1].z /= vScale.y;
+	}
+	if (vScale.z != 0)
+	{
+		vCols[2].x /= vScale.z;
+		vCols[2].y /= vScale.z;
+		vCols[2].z /= vScale.z;
+	}
+
+	//unroll the loop to increase the speed
+
+	/*for(int x=0;x<3;x++)
+	{
+	mRot.m[0][x] = vCols[x].x;
+	mRot.m[1][x] = vCols[x].y;
+	mRot.m[2][x] = vCols[x].z;
+	mRot.m[x][3] = 0;
+	mRot.m[3][x] = 0;
+	}*/
+	mRot.m[0][0] = vCols[0].x;
+	mRot.m[1][0] = vCols[0].y;
+	mRot.m[2][0] = vCols[0].z;
+	mRot.m[0][3] = 0;
+	mRot.m[3][0] = 0;
+	mRot.m[0][1] = vCols[1].x;
+	mRot.m[1][1] = vCols[1].y;
+	mRot.m[2][1] = vCols[1].z;
+	mRot.m[1][3] = 0;
+	mRot.m[3][1] = 0;
+	mRot.m[0][2] = vCols[2].x;
+	mRot.m[1][2] = vCols[2].y;
+	mRot.m[2][2] = vCols[2].z;
+	mRot.m[2][3] = 0;
+	mRot.m[3][2] = 0;
+	mRot.m[3][3] = 1;
+
 }
 
 Quaternion::Quaternion(float _x, float _y, float _z, float _w)

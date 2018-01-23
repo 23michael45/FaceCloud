@@ -127,6 +127,8 @@ struct Vector3f
 
     Vector3f& Normalize();
 
+	float Length();
+
     void Rotate(float Angle, const Vector3f& Axis);
 
     void Print() const
@@ -347,6 +349,24 @@ public:
         
         return r;
     }
+	bool operator==(const Matrix4f& v) const
+	{
+		bool same = true;
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				if (m[i][j] != v.m[i][j])
+				{
+					same = false;
+					break;
+				}
+			}
+		}
+
+		return same;
+	}
+	
     
     operator const float*() const
     {
@@ -372,8 +392,9 @@ public:
     void InitPersProjTransform(const PersProjInfo& p);
     void InitOrthoProjTransform(const OrthoProjInfo& p);
 
+
+	void MatrixDecompose(Vector3f& vTrans, Vector3f& vScale, Matrix4f& mRot);
 	Vector3f ExtractTranslation();
-	Vector3f ExtractScale();
 	Vector3f ExtractRotation();
 };
 

@@ -47,6 +47,7 @@ SkinnedMesh::SkinnedMesh()
     ZERO_MEM(m_Buffers);
     m_NumBones = 0;
     m_pScene = NULL;
+	m_NotSameCount = 0;
 }
 
 
@@ -317,6 +318,11 @@ void SkinnedMesh::LoadNodeMap(map<string, aiNode*>& map,const aiNode* pNode)
 
 }
 
+Matrix4f SkinnedMesh::GetBoneNode(string bonename)
+{
+
+	return GetNodeGlobalTransformation((const aiNode*)m_NodeMap[bonename]);
+}
 
 SkinnedMesh::BoneInfo SkinnedMesh::GetBoneInfo(string bonename)
 {
@@ -594,7 +600,28 @@ void SkinnedMesh::ReadNodeHeirarchy(float AnimationTime, const aiNode* pNode, co
 		m_BoneInfo[BoneIndex].NodeTransformation = NodeTransformation;
 		m_BoneInfo[BoneIndex].Parentformation = ParentTransform;
 		m_BoneInfo[BoneIndex].GlobalInverseTransform = m_GlobalInverseTransform;
-        m_BoneInfo[BoneIndex].FinalTransformation = m_GlobalInverseTransform * GlobalTransformation * m_BoneInfo[BoneIndex].BoneOffset;
+
+		if (m_BoneGlobalTrasMap.find(NodeName) != m_BoneGlobalTrasMap.end())
+		{
+			Matrix4f globalmat = m_BoneGlobalTrasMap[NodeName];
+			m_BoneInfo[BoneIndex].FinalTransformation = m_GlobalInverseTransform * globalmat * m_BoneInfo[BoneIndex].BoneOffset;
+
+
+			
+			if (globalmat != GlobalTransformation)
+			{
+				printf("");
+				m_NotSameCount++;
+			}
+
+			//m_BoneInfo[BoneIndex].FinalTransformation = m_GlobalInverseTransform * GlobalTransformation * m_BoneInfo[BoneIndex].BoneOffset;
+		}
+		else
+		{
+			m_BoneInfo[BoneIndex].FinalTransformation = m_GlobalInverseTransform * GlobalTransformation * m_BoneInfo[BoneIndex].BoneOffset;
+
+		}
+
     }
     
     for (uint i = 0 ; i < pNode->mNumChildren ; i++) {

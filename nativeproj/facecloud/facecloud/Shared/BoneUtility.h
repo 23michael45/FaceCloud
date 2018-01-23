@@ -40,11 +40,12 @@ public:
 
 	void LoadFromFile(string filename);
 	void Load(Json::Value root);
+	void Save(string filename);
 
 public:
-
+	Json::Value root;
 	vector<Vector3f> verts;
-
+	map<string,node> nodemap;
 
 };
 
@@ -280,8 +281,10 @@ public:
 class BoneUtility
 {
 public:
-
+	JsonModelFormat jsonModelFormat;
 	JsonKeyPointBonePairs pairs;
+	Json::Value rtjson;
+
 	bool hasMoveBones;
 public:
 	void Init();
@@ -295,4 +298,6 @@ public:
 	void MoveBonePYR(SkinnedMesh* pmesh, string bonename, JsonFaceInfo faceinfo, string facekeypoint, JsonRole bonedef, string boneoffsetname, Vector3f headCenter, float offsetrate = 0.01f);
 
 	void MoveUV(SkinnedMesh* pmesh, JsonRole bonedef);
+
+	Matrix4f GetLocalMatrixFromGlobal(SkinnedMesh* pmesh ,string bonename,Matrix4f globalmat);
 };

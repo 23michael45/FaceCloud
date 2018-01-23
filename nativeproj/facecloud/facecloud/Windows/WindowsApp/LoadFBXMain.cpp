@@ -136,12 +136,12 @@ public:
 	bool Init()
 	{
 		
-				Vector3f Pos(0.0f, 175, 10.0f);
-				Vector3f Target(0.0f, 0.0f, -1.0f);
+		Vector3f Pos(0.0f, 175, 10.0f);
+		Vector3f Target(0.0f, 0.0f, -1.0f);
 
 
-				/*Vector3f Pos(10.0f, 175, 0.0f);
-				Vector3f Target(1.0f, 0.0f, .0f);*/
+		/*Vector3f Pos(10.0f, 175, 0.0f);
+		Vector3f Target(1.0f, 0.0f, .0f);*/
 
 		Vector3f Up(0.0, 1.0f, 0.0f);
 
@@ -359,7 +359,7 @@ public:
 
 	virtual void PassiveMouseCB(int x, int y)
 	{
-		//m_pGameCamera->OnMouse(x, y);
+		m_pGameCamera->OnMouse(x, y);
 	}
 
 	void DisplayGrid()

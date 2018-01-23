@@ -69,7 +69,7 @@ public:
     
 	void BoneTransform(float TimeInSeconds, vector<Matrix4f>& Transforms);
 	BoneInfo GetBoneInfo(string bonename);
-
+	Matrix4f GetBoneNode(string bonename);
     #define NUM_BONES_PER_VEREX 4
 
    
@@ -168,7 +168,10 @@ enum VB_TYPES {
 
 	map<string, aiNode*> m_NodeMap;
 	map<string, aiNode*> m_BoneNodeMap;
+	map<string, Matrix4f> m_BoneGlobalTrasMap;
 	map<string, Matrix4f> m_BoneOffsetMap;
+
+	int m_NotSameCount;
 };
 
 
