@@ -147,8 +147,11 @@ void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, 
 
 	if (BeginRenterTexture())
 	{
-		CalculateBone(modelID, jsonfaceinfo, photoPathOut, jsonModelOut);
-		DrawOnce(modelID);
+		Vector3f center;
+		Vector2f uvsize;
+
+		CalculateBone(modelID, jsonfaceinfo, photoPathOut, jsonModelOut,center,uvsize);
+		DrawOnce(modelID,center,uvsize);
 		EndRenderTexture();
 	}
 
@@ -295,21 +298,28 @@ void FaceCloudLib::EndRenderTexture()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glutSwapBuffers();
 }
-void FaceCloudLib::CalculateBone(string modelID, JsonFaceInfo jsonfaceinfo, string& photoPathOut, string& jsonModelOut)
+void FaceCloudLib::CalculateBone(string modelID, JsonFaceInfo jsonfaceinfo, string& photoPathOut, string& jsonModelOut, Vector3f& centerpos, Vector2f& uvsize)
 {
 	SkinnedMesh* pmesh = m_MeshMap[modelID];
-	m_BoneUtility.CalculateFaceBone(pmesh, m_JsonRoles.roles[modelID], jsonfaceinfo, jsonModelOut);
+	m_BoneUtility.CalculateFaceBone(pmesh, m_JsonRoles.roles[modelID], jsonfaceinfo, jsonModelOut, centerpos,uvsize);
 }
-bool FaceCloudLib::DrawOnce(string modelID)
+bool FaceCloudLib::DrawOnce(string modelID,Vector3f& center,Vector2f& uvsize)
 {
 	// Always check that our framebuffer is ok
 
 	m_pGameCamera->OnRender();
+
 	Pipeline p;
 	p.WorldPos(0.0f, 0, 0.0f);
 	p.Rotate(0.0f, 180.0f, 0.0f);
 	p.Scale(1, 1, 1);
-	p.SetCamera(m_pGameCamera->GetPos(), m_pGameCamera->GetTarget(), m_pGameCamera->GetUp());
+	p.SetCamera(center, m_pGameCamera->GetTarget(), m_pGameCamera->GetUp());
+
+	m_orthoProjInfo.b = -uvsize.x/2;
+	m_orthoProjInfo.t = uvsize.x / 2;
+	m_orthoProjInfo.l = -uvsize.y / 2;
+	m_orthoProjInfo.r = uvsize.y / 2;
+
 	p.SetOrthographicProj(m_orthoProjInfo);
 	//p.SetPerspectiveProj(m_persProjInfo);
 	m_pSkinningRenderer->Enable();

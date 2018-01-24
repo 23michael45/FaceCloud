@@ -334,7 +334,9 @@ public:
 		if (!hasdone)
 		{
 			hasdone = true;
-			boneutility.CalculateFaceBone(&m_mesh, jsonRoles.roles["10002"], jsonfaceinfo, outJson);
+			Vector3f center;
+			Vector2f uvsize;
+			boneutility.CalculateFaceBone(&m_mesh, jsonRoles.roles["10002"], jsonfaceinfo, outJson,center,uvsize);
 
 		}
 

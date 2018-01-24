@@ -50,10 +50,13 @@ void JsonModelFormat::Load(Json::Value root)
 		JsonModelFormat::node node;
 		node.name = jnode["name"].asString();
 		node.parent = jnode["parent"].asInt();
-		node.pos = Vector3f(jnode["pos"][0].asFloat(), jnode["pos"][1].asFloat(), jnode["pos"][2].asFloat());
+		/*node.pos = Vector3f(jnode["pos"][0].asFloat(), jnode["pos"][1].asFloat(), jnode["pos"][2].asFloat());
 		node.scl = Vector3f(jnode["scl"][0].asFloat(), jnode["scl"][1].asFloat(), jnode["scl"][2].asFloat());
-		node.rot = Vector4f(jnode["rot"][0].asFloat(), jnode["rot"][1].asFloat(), jnode["rot"][2].asFloat(), jnode["rot"][3].asFloat());
+		node.rot = Vector4f(jnode["rot"][0].asFloat(), jnode["rot"][1].asFloat(), jnode["rot"][2].asFloat(), jnode["rot"][3].asFloat());*/
 
+		node.pos = Vector3f(0, 0, 0);
+		node.scl = Vector3f(1, 1, 1);
+		node.rot = Vector4f(0, 0 ,0, 1);
 		nodemap[node.name] = node;
 	}
 
@@ -160,7 +163,7 @@ int BoneUtility::ReadJsonFromFile(const char* filename)
 }
 
 
-void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFaceInfo faceinfo,string& outOffsetJson)
+void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFaceInfo faceinfo,string& outOffsetJson,Vector3f& centerpos,Vector2f& uvsize)
 {
 
 	Matrix4f tooth_MID = pmesh->GetBoneNode("face_mouthLip_up_joint2");
@@ -236,7 +239,9 @@ void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFa
 	MoveUV(pmesh, bonedef);
 
 	outOffsetJson = jsonModelFormat.ToString();
-	
+
+	centerpos = headCenter;
+	uvsize = Vector2f(bonedef.uvsize, bonedef.uvsize);
 }
 void BoneUtility::MoveUV(SkinnedMesh* pmesh, JsonRole bonedef)
 {
@@ -388,9 +393,6 @@ Matrix4f BoneUtility::GetLocalMatrixFromGlobal(SkinnedMesh* pmesh,string bonenam
 //面部骨骼变形
 void BoneUtility::MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo faceinfo, string facekeypoint, JsonRole bonedef, string boneoffsetname, Vector3f headCenter, float offsetrate)
 {
-
-	Json::Value jresult;
-
 	Matrix4f transformtochange;
 	Matrix4f currentlocalMat;
 
@@ -419,21 +421,6 @@ void BoneUtility::MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo fac
 
 
 
-	jresult.append(bonename);
-
-	std::ostringstream prewrdb;
-	prewrdb << trspos.x << "," << trspos.y << "," << trspos.z;
-	jresult.append("prewrdposition:" + prewrdb.str());
-
-
-	std::ostringstream prelocb;
-	Vector3f preloct = currentlocalMat.ExtractTranslation();
-	prelocb << preloct.x << "," << preloct.y << "," << preloct.z;
-	jresult.append("prelocposition:" + prelocb.str());
-
-
-
-
 
 
 	float zepos = bonedef.face_zero_pointy;
@@ -446,10 +433,6 @@ void BoneUtility::MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo fac
 
 	Vector3f zero(zero_px, zero_py, trspos.z);
 	trspos = zero + Vector3f(-faceinfo.landmarkdata[facekeypoint].x, faceinfo.landmarkdata[facekeypoint].y, 0) *scale_1024_to_model;
-
-	std::ostringstream aftwrdb;
-	aftwrdb << trspos.x << "," << trspos.y << "," << trspos.z;
-	jresult.append("aftwrdposition:" + aftwrdb.str());
 
 
 	//Vector3f offset = bonedef.offsets_map[boneoffsetname] * offsetrate;
@@ -514,13 +497,9 @@ void BoneUtility::MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo fac
 
 	std::ostringstream aftlocb;
 	Vector3f aftloct = final.ExtractTranslation();
-	aftlocb << aftloct.x << "," << aftloct.y << "," << aftloct.z;
-	jresult.append("aftlocposition:" + aftlocb.str());
-
-
 	if (pmesh->m_BoneNodeMap.find(bonename) != pmesh->m_BoneNodeMap.end())
 	{
-		pmesh->m_BoneNodeMap[bonename]->mTransformation = x.GetaiMatrix4x4();
+		pmesh->m_BoneNodeMap[bonename]->mTransformation = final.GetaiMatrix4x4();
 		
 		Matrix4f totalfinal = parentMat * final;
 		pmesh->m_BoneGlobalTrasMap[bonename] = totalfinal;
@@ -528,13 +507,6 @@ void BoneUtility::MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo fac
 
 		jsonModelFormat.nodemap[bonename].pos = diff;
 		
-		Matrix4f test = parentMat * x;
-
-		if (test != mat)
-		{
-			printf("");
-
-		}
 	}
 	else
 	{
@@ -559,7 +531,6 @@ void BoneUtility::MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo fac
 		printf("");
 	}
 
-	rtjson.append(jresult);
 	return;
 
 	//int i = 0;

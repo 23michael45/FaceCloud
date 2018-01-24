@@ -80,13 +80,15 @@ void RenderSceneCB()
 	string outJsonPath = "data/export/outjson.json";
 	string outPhotoPath = "data/export/outphoto.jpg";
 
+	Vector3f center;
+	Vector2f uvsize;
 	if (!hasdone)
 	{
 		hasdone = true;
-		lib.CalculateBone("10002", jsonfaceinfo, outPhotoPath, outJsonPath);
+		lib.CalculateBone("10002", jsonfaceinfo, outPhotoPath, outJsonPath, center,uvsize);
 	}
 
-	lib.DrawOnce("10002");
+	lib.DrawOnce("10002",center,uvsize);
 
 	glutSwapBuffers();
 }
