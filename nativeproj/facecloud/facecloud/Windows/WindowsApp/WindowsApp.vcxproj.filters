@@ -201,6 +201,9 @@
     <ClInclude Include="..\..\Shared\SkinningTechnique.h">
       <Filter>Shared</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Shared\UnlitSkinningTechnique.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -321,6 +324,9 @@
       <Filter>Shared</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Shared\SkinningTechnique.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Shared\UnlitSkinningTechnique.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
   </ItemGroup>
