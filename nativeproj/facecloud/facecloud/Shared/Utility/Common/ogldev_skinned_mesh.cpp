@@ -38,7 +38,10 @@ void SkinnedMesh::VertexBoneData::AddBoneData(uint BoneID, float Weight)
     }
     
     // should never get here - more bones than we have space for
-    assert(0);
+
+	//a vertex has more than 4 bones controlled;
+    //assert(0);
+	printf("a vertex has more than 4 bones controlled");
 }
 
 SkinnedMesh::SkinnedMesh()
@@ -420,7 +423,7 @@ void SkinnedMesh::Render()
     
     for (uint i = 0 ; i < m_Entries.size() ; i++) {
         
-		if (m_Entries[i].NumBones > 80)
+		if (m_Entries[i].NumBones == 101)
 		{
 			const uint MaterialIndex = m_Entries[i].MaterialIndex;
 

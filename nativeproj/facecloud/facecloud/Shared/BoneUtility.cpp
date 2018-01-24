@@ -58,23 +58,53 @@ void JsonModelFormat::Load(Json::Value root)
 	}
 
 }
-void JsonModelFormat::Save(string filename)
+string JsonModelFormat::ToString()
 {
-
-	Json::Value jnodes = root["hierarchy"]["nodes"];
+	//All Info
+	/*Json::Value jnodes = root["hierarchy"]["nodes"];
 	for (int i = 0; i < jnodes.size(); i++)
 	{
 		jnodes[i]["pos"][0] = Json::Value(nodemap[jnodes[i]["name"].asString()].pos.x);
 		jnodes[i]["pos"][1] = Json::Value(nodemap[jnodes[i]["name"].asString()].pos.y);
 		jnodes[i]["pos"][2] = Json::Value(nodemap[jnodes[i]["name"].asString()].pos.z);
+	}*/
+
+	//Tiny Info
+	Json::Value jnodes = root["hierarchy"]["nodes"];
+	Json::Value oroot;
+	Json::Value hierarchy;
+	Json::Value nodes;
+	for (int i = 0; i < jnodes.size(); i++)
+	{
+		jnodes[i]["pos"][0] = Json::Value(nodemap[jnodes[i]["name"].asString()].pos.x);
+		jnodes[i]["pos"][1] = Json::Value(nodemap[jnodes[i]["name"].asString()].pos.y);
+		jnodes[i]["pos"][2] = Json::Value(nodemap[jnodes[i]["name"].asString()].pos.z);
+
+		Json::Value jnewnode;
+		jnewnode["name"] = jnodes[i]["name"];
+		jnewnode["pos"][0] = jnodes[i]["pos"][0];
+		jnewnode["pos"][1] = jnodes[i]["pos"][1];
+		jnewnode["pos"][2] = jnodes[i]["pos"][2];
+
+		nodes.append(jnewnode);
 	}
+	hierarchy["nodes"] = nodes;
+	oroot["hierarchy"] = hierarchy;
 
 
 
+	//Json Value to String
 	Json::StreamWriterBuilder  builder;
 	builder.settings_["commentStyle"] = "None";
 	//builder.settings_["indentation"] = "All";
-	std::string s = Json::writeString(builder, root);
+	std::string s = Json::writeString(builder, nodes);
+
+	return s;
+}
+void JsonModelFormat::Save(string filename)
+{
+	string s = ToString();
+
 	ofstream write;
 	write.open(filename.c_str(), ios::out | ios::binary);
 	write.write(s.c_str(), s.length());
@@ -130,36 +160,8 @@ int BoneUtility::ReadJsonFromFile(const char* filename)
 }
 
 
-void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFaceInfo faceinfo)
+void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFaceInfo faceinfo,string& outOffsetJson)
 {
-	if (hasMoveBones)
-	{
-		return;
-	}
-	hasMoveBones = true;
-	//for (uint i = 0; i < pMesh->mNumBones; i++) {
-	//	uint BoneIndex = 0;
-	//	string BoneName(pMesh->mBones[i]->mName.data);
-
-	//	if (m_BoneMapping.find(BoneName) == m_BoneMapping.end()) {
-	//		// Allocate an index for a new bone
-	//		BoneIndex = m_NumBones;
-	//		m_NumBones++;
-	//		BoneInfo bi;
-	//		m_BoneInfo.push_back(bi);
-	//		m_BoneInfo[BoneIndex].BoneOffset = pMesh->mBones[i]->mOffsetMatrix;
-	//		m_BoneMapping[BoneName] = BoneIndex;
-	//	}
-	//	else {
-	//		BoneIndex = m_BoneMapping[BoneName];
-	//	}
-
-	//	for (uint j = 0; j < pMesh->mBones[i]->mNumWeights; j++) {
-	//		uint VertexID = m_Entries[MeshIndex].BaseVertex + pMesh->mBones[i]->mWeights[j].mVertexId;
-	//		float Weight = pMesh->mBones[i]->mWeights[j].mWeight;
-	//		Bones[VertexID].AddBoneData(BoneIndex, Weight);
-	//	}
-	//}
 
 	Matrix4f tooth_MID = pmesh->GetBoneNode("face_mouthLip_up_joint2");
 	Matrix4f toothup_Lf = pmesh->GetBoneNode("face_mouthLip_Lf_joint1");
@@ -230,20 +232,11 @@ void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFa
 		KP kp = pairs.pairs[i];
 		MoveBone(pmesh, kp.bonename, faceinfo, kp.facekeypointname, bonedef, kp.offsetname, headCenter);
 	}
+	
+	MoveUV(pmesh, bonedef);
 
-	int jcount = rtjson.size();
-	Json::StreamWriterBuilder  builder;
-	builder.settings_["commentStyle"] = "All";
-	std::string s = Json::writeString(builder, rtjson);
-	ofstream write;
-	string filename = "d:/cppjr.json";
-	write.open(filename.c_str(), ios::out | ios::binary);
-	write.write(s.c_str(), s.length());
-	write.close();
-
-	jsonModelFormat.Save("d:/facemodeljson.json");
-	MoveUV(pmesh,bonedef);
-
+	outOffsetJson = jsonModelFormat.ToString();
+	
 }
 void BoneUtility::MoveUV(SkinnedMesh* pmesh, JsonRole bonedef)
 {

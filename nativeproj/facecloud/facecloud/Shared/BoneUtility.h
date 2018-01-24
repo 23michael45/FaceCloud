@@ -41,7 +41,7 @@ public:
 	void LoadFromFile(string filename);
 	void Load(Json::Value root);
 	void Save(string filename);
-
+	string ToString();
 public:
 	Json::Value root;
 	vector<Vector3f> verts;
@@ -142,7 +142,7 @@ public:
 	map<string, Vector3f> bonespos_map;
 	map<string, Vector3f> offsets_map;
 };
-class JsonRoles
+class jsonRoles
 {
 public:
 	void LoadFromFile(string filename)
@@ -174,6 +174,17 @@ public:
 class JsonFaceInfo
 {
 public:
+	void LoadFromString(string jsonstring)
+	{
+		Json::Value root;
+		Json::CharReaderBuilder rbuilder;
+		Json::CharReader * reader = rbuilder.newCharReader();
+		string errors;
+		bool ok = reader->parse(jsonstring.c_str(), jsonstring.c_str() + jsonstring.size(), &root, &errors);
+		delete reader;
+		
+		Load(root);
+	}
 	void LoadFromFile(string filename)
 	{
 
@@ -185,6 +196,12 @@ public:
 		ifs.open(filename);
 		bool ok = Json::parseFromStream(rbuilder, ifs, &root, &errs);
 		ifs.close();
+
+		Load(root);
+	}
+
+	void Load(Json::Value& root)
+	{
 
 		face_token = root["face_token"].asString();
 
@@ -204,13 +221,13 @@ public:
 
 		Json::Value landmarkdataValue = root["landmark"]["data"];
 		vector<string> namesvec = landmarkdataValue.getMemberNames();
-		for (vector<string>::iterator it = namesvec.begin() ; it != namesvec.end();it++)
+		for (vector<string>::iterator it = namesvec.begin(); it != namesvec.end(); it++)
 		{
 			float x = landmarkdataValue[*it]["x"].asFloat();
 			float y = landmarkdataValue[*it]["y"].asFloat();
-			landmarkdata[*it] = Vector2f(x,y);
+			landmarkdata[*it] = Vector2f(x, y);
 		}
-		
+
 	}
 public:
 	string face_token;
@@ -291,7 +308,7 @@ public:
 	int ReadJsonFromFile(const char* filename);
 
 
-	void CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonfdef, JsonFaceInfo faceinfo);
+	void CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonfdef, JsonFaceInfo faceinfo, string& outOffsetJson); 
 
 	void ResetBone();
 	void MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo faceinfo, string facekeypoint, JsonRole bonedef, string boneoffsetname, Vector3f headCenter, float offsetrate = 0.01f);
