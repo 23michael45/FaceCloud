@@ -152,6 +152,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Shared\BoneUtility.h" />
+    <ClInclude Include="..\..\Shared\CommonTechnique.h" />
+    <ClInclude Include="..\..\Shared\FaceCloudLib.h" />
     <ClInclude Include="..\..\Shared\FacePlusWrapper.h" />
     <ClInclude Include="..\..\Shared\FBXImportUtility.h" />
     <ClInclude Include="..\..\Shared\FBXLoader\FBXLoader.h" />
@@ -169,6 +171,9 @@
     <ClInclude Include="..\..\Shared\JsonCpp\include\json\version.h" />
     <ClInclude Include="..\..\Shared\JsonCpp\include\json\writer.h" />
     <ClInclude Include="..\..\Shared\JsonCpp\src\json_tool.h" />
+    <ClInclude Include="..\..\Shared\MeshBase.h" />
+    <ClInclude Include="..\..\Shared\RenderTextureTechnique.h" />
+    <ClInclude Include="..\..\Shared\SkinningTechnique.h" />
     <ClInclude Include="..\..\Shared\Utility\Include\ogldev.h" />
     <ClInclude Include="..\..\Shared\Utility\Include\ogldev_app.h" />
     <ClInclude Include="..\..\Shared\Utility\Include\ogldev_atb.h" />
@@ -197,14 +202,13 @@
     <ClInclude Include="..\..\Shared\Utility\Include\ogldev_win32_control.h" />
     <ClInclude Include="..\..\Shared\Utility\Include\ogldev_xcb_control.h" />
     <ClInclude Include="..\..\Shared\Utility\Include\technique.h" />
-    <ClInclude Include="CommonTechnique.h" />
-    <ClInclude Include="RenderTextureTechnique.h" />
-    <ClInclude Include="SkinningTechnique.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Shared\BoneUtility.cpp" />
+    <ClCompile Include="..\..\Shared\CommonTechnique.cpp" />
+    <ClCompile Include="..\..\Shared\FaceCloudLib.cpp" />
     <ClCompile Include="..\..\Shared\FacePlusWrapper.cpp" />
     <ClCompile Include="..\..\Shared\FBXImportUtility.cpp" />
     <ClCompile Include="..\..\Shared\FBXLoader\FBXLoader.cpp" />
@@ -213,6 +217,9 @@
     <ClCompile Include="..\..\Shared\JsonCpp\src\json_reader.cpp" />
     <ClCompile Include="..\..\Shared\JsonCpp\src\json_value.cpp" />
     <ClCompile Include="..\..\Shared\JsonCpp\src\json_writer.cpp" />
+    <ClCompile Include="..\..\Shared\MeshBase.cpp" />
+    <ClCompile Include="..\..\Shared\RenderTextureTechnique.cpp" />
+    <ClCompile Include="..\..\Shared\SkinningTechnique.cpp" />
     <ClCompile Include="..\..\Shared\Utility\Common\camera.cpp" />
     <ClCompile Include="..\..\Shared\Utility\Common\cubemap_texture.cpp" />
     <ClCompile Include="..\..\Shared\Utility\Common\glut_backend.cpp" />
@@ -235,17 +242,14 @@
     <ClCompile Include="..\..\Shared\Utility\Common\pipeline.cpp" />
     <ClCompile Include="..\..\Shared\Utility\Common\random_texture.cpp" />
     <ClCompile Include="..\..\Shared\Utility\Common\technique.cpp" />
-    <ClCompile Include="CommonTechnique.cpp" />
     <ClCompile Include="LoadFBXMain.cpp" />
-    <ClCompile Include="RenderTextureTechnique.cpp" />
-    <ClCompile Include="SkinningTechnique.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Tutorial.cpp" />
+    <ClCompile Include="LibCaller.cpp" />
     <ClCompile Include="WindowsApp.cpp" />
   </ItemGroup>
   <ItemGroup>

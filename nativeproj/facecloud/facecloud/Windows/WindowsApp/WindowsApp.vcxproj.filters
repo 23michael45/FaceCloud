@@ -186,14 +186,20 @@
     <ClInclude Include="..\..\Shared\Utility\Include\technique.h">
       <Filter>Shared\Utility\Include</Filter>
     </ClInclude>
-    <ClInclude Include="SkinningTechnique.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="..\..\Shared\CommonTechnique.h">
+      <Filter>Shared</Filter>
     </ClInclude>
-    <ClInclude Include="CommonTechnique.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="..\..\Shared\FaceCloudLib.h">
+      <Filter>Shared</Filter>
     </ClInclude>
-    <ClInclude Include="RenderTextureTechnique.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="..\..\Shared\MeshBase.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\RenderTextureTechnique.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\SkinningTechnique.h">
+      <Filter>Shared</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -220,9 +226,6 @@
     </ClCompile>
     <ClCompile Include="..\..\Shared\FacePlusWrapper.cpp">
       <Filter>Shared</Filter>
-    </ClCompile>
-    <ClCompile Include="Tutorial.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Shared\FBXImportUtility.cpp">
       <Filter>Shared</Filter>
@@ -302,14 +305,23 @@
     <ClCompile Include="LoadFBXMain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SkinningTechnique.cpp">
+    <ClCompile Include="LibCaller.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CommonTechnique.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\Shared\CommonTechnique.cpp">
+      <Filter>Shared</Filter>
     </ClCompile>
-    <ClCompile Include="RenderTextureTechnique.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\Shared\FaceCloudLib.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Shared\MeshBase.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Shared\RenderTextureTechnique.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Shared\SkinningTechnique.cpp">
+      <Filter>Shared</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

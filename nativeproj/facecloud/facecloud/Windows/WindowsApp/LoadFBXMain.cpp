@@ -89,10 +89,8 @@ private:
 
 	GLuint m_RenderTexture;
 
-
-
 	JsonFaceInfo jsonfaceinfo;
-	JsonRoles JsonRoles;
+	jsonRoles jsonRoles;
 	BoneUtility boneutility;
 public:
 
@@ -118,8 +116,8 @@ public:
 		m_orthoProjInfo.t = 15;
 		m_orthoProjInfo.l = -20;
 		m_orthoProjInfo.r = 20;
-		m_orthoProjInfo.n = -100;
-		m_orthoProjInfo.f = 100;
+		m_orthoProjInfo.n = -1000;
+		m_orthoProjInfo.f = 1000;
 
 		m_position = Vector3f(0.0f, 0.0f, 6.0f);
 	}
@@ -135,15 +133,17 @@ public:
 
 	bool Init()
 	{
-		
-		Vector3f Pos(0.0f, 175, 10.0f);
-		Vector3f Target(0.0f, 0.0f, -1.0f);
+		/*Vector3f Pos(0.0f, 0, 0.0f);
+		Vector3f Target(0.0f, 0.0f, 1.0f);
+		Vector3f Up(0.0, 1.0f, 0.0f);*/
 
+		Vector3f Pos(0.0f, 175, 10.0f);
+			Vector3f Target(0.0f, 0.0f, -1.0f);
+			Vector3f Up(0.0, 1.0f, 0.0f);
 
 		/*Vector3f Pos(10.0f, 175, 0.0f);
 		Vector3f Target(1.0f, 0.0f, .0f);*/
 
-		Vector3f Up(0.0, 1.0f, 0.0f);
 
 		m_pGameCamera = new Camera(WINDOW_WIDTH, WINDOW_HEIGHT, Pos, Target, Up);
 
@@ -198,7 +198,7 @@ public:
 
 		jsonfaceinfo.LoadFromFile("data/face/mytest1.info");
 
-		JsonRoles.LoadFromFile("data/face/a_role.bytes");
+		jsonRoles.LoadFromFile("data/face/a_role.bytes");
 
 		boneutility.Init();
 
@@ -214,7 +214,7 @@ public:
 
 	void Run()
 	{
-		CreateRenderTarget();
+		//CreateRenderTarget();
 		GLUTBackendRun(this);
 	}
 	void DrawQuad()
@@ -265,14 +265,15 @@ public:
 		p.SetCamera(m_pGameCamera->GetPos(), m_pGameCamera->GetTarget(), m_pGameCamera->GetUp());
 		//p.SetPerspectiveProj(m_persProjInfo);
 		p.SetOrthographicProj(m_orthoProjInfo);
-
 		m_pCommonEffect->Enable();
-		m_pCommonEffect->SetWVP(p.GetWVPTrans());
+		m_pCommonEffect->SetWVP(p.GetWVOrthoPTrans());
 
 
 		m_pTextureColor->Bind(GL_TEXTURE0);
 		DisplayGrid();
 
+		/*glutSwapBuffers();
+		return;*/
 		Vector3f Pos(m_position);
 		p.WorldPos(Pos);
 		p.WorldPos(0.0f, 10, 0.0f);
@@ -327,7 +328,15 @@ public:
 
 		
 
-		boneutility.CalculateFaceBone(&m_mesh, JsonRoles.roles["10002"], jsonfaceinfo);
+		string outJson;
+
+		static bool hasdone = false;
+		if (!hasdone)
+		{
+			hasdone = true;
+			boneutility.CalculateFaceBone(&m_mesh, jsonRoles.roles["10002"], jsonfaceinfo, outJson);
+
+		}
 
 		m_mesh.BoneTransform(RunningTime, Transforms);
 
@@ -364,10 +373,6 @@ public:
 
 	void DisplayGrid()
 	{
-	
-		m_pCommonEffect->Enable();
-		
-
 		glPushMatrix();
 		//glMultMatrixd(pTransform);
 	
@@ -682,7 +687,7 @@ static void RenderSceneCB()
 	}
 }
 
-int main(int argc, char** argv)
+int maina(int argc, char** argv)
 {
 	JsonModelFormat jsonmodel;
 	jsonmodel.LoadFromFile("data/women_head_split.JD");
