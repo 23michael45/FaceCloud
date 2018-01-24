@@ -94,7 +94,11 @@ int main(int argc, char** argv)
 {
 
 
-	lib.Init();
+	if (!lib.Init())
+	{
+		printf("Face Cloud Lib Init Failed");
+		return -1;
+	}
 
 	string outJsonModelOut = "";
 	string outPhotoPath = "data/export/outphoto.jpg";

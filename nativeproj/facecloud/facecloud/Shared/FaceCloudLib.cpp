@@ -182,22 +182,14 @@ bool FaceCloudLib::InitCamera()
 
 	m_pGameCamera = new Camera(m_Width, m_Height, Pos, Target, Up);
 
-	DirectionalLight directionalLight;
-	directionalLight.Color = Vector3f(1.0f, 1.0f, 1.0f);
-	directionalLight.AmbientIntensity = 0.55f;
-	directionalLight.DiffuseIntensity = 0.9f;
-	directionalLight.Direction = Vector3f(1.0f, 0.0, 0.0);
-	m_pSkinningRenderer = new SkinningTechnique(); 
+	m_pSkinningRenderer = new UnlitSkinningTechnique(); 
 	if (!m_pSkinningRenderer->Init()) {
-		printf("Error initializing the SkinningTechnique\n");
+		printf("Error initializing the UnlitSkinningTechnique\n");
 		return false;
 	}
 	m_pSkinningRenderer->Enable();
 	m_pSkinningRenderer->SetColorTextureUnit(COLOR_TEXTURE_UNIT_INDEX);
 	m_pSkinningRenderer->SetDetailTextureUnit(COLOR_TEXTURE_UNIT_INDEX + 1);
-	m_pSkinningRenderer->SetDirectionalLight(directionalLight);
-	m_pSkinningRenderer->SetMatSpecularIntensity(0.0f);
-	m_pSkinningRenderer->SetMatSpecularPower(0);
 
 	m_pCommonRenderer = new CommonTechnique();
 	if (!m_pCommonRenderer->Init()) {
@@ -322,9 +314,7 @@ bool FaceCloudLib::DrawOnce(string modelID)
 	//p.SetPerspectiveProj(m_persProjInfo);
 	m_pSkinningRenderer->Enable();
 
-	m_pSkinningRenderer->SetEyeWorldPos(m_pGameCamera->GetPos());
 	m_pSkinningRenderer->SetWVP(p.GetWVOrthoPTrans());
-	m_pSkinningRenderer->SetWorldMatrix(p.GetWorldTrans());
 
 
 	if (m_MeshMap.find(modelID) != m_MeshMap.end())

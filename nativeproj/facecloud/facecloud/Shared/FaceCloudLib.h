@@ -12,8 +12,9 @@
 #include "ogldev_pipeline.h"
 #include "ogldev_camera.h"
 #include "texture.h"
-#include "SkinningTechnique.h"
 #include "CommonTechnique.h"
+#include "SkinningTechnique.h"
+#include "UnlitSkinningTechnique.h"
 #include "RenderTextureTechnique.h"
 #include "ogldev_glut_backend.h"
 #include "ogldev_skinned_mesh.h"
@@ -36,7 +37,7 @@ private:
 	Camera * m_pGameCamera;
 	PersProjInfo m_persProjInfo;
 	OrthoProjInfo m_orthoProjInfo;
-	SkinningTechnique * m_pSkinningRenderer;
+	UnlitSkinningTechnique * m_pSkinningRenderer;
 	CommonTechnique * m_pCommonRenderer;
 
 
