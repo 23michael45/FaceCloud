@@ -141,8 +141,10 @@ void main()
                                                                                      
     vec4 color = texture(gColorMap, In.TexCoord.xy);
 	vec4 detail = texture(gDetailMap, In.TexCoord_C2.xy);
-	                   
+			
+	//TotalLight = vec4(1.0, 0.0, 0.0, 1.0);
+		 
     float blend = 0.5;					   
-    FragColor = (color * blend + detail * (1 - blend))* TotalLight;
-	
+    FragColor = (color * blend + detail * (1 - blend)) * TotalLight;
+	//FragColor = color * blend + detail * (1 - blend);
 }
