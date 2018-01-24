@@ -149,8 +149,12 @@ void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, 
 	{
 		Vector3f center;
 		Vector2f uvsize;
+		float yoffset;
+		CalculateBone(modelID, jsonfaceinfo, photoPathOut, jsonModelOut,center,uvsize,yoffset);
 
-		CalculateBone(modelID, jsonfaceinfo, photoPathOut, jsonModelOut,center,uvsize);
+		m_pSkinningRenderer->SetUVSize(uvsize);
+		m_pSkinningRenderer->SetYOffset(yoffset);
+
 		DrawOnce(modelID,center,uvsize);
 		EndRenderTexture();
 	}
@@ -298,10 +302,10 @@ void FaceCloudLib::EndRenderTexture()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glutSwapBuffers();
 }
-void FaceCloudLib::CalculateBone(string modelID, JsonFaceInfo jsonfaceinfo, string& photoPathOut, string& jsonModelOut, Vector3f& centerpos, Vector2f& uvsize)
+void FaceCloudLib::CalculateBone(string modelID, JsonFaceInfo jsonfaceinfo, string& photoPathOut, string& jsonModelOut, Vector3f& centerpos, Vector2f& uvsize,float& yOffset)
 {
 	SkinnedMesh* pmesh = m_MeshMap[modelID];
-	m_BoneUtility.CalculateFaceBone(pmesh, m_JsonRoles.roles[modelID], jsonfaceinfo, jsonModelOut, centerpos,uvsize);
+	m_BoneUtility.CalculateFaceBone(pmesh, m_JsonRoles.roles[modelID], jsonfaceinfo, jsonModelOut, centerpos,uvsize,yOffset);
 }
 bool FaceCloudLib::DrawOnce(string modelID,Vector3f& center,Vector2f& uvsize)
 {

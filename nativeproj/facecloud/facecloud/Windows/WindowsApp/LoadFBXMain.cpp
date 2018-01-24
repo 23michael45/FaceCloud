@@ -336,7 +336,8 @@ public:
 			hasdone = true;
 			Vector3f center;
 			Vector2f uvsize;
-			boneutility.CalculateFaceBone(&m_mesh, jsonRoles.roles["10002"], jsonfaceinfo, outJson,center,uvsize);
+			float yoffset;
+			boneutility.CalculateFaceBone(&m_mesh, jsonRoles.roles["10002"], jsonfaceinfo, outJson,center,uvsize,yoffset);
 
 		}
 

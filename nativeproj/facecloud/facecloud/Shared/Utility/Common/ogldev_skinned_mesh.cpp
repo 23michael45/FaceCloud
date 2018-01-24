@@ -161,6 +161,7 @@ bool SkinnedMesh::InitFromScene(const aiScene* pScene, const string& Filename)
 
 	TotalTexCoords2 = TexCoords2;
 	TotalPositions = Positions;
+	TotalBones = Bones;
     //if (!InitMaterials(pScene, Filename)) {
     //   // return false;
     //}
@@ -281,6 +282,7 @@ void SkinnedMesh::LoadBones(uint MeshIndex, const aiMesh* pMesh, vector<VertexBo
             m_NumBones++;            
 	        BoneInfo bi;	
 			m_BoneInfo.push_back(bi);
+			m_BoneInfo[BoneIndex].Name = BoneName;
             m_BoneInfo[BoneIndex].BoneOffset = pMesh->mBones[i]->mOffsetMatrix;  
 			m_BoneInfo[BoneIndex].pMeshVec.push_back((aiMesh*)pMesh);
 			m_BoneInfo[BoneIndex].BoneIndexVec.push_back(i);

@@ -53,6 +53,8 @@ bool UnlitSkinningTechnique::Init()
 
 
 	m_detailTextureLocation = GetUniformLocation("gDetailMap");
+	m_UVSizeLocation = GetUniformLocation("gUVSize");
+	m_YOffsetLocation = GetUniformLocation("gYOffset");
 
 	if (m_WVPLocation == INVALID_UNIFORM_LOCATION ||
 		m_colorTextureLocation == INVALID_UNIFORM_LOCATION) {
@@ -85,7 +87,15 @@ void UnlitSkinningTechnique::SetDetailTextureUnit(unsigned int TextureUnit)
 	glUniform1i(m_detailTextureLocation, TextureUnit);
 }
 
+void UnlitSkinningTechnique::SetUVSize(Vector2f& uvsize)
+{
+	glUniform2fv(m_UVSizeLocation, 1,(const GLfloat*)&uvsize);
+}
+void UnlitSkinningTechnique::SetYOffset(float yoffset)
+{
 
+	glUniform1f(m_YOffsetLocation, yoffset);
+}
 
 
 void UnlitSkinningTechnique::SetBoneTransform(uint Index, const Matrix4f& Transform)

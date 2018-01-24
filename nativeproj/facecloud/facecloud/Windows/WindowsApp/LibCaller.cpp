@@ -82,10 +82,11 @@ void RenderSceneCB()
 
 	Vector3f center;
 	Vector2f uvsize;
+	float yoffset;
 	if (!hasdone)
 	{
 		hasdone = true;
-		lib.CalculateBone("10002", jsonfaceinfo, outPhotoPath, outJsonPath, center,uvsize);
+		lib.CalculateBone("10002", jsonfaceinfo, outPhotoPath, outJsonPath, center,uvsize,yoffset);
 	}
 
 	lib.DrawOnce("10002",center,uvsize);

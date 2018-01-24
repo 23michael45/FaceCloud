@@ -31,7 +31,7 @@ public:
 	void Calculate(string modelID, string photoPath, string jsonFace, string& photoPathOut, string& jsonModelOut);
 
 
-	void CalculateBone(string modelID, JsonFaceInfo jsonfaceinfo, string& photoPathOut, string& jsonModelOut, Vector3f& centerpos, Vector2f& uvsize);
+	void CalculateBone(string modelID, JsonFaceInfo jsonfaceinfo, string& photoPathOut, string& jsonModelOut, Vector3f& centerpos, Vector2f& uvsize, float& yOffset);
 	bool DrawOnce(string modelID, Vector3f& center, Vector2f& uvsize);
 private:
 	Camera * m_pGameCamera;

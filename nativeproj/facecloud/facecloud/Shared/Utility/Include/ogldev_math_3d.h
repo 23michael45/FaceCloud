@@ -321,7 +321,18 @@ public:
         m[2][0] = 0.0f; m[2][1] = 0.0f; m[2][2] = 1.0f; m[2][3] = 0.0f;
         m[3][0] = 0.0f; m[3][1] = 0.0f; m[3][2] = 0.0f; m[3][3] = 1.0f;
     }
+	inline Matrix4f operator+(const Matrix4f& Right) const
+	{
+		Matrix4f Ret;
 
+		for (unsigned int i = 0; i < 4; i++) {
+			for (unsigned int j = 0; j < 4; j++) {
+				Ret.m[i][j] = m[i][j] + Right.m[i][j];
+			}
+		}
+
+		return Ret;
+	}
     inline Matrix4f operator*(const Matrix4f& Right) const
     {
         Matrix4f Ret;
@@ -349,6 +360,16 @@ public:
         
         return r;
     }
+	Matrix4f operator*(float v) const
+	{
+		Matrix4f r;
+		for (unsigned int i = 0; i < 4; i++) {
+			for (unsigned int j = 0; j < 4; j++) {
+				r.m[i][j] = m[i][j] * v;
+			}
+		}
+		return r;
+	}
 	bool operator==(const Matrix4f& v) const
 	{
 		bool same = true;

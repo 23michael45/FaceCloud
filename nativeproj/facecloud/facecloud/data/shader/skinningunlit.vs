@@ -13,11 +13,13 @@ out vec2 TexCoord1;
 out vec3 Normal0;                                                                   
 out vec3 WorldPos0;                                                                 
 
-const int MAX_BONES = 254;
-
+const int MAX_BONES = 200;
+uniform float gYOffset;
+uniform vec2 gUVSize;
 uniform mat4 gWVP;
 uniform mat4 gWorld;
 uniform mat4 gBones[MAX_BONES];
+
 
 void main()
 {       
@@ -29,7 +31,10 @@ void main()
     vec4 PosL    = BoneTransform * vec4(Position, 1.0);
     gl_Position  = gWVP * PosL;
     TexCoord0    = TexCoord;
-    TexCoord1    = TexCoord_C2;
+	
+	vec2 C2 = vec2(-PosL.x / gUVSize.x - 0.5,-PosL.y / gUVSize.y - gYOffset);
+	
+    TexCoord1    = C2;
     vec4 NormalL = BoneTransform * vec4(Normal, 0.0);
     Normal0      = (gWorld * NormalL).xyz;
     WorldPos0    = (gWorld * PosL).xyz;                                

@@ -38,6 +38,7 @@ class SkinnedMesh
 public:
 	struct BoneInfo
 	{
+		string Name;
 		vector<aiMesh*> pMeshVec;
 		vector<int> BoneIndexVec;
 		Matrix4f GlobalInverseTransform;
@@ -165,6 +166,7 @@ enum VB_TYPES {
 
 	vector<Vector3f> TotalPositions;
 	vector<Vector2f> TotalTexCoords2;
+	vector<VertexBoneData> TotalBones;
 
 	map<string, aiNode*> m_NodeMap;
 	map<string, aiNode*> m_BoneNodeMap;

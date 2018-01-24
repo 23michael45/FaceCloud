@@ -163,7 +163,7 @@ int BoneUtility::ReadJsonFromFile(const char* filename)
 }
 
 
-void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFaceInfo faceinfo,string& outOffsetJson,Vector3f& centerpos,Vector2f& uvsize)
+void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFaceInfo faceinfo,string& outOffsetJson,Vector3f& centerpos,Vector2f& uvsize,float& yoffset)
 {
 
 	Matrix4f tooth_MID = pmesh->GetBoneNode("face_mouthLip_up_joint2");
@@ -236,10 +236,10 @@ void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFa
 		MoveBone(pmesh, kp.bonename, faceinfo, kp.facekeypointname, bonedef, kp.offsetname, headCenter);
 	}
 	
-	MoveUV(pmesh, bonedef);
+	//MoveUV(pmesh, bonedef);
 
 	outOffsetJson = jsonModelFormat.ToString();
-
+	yoffset = bonedef.offset_y / 100;
 	centerpos = headCenter;
 	uvsize = Vector2f(bonedef.uvsize, bonedef.uvsize);
 }
@@ -249,10 +249,12 @@ void BoneUtility::MoveUV(SkinnedMesh* pmesh, JsonRole bonedef)
 	uint NumVertices = 0;
 	int len = 0;
 	int startpos;
+	int meshid = 0;
 	for (uint i = 0; i < pmesh->m_Entries.size(); i++) {
 
 		if (pmesh->m_Entries[i].NumBones > 80)
 		{
+			meshid = i;
 			len = pmesh->m_Entries[i].BaseVertex;
 			startpos = NumVertices;
 		}
@@ -267,7 +269,30 @@ void BoneUtility::MoveUV(SkinnedMesh* pmesh, JsonRole bonedef)
 	{
 		float uvsize = bonedef.uvsize;
 		float offset_y = bonedef.offset_y / 100;
-		Vector2f uv(pmesh->TotalPositions[startpos + i].x / uvsize + 0.5f, -pmesh->TotalPositions[startpos + i].y / uvsize - offset_y);
+
+		Vector3f vertex = pmesh->TotalPositions[startpos + i];
+
+		uint VertexID = startpos + i;
+		Matrix4f BoneTransform;
+		BoneTransform.SetZero();
+		SkinnedMesh::VertexBoneData vertexboneinfo = pmesh->TotalBones[VertexID];
+		for (int i = 0; i < sizeof(*(vertexboneinfo.IDs)); i++ )
+		{
+			int boneid = vertexboneinfo.IDs[i];
+			string bonename = pmesh->m_BoneInfo[boneid].Name;
+
+			if (pmesh->m_BoneGlobalTrasMap.find(bonename) != pmesh->m_BoneGlobalTrasMap.end())
+			{
+				Matrix4f globaltran = pmesh->m_BoneGlobalTrasMap[bonename];
+				Matrix4f offset = pmesh->m_BoneInfo[boneid].BoneOffset;
+				//BoneTransform = BoneTransform + globaltran * offset * vertexboneinfo.Weights[i];
+
+			}
+		}
+
+		Vector4f vertexafter = BoneTransform * Vector4f( vertex.x, vertex.y, vertex.z,1.0);
+
+		Vector2f uv(vertex.x / uvsize + 0.5f, -vertex.y / uvsize - offset_y);
 		uvs2.push_back(uv);
 	}
 
@@ -278,7 +303,7 @@ void BoneUtility::MoveUV(SkinnedMesh* pmesh, JsonRole bonedef)
 		newuv2[startpos + i] = uvs2[i];
 	}
 
-	pmesh->RefreshUV2(newuv2);
+	//pmesh->RefreshUV2(newuv2);
 }
 
 

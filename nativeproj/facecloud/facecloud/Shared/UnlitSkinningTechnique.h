@@ -19,9 +19,13 @@ public:
 	void SetColorTextureUnit(uint TextureUnit);
 	void SetBoneTransform(uint Index, const Matrix4f& Transform);
 	void SetDetailTextureUnit(uint TextureUnit);
+	void SetUVSize(Vector2f& uvsize);
+	void SetYOffset(float yoffset);
 private:
 
 	GLuint m_WVPLocation;
+	GLuint m_YOffsetLocation;
+	GLuint m_UVSizeLocation;
 	GLuint m_colorTextureLocation;
 	GLuint m_detailTextureLocation;
 	GLuint m_boneLocation[MAX_BONES];
