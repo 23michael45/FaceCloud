@@ -141,6 +141,19 @@ void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, 
 	}
 	ptexture->Bind(GL_TEXTURE1);
 
+	bool isman = true;
+	if (modelID == "10001")
+	{
+		isman = true;
+	}
+	else if (modelID == "10002")
+	{
+		isman = false;
+	}
+
+
+	Texture* paftertex = m_BoneUtility.CalculateSkin(ptexture->GetTextureObj(), isman);
+	m_pCurrentSkinTexture = paftertex;
 
 	JsonFaceInfo jsonfaceinfo;
 	jsonfaceinfo.LoadFromString(jsonFace);
@@ -150,6 +163,7 @@ void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, 
 		Vector3f center;
 		Vector2f uvsize;
 		float yoffset;
+
 		CalculateBone(modelID, jsonfaceinfo, photoPathOut, jsonModelOut,center,uvsize,yoffset);
 
 		m_pSkinningRenderer->SetUVSize(uvsize);
@@ -159,8 +173,14 @@ void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, 
 		EndRenderTexture();
 	}
 
-	SaveTextureToFile(m_RenderTexture, m_Width, m_Width, photoPathOut);
+	SaveTextureToFile(m_RenderTexture, m_Width, m_Width, photoPathOut,true);
+
+	SaveTextureToFile(ptexture->GetTextureObj(), m_Width, m_Width, "data/export/preskin.jpg");
+
+	SaveTextureToFile(paftertex->GetTextureObj(), m_Width, m_Width, "data/export/afterskin.jpg");
+
 	SAFE_DELETE(ptexture);
+	SAFE_DELETE(m_pCurrentSkinTexture);
 }
 
 
@@ -197,6 +217,7 @@ bool FaceCloudLib::InitCamera()
 	m_pSkinningRenderer->Enable();
 	m_pSkinningRenderer->SetColorTextureUnit(COLOR_TEXTURE_UNIT_INDEX);
 	m_pSkinningRenderer->SetDetailTextureUnit(COLOR_TEXTURE_UNIT_INDEX + 1);
+	m_pSkinningRenderer->SetMaskTextureUnit(COLOR_TEXTURE_UNIT_INDEX + 2);
 
 	m_pCommonRenderer = new CommonTechnique();
 	if (!m_pCommonRenderer->Init()) {
@@ -226,7 +247,10 @@ bool FaceCloudLib::InitMesh()
 		}
 		m_ColorTextureMap[*iter] = ptexture;
 	}
-
+	m_pMaskTexture = new Texture(GL_TEXTURE_2D, "data/facecloud/mask.jpg");
+	if (!m_pMaskTexture->Load()) {
+		return 1;
+	}
 	
 
 }
@@ -304,6 +328,7 @@ void FaceCloudLib::EndRenderTexture()
 }
 void FaceCloudLib::CalculateBone(string modelID, JsonFaceInfo jsonfaceinfo, string& photoPathOut, string& jsonModelOut, Vector3f& centerpos, Vector2f& uvsize,float& yOffset)
 {
+
 	SkinnedMesh* pmesh = m_MeshMap[modelID];
 	m_BoneUtility.CalculateFaceBone(pmesh, m_JsonRoles.roles[modelID], jsonfaceinfo, jsonModelOut, centerpos,uvsize,yOffset);
 }
@@ -327,7 +352,6 @@ bool FaceCloudLib::DrawOnce(string modelID,Vector3f& center,Vector2f& uvsize)
 	p.SetOrthographicProj(m_orthoProjInfo);
 	//p.SetPerspectiveProj(m_persProjInfo);
 	m_pSkinningRenderer->Enable();
-
 	m_pSkinningRenderer->SetWVP(p.GetWVOrthoPTrans());
 
 
@@ -337,7 +361,14 @@ bool FaceCloudLib::DrawOnce(string modelID,Vector3f& center,Vector2f& uvsize)
 		{
 			m_ColorTextureMap[modelID]->Bind(GL_TEXTURE0);
 			//m_ColorTextureMap[modelID]->Bind(GL_TEXTURE1);
-
+			if (m_pCurrentSkinTexture != NULL)
+			{
+				m_pCurrentSkinTexture->Bind(GL_TEXTURE1);
+			}
+			if (m_pMaskTexture != NULL)
+			{
+				m_pMaskTexture->Bind(GL_TEXTURE2);
+			}
 
 			SkinnedMesh* pmesh = m_MeshMap[modelID];
 			vector<Matrix4f> Transforms;
@@ -360,16 +391,14 @@ bool FaceCloudLib::DrawOnce(string modelID,Vector3f& center,Vector2f& uvsize)
 	return true;
 
 }
-void FaceCloudLib::SaveTextureToFile(GLuint texture, int width, int height,string path)
+void FaceCloudLib::SaveTextureToFile(GLuint texture, int width, int height,string path,bool flip)
 {
 	width = 2048;
 	height = 2048;
-	long size = width * height * 3;
-	unsigned char* output_image = new unsigned char[size];
+	long size = 0;
 
-	glActiveTexture(GL_TEXTURE0);
+
 	glBindTexture(GL_TEXTURE_2D, texture);
-	//m_pTextureColor->Bind(GL_TEXTURE0);
 
 	GLint wtex, htex, comp, rs, gs, bs, as;
 	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &wtex);
@@ -380,33 +409,58 @@ void FaceCloudLib::SaveTextureToFile(GLuint texture, int width, int height,strin
 	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_BLUE_SIZE, &bs);
 	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_ALPHA_SIZE, &as);
 
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, output_image);
+	if (comp == GL_RGB)
+	{
+
+		size = width * height * 3;
+	}
+	else if (comp == GL_RGBA)
+	{
+		size = width * height * 4;
+	}
+	unsigned char* output_image = new unsigned char[size];
+	glGetTexImage(GL_TEXTURE_2D, 0, comp, GL_UNSIGNED_BYTE, output_image);
 
 	GLenum error = glGetError();
 	const GLubyte * eb = gluErrorString(error);
 	string errorstring((char*)eb);
 
-
-
 	//WriteTGA((char*)"data/export/rendertexture.tga", wtex, htex, output_image);
 
 
-	cv::Mat  img = cv::Mat(wtex, htex, CV_8UC3, (unsigned*)output_image);
+	cv::Mat  img;
 	cv::Mat  bgra;
-	cv::cvtColor(img, bgra, cv::COLOR_RGB2BGRA);
 
-	cv::Mat flipimg;
+	if (comp == GL_RGB)
+	{
+		img = cv::Mat(wtex, htex, CV_8UC3, (unsigned*)output_image);
+		cv::cvtColor(img, bgra, cv::COLOR_RGB2BGRA);
+	}
+	else if (comp == GL_RGBA)
+	{
+		img = cv::Mat(wtex, htex, CV_8UC4, (unsigned*)output_image);
+		cv::cvtColor(img, bgra, cv::COLOR_RGBA2BGRA);
+	}
 
-	//cv::imwrite(path, img);
+	if (flip)
+	{
+		cv::Mat flipimg;
+		/*	flipCode	Anno
+		1	水平翻转
+		0	垂直翻转
+		- 1	水平垂直翻转*/
+		cv::flip(bgra, flipimg, 0);
+		cv::imwrite(path, flipimg);
+	}
+	else
+	{
 
-	/*	flipCode	Anno
-	1	水平翻转
-	0	垂直翻转
-	- 1	水平垂直翻转*/
-	cv::flip(bgra, flipimg, 0);
-	cv::imwrite(path, flipimg);
+		cv::imwrite(path, bgra);
+	}
 
-	delete output_image;
+	
+
+	SAFE_DELETE( output_image);
 
 }
 

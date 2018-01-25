@@ -43,6 +43,8 @@ private:
 
 	map<string, SkinnedMesh*> m_MeshMap;
 	map<string, Texture*> m_ColorTextureMap;
+	Texture* m_pMaskTexture;
+	Texture* m_pCurrentSkinTexture;
 
 	jsonRoles m_JsonRoles;
 	BoneUtility m_BoneUtility;
@@ -61,7 +63,7 @@ private:
 	bool CreateRenderTarget();
 	bool BeginRenterTexture();
 	void EndRenderTexture();
-	void SaveTextureToFile(GLuint texture, int width, int height,string path);
+	void SaveTextureToFile(GLuint texture, int width, int height,string path, bool flip = false);
 
 	void DisplayGrid();
 };

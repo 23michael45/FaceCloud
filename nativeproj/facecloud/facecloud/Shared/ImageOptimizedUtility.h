@@ -1,9 +1,22 @@
 #pragma once
+
+#include <stdio.h>
+
+#include "ogldev_engine_common.h"
+#include "ogldev_app.h"
+#include "ogldev_camera.h"
+#include "ogldev_util.h"
+#include "ogldev_pipeline.h"
+#include "ogldev_camera.h"
+
+#include "ogldev_util.h"
+#include "ogldev_glut_backend.h"
+#include "ogldev_pipeline.h"
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/highgui.hpp"
 #include "opencv2/objdetect.hpp"
-#include <stdio.h>
-
+#include <opencv2/imgproc/imgproc.hpp> 
+#include <opencv2/core/core.hpp> 
 using namespace std;
 using namespace cv;
 
@@ -19,5 +32,11 @@ public:
 	vector<Rect> detectFace(Mat src);
 
 
-	void UpdateRef_RGB(Mat img, cv::Vec3f refcolor, float value, cv::Vec2f leftpoint, cv::Vec2f rightpoint);
+	void UpdateRef_RGB(Mat img, Vector3f refcolor, float value, Mat& outputimg, Vector2f leftpoint, Vector2f rightpoint);
+
+	Vector3f UpdateRefSkin(Mat inputTexture, Vector3f ref_RGB, float value, Mat& outputTexture, Vector2f leftpoint, Vector2f rightpoint);
+
+
+
+
 };

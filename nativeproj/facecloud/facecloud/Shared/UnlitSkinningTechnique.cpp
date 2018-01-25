@@ -50,6 +50,7 @@ bool UnlitSkinningTechnique::Init()
 
 	m_WVPLocation = GetUniformLocation("gWVP");
 	m_colorTextureLocation = GetUniformLocation("gColorMap");
+	m_maskTextureLocation = GetUniformLocation("gMaskMap");
 
 
 	m_detailTextureLocation = GetUniformLocation("gDetailMap");
@@ -86,7 +87,10 @@ void UnlitSkinningTechnique::SetDetailTextureUnit(unsigned int TextureUnit)
 {
 	glUniform1i(m_detailTextureLocation, TextureUnit);
 }
-
+void UnlitSkinningTechnique::SetMaskTextureUnit(unsigned int TextureUnit)
+{
+	glUniform1i(m_maskTextureLocation, TextureUnit);
+}
 void UnlitSkinningTechnique::SetUVSize(Vector2f& uvsize)
 {
 	glUniform2fv(m_UVSizeLocation, 1,(const GLfloat*)&uvsize);

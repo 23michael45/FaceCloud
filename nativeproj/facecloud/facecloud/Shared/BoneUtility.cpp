@@ -6,6 +6,13 @@
 #include <fstream>
 #include <sstream>
 
+#include "opencv2/imgcodecs.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/objdetect.hpp"
+#include <opencv2/imgproc/imgproc.hpp> 
+#include <opencv2/core/core.hpp> 
+#include "ImageOptimizedUtility.h"
+
 void JsonModelFormat::LoadFromFile(string filename)
 {
 
@@ -161,7 +168,65 @@ int BoneUtility::ReadJsonFromFile(const char* filename)
 
 	return 0;
 }
+Texture* BoneUtility::CalculateSkin(GLuint texture,bool isman)
+{
+	GLint wtex, htex, comp, rs, gs, bs, as;
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &wtex);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &htex);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &comp);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_RED_SIZE, &rs);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_GREEN_SIZE, &gs);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_BLUE_SIZE, &bs);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_ALPHA_SIZE, &as);
 
+
+	long size = wtex * htex * 4;
+	unsigned char* output_image = new unsigned char[size];
+
+
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, output_image);
+
+	GLenum error = glGetError();
+	const GLubyte * eb = gluErrorString(error);
+	string errorstring((char*)eb);
+	cv::Mat img = cv::Mat(wtex, htex, CV_8UC4, (unsigned*)output_image);
+	
+	Mat rgbimg;
+	cv::cvtColor(img, rgbimg, CV_RGBA2RGB);
+
+	Mat rtmat;
+
+	Vector3f ref_color;
+
+	if (isman)
+	{
+		ref_color = Vector3f(171, 133, 97);
+	}
+	else {
+		ref_color = Vector3f(170, 140, 106);
+	}
+
+
+
+	int _V1 = 1;
+	int _V2 = 9;
+	int _VB = 7;
+
+
+	Vector2f leftpoint(350, 340);
+	Vector2f rightpoint(475, 420);
+
+	ImageOptimizedUtility iou;
+	Vector3f rgb = iou.UpdateRefSkin(rgbimg, ref_color, 1.0f, rtmat, leftpoint, rightpoint);
+	
+
+	Texture *ptexture = new Texture();
+	ptexture->FromCVMat(GL_TEXTURE_2D,rtmat);
+	
+	SAFE_DELETE(output_image);
+
+	return ptexture;
+}
 
 void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFaceInfo faceinfo,string& outOffsetJson,Vector3f& centerpos,Vector2f& uvsize,float& yoffset)
 {

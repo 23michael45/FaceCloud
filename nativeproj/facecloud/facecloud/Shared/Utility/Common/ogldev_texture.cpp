@@ -24,8 +24,16 @@ Texture::Texture(GLenum TextureTarget, const std::string& FileName)
     m_textureTarget = TextureTarget;
     m_fileName      = FileName;
 }
+Texture::Texture()
+{
 
-
+}
+Texture::~Texture()
+{
+	if (m_textureObj != 0) {
+		glDeleteTextures(1, &m_textureObj);
+	}
+}
 bool Texture::Load()
 {
     try {
@@ -55,4 +63,43 @@ void Texture::Bind(GLenum TextureUnit)
 GLuint Texture::GetTextureObj()
 {
 	return m_textureObj;
+}
+
+
+// don't forget to include related head files
+void Texture::FromCVMat(GLenum TextureTarget, cv::Mat& image)
+{
+	m_textureTarget = TextureTarget;
+	if (image.empty()) {
+		std::cout << "image empty" << std::endl;
+	}
+	else {
+		//glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		//glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+		glGenTextures(1, &m_textureObj);
+		glBindTexture(m_textureTarget, m_textureObj);
+
+		//glTexParameteri(m_textureTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		//glTexParameteri(m_textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		//// Set texture clamping method
+		//glTexParameteri(m_textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		//glTexParameteri(m_textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+		cv::cvtColor(image, image, CV_RGB2RGBA);
+
+		glTexImage2D(GL_TEXTURE_2D,         // Type of texture
+			0,                   // Pyramid level (for mip-mapping) - 0 is the top level
+			GL_RGBA,              // Internal colour format to convert to
+			image.cols,          // Image width  i.e. 640 for Kinect in standard mode
+			image.rows,          // Image height i.e. 480 for Kinect in standard mode
+			0,                   // Border width in pixels (can either be 1 or 0)
+			GL_RGBA,              // Input image format (i.e. GL_RGB, GL_RGBA, GL_BGR etc.)
+			GL_UNSIGNED_BYTE,    // Image data type
+			image.ptr());        // The actual image data itself
+
+		glTexParameterf(m_textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameterf(m_textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glBindTexture(m_textureTarget, 0);
+	}
 }

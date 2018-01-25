@@ -14,6 +14,7 @@ struct VSOutput
                                                                                                
 uniform sampler2D gColorMap;   
 uniform sampler2D gDetailMap;
+uniform sampler2D gMaskMap;
                                                                                  
                                 
 out vec4 FragColor;
@@ -27,9 +28,10 @@ void main()
                                           
                                                                                                 
                                                                                      
-    vec4 color = texture(gColorMap, In.TexCoord.xy);
+    vec4 color = texture(gColorMap, In.TexCoord.xy);                               
+    vec4 mask = texture(gMaskMap, In.TexCoord.xy);
 	vec4 detail = texture(gDetailMap, In.TexCoord_C2.xy);
 			
-    float blend = 0.5;					   
+    float blend = (mask.x + mask.y + mask.z)/3;					   
     FragColor = (color * blend + detail * (1 - blend));
 }

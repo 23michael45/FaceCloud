@@ -23,16 +23,23 @@
 
 #include <GL/glew.h>
 #include <ImageMagick-6/Magick++.h>
-
+#include "opencv2/imgcodecs.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/objdetect.hpp"
+#include <opencv2/imgproc/imgproc.hpp> 
+#include <opencv2/core/core.hpp> 
 class Texture
 {
 public:
     Texture(GLenum TextureTarget, const std::string& FileName);
-
+	Texture();
+	~Texture();
     bool Load();
 
     void Bind(GLenum TextureUnit);
 	GLuint GetTextureObj();
+
+	void FromCVMat(GLenum TextureTarget, cv::Mat& image);
 private:
     std::string m_fileName;
     GLenum m_textureTarget;

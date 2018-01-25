@@ -1,6 +1,5 @@
 #include "ImageOptimizedUtility.h"
-#include <opencv2/imgproc/imgproc.hpp> 
-#include <opencv2/core/core.hpp> 
+
 #include <stdio.h>
 #include <iostream>
 
@@ -109,12 +108,13 @@ vector<Rect> ImageOptimizedUtility::detectFace(Mat src)
 	return faces;
 }
 
-void ImageOptimizedUtility::UpdateRef_RGB(Mat img, cv::Vec3f refcolor, float value, cv::Vec2f leftpoint, cv::Vec2f rightpoint)
+void ImageOptimizedUtility::UpdateRef_RGB(Mat img, Vector3f refcolor, float value, Mat& outputimg, Vector2f leftpoint, Vector2f rightpoint)
 {
-	//主画面分离
 
-	vector<Mat> main_channel;
-	split(img, main_channel);
+
+	//主画面分离
+	Mat main_channel[3];
+	cv::split(img, main_channel);
 
 	Mat mainRedChannel = main_channel[0];
 	Mat mainGreenChannel = main_channel[1];
@@ -129,49 +129,58 @@ void ImageOptimizedUtility::UpdateRef_RGB(Mat img, cv::Vec3f refcolor, float val
 
 	//左侧取样
 
-	Vec2f eyedown_pos1 = rightpoint;
-	Vec2f face_pos1 = leftpoint;
+	Vector2f eyedown_pos1 = rightpoint;
+	Vector2f face_pos1 = leftpoint;
 
-	Point left_1(face_pos1[0], face_pos1[1]);
-	Point right_1(eyedown_pos1[0], eyedown_pos1[1]);
+	Point left_1(face_pos1.x, face_pos1.y);
+	Point right_1(eyedown_pos1.x, eyedown_pos1.y);
 
-	Mat subimg_1 = img(Range((int)left_1.y, (int)right_1.y), Range((int)left_1.x, (int)right_1.x));
+
+	Rect roi1(left_1.x, left_1.y, right_1.x - left_1.x, right_1.y - left_1.y);
+
+	Mat subimg_1(img,roi1);// = img.(new Range((int)left_1.y, (int)right_1.y), new Range((int)left_1.x, (int)right_1.x));
 	Mat subimgcopy_1;
 	subimg_1.copyTo(subimgcopy_1);
 
 	//采样分离
-	vector<Mat> LF_vChannels;
-	split(subimgcopy_1, LF_vChannels);
+
+	Mat LF_vChannels[3];
+	cv::split(subimgcopy_1, LF_vChannels);
 
 	Mat imageRedChannel = LF_vChannels[0];
 	Mat imageGreenChannel = LF_vChannels[1];
 	Mat imageBlueChannel = LF_vChannels[2];
 
-	Scalar imageBlueChannelAvg_LF = mean(imageBlueChannel);
-	Scalar imageGreenChannelAvg_LF = mean(imageGreenChannel);
-	Scalar imageRedChannelAvg_LF = mean(imageRedChannel);
+	Scalar imageBlueChannelAvg_LF = cv::mean(imageBlueChannel);
+	Scalar imageGreenChannelAvg_LF = cv::mean(imageGreenChannel);
+	Scalar imageRedChannelAvg_LF = cv::mean(imageRedChannel);
 
 
 
 
 
 	//右侧取样
-	
-	double left2_x = img.rows - face_pos1[0];
-	double right2_x = img.rows - eyedown_pos1[0];
+
+	double left2_x = img.rows - face_pos1.x;
+	double right2_x = img.rows - eyedown_pos1.x;
 
 	Point left_2(left2_x, left_1.y);
 	Point right_2(right2_x, right_1.y);
-	
+
+	// Debug.Log(left_2 + "................" + right_2);
+
 	//第1次调色 
 
-	Mat subimg_2 = img(Range((int)left_2.y, (int)right_2.y), Range((int)right_2.x, (int)left_2.x));
+	Rect roi2(left_2.x, left_2.y, left_2.x - right_2.x, right_2.y - left_2.y);
+
+
+	Mat subimg_2(img, roi2);// img.submat(new Range((int)left_2.y, (int)right_2.y), new Range((int)right_2.x, (int)left_2.x));
 	Mat subimgcopy_2;
 	subimg_2.copyTo(subimgcopy_2);
 
 
-	vector<Mat> RT_vChannels;
-	split(subimgcopy_2, RT_vChannels);
+	Mat RT_vChannels[3];
+	cv::split(subimgcopy_2, RT_vChannels);
 
 	Mat imageRedChannel_RT = RT_vChannels[0];
 	Mat imageGreenChannel_RT = RT_vChannels[1];
@@ -179,9 +188,9 @@ void ImageOptimizedUtility::UpdateRef_RGB(Mat img, cv::Vec3f refcolor, float val
 
 
 
-	Scalar imageRedChannelAvg_RT = mean(imageRedChannel_RT);
-	Scalar imageGreenChannelAvg_RT = mean(imageGreenChannel_RT);
-	Scalar imageBlueChannelAvg_RT = mean(imageBlueChannel_RT);
+	Scalar imageRedChannelAvg_RT = cv::mean(imageRedChannel_RT);
+	Scalar imageGreenChannelAvg_RT = cv::mean(imageGreenChannel_RT);
+	Scalar imageBlueChannelAvg_RT = cv::mean(imageBlueChannel_RT);
 
 
 	double r_avg_LF = imageRedChannelAvg_LF.val[0];
@@ -192,23 +201,28 @@ void ImageOptimizedUtility::UpdateRef_RGB(Mat img, cv::Vec3f refcolor, float val
 	double r_avg_RT = imageRedChannelAvg_RT.val[0];
 	double g_avg_RT = imageGreenChannelAvg_RT.val[0];
 	double b_avg_RT = imageBlueChannelAvg_RT.val[0];
-	
+
+
+
+	//Debug.Log(r_avg_LF+"....."+ g_avg_LF+"....."+ b_avg_LF);
+	// Debug.Log(r_avg_RT+"....."+ g_avg_RT+ "....." + b_avg_RT);
+
 
 
 	//double Red_offest   ;
 	//double Green_offest ;
 	//double Blue_offest;
 
-	double Red_offest_LF = refcolor[0] - r_avg_LF;
-	double Green_offest_LF = refcolor[1] - g_avg_LF;
-	double Blue_offest_LF = refcolor[2] - b_avg_LF;
+	double Red_offest_LF = refcolor.x - r_avg_LF;
+	double Green_offest_LF = refcolor.y - g_avg_LF;
+	double Blue_offest_LF = refcolor.z - b_avg_LF;
 	double aphaf = 0;
 
 
 
-	double Red_offest_RT = refcolor[0] - r_avg_RT;
-	double Green_offest_RT = refcolor[1] - g_avg_RT;
-	double Blue_offest_RT = refcolor[2] - b_avg_RT;
+	double Red_offest_RT = refcolor.x - r_avg_RT;
+	double Green_offest_RT = refcolor.y - g_avg_RT;
+	double Blue_offest_RT = refcolor.z - b_avg_RT;
 	//左侧调色
 
 
@@ -218,7 +232,7 @@ void ImageOptimizedUtility::UpdateRef_RGB(Mat img, cv::Vec3f refcolor, float val
 
 		for (int row = 0; row < img.rows; row++)
 		{
-			Vec3f rgb = img.at<Vec3f>(row, col);
+			Vec3b rgb = img.at<Vec3b>(row, col);
 
 			double Red = rgb[0];
 			double Green = rgb[1];
@@ -349,11 +363,12 @@ void ImageOptimizedUtility::UpdateRef_RGB(Mat img, cv::Vec3f refcolor, float val
 				Blue = rgb[2] + Blue_offest_LF;
 			}
 
+
 			rgb[0] = Red;
 			rgb[1] = Green;
 			rgb[2] = Blue;
 
-			image_LF.at<Vec3f>(row, col) = rgb;
+			image_LF.at<Vec3b>(row, col) = rgb;
 
 		}
 
@@ -368,11 +383,12 @@ void ImageOptimizedUtility::UpdateRef_RGB(Mat img, cv::Vec3f refcolor, float val
 
 		for (int row = 0; row < img.rows; row++)
 		{
-			Vec3f rgb = img.at<Vec3f>(row, col);
+			Vec3b rgb = img.at<Vec3b>(row, col);
 
 			double Red = rgb[0];
 			double Green = rgb[1];
 			double Blue = rgb[2];
+
 
 
 			double light_img = rgb[0] + rgb[1] + rgb[2];
@@ -460,11 +476,12 @@ void ImageOptimizedUtility::UpdateRef_RGB(Mat img, cv::Vec3f refcolor, float val
 				Blue = rgb[2] + Blue_offest_RT;
 			}
 
+
 			rgb[0] = Red;
 			rgb[1] = Green;
 			rgb[2] = Blue;
 
-			image_RT.at<Vec3f>(row, col) = rgb; 
+			image_RT.at<Vec3b>(row, col) = rgb;
 
 		}
 
@@ -483,10 +500,10 @@ void ImageOptimizedUtility::UpdateRef_RGB(Mat img, cv::Vec3f refcolor, float val
 
 		for (int row = 0; row < img.rows; row++)
 		{
-			Vec3f rgb = img.at<Vec3f>(row, col);
+			Vec3b rgb = img.at<Vec3b>(row, col);
 
-			Vec3f rgb_LF = image_LF.at<Vec3f>(row, col);
-			Vec3f rgb_RT = image_RT.at<Vec3f>(row, col);
+			Vec3b rgb_LF = image_LF.at<Vec3b>(row, col);
+			Vec3b rgb_RT = image_RT.at<Vec3b>(row, col);
 
 
 			double Red = rgb[0];
@@ -537,83 +554,24 @@ void ImageOptimizedUtility::UpdateRef_RGB(Mat img, cv::Vec3f refcolor, float val
 
 
 			rgb[0] = Red;
-			rgb[1] = Green;
+			rgb[1]= Green;
 			rgb[2] = Blue;
 
-			img.at<Vec3f>(row, col) =  rgb;
+			img.at<Vec3b>(row, col) = rgb;
 
 
 		}
+		
 	}
-
-
-
-
-
+	outputimg = img;
 
 }
-
-
-/*
-Scalar ImageOptimizedUtility::CalculateMeanRefColor_new(Mat tex, FP_Face face)   //新的计算原始图片
+Vector3f ImageOptimizedUtility::UpdateRefSkin(Mat inputTexture, Vector3f ref_RGB, float value, Mat& outputTexture, Vector2f leftpoint, Vector2f rightpoint)
 {
-	if (tex != null)
-	{
-		Mat ReferenceMat = new Mat(tex.width, tex.height, CvType.CV_8UC3);
-		Utils.texture2DToMat(tex, ReferenceMat);
 
-		//  OpenCVForUnity.Rect[] facesarray = detectFace(ReferenceMat);
-
-
-
-		Vector2 eyedown_pos1 = (Vector2)(face.landmark.Get("left_eye_lower_right_quarter"));
-		Vector2 face_pos1 = (Vector2)(face.landmark.Get("contour_left5"));
-
-		Vector2 eyedown_pos2 = (Vector2)(face.landmark.Get("right_eye_lower_left_quarter"));
-		Vector2 face_pos2 = (Vector2)(face.landmark.Get("contour_right5"));
-
-		Point left_pos1 = new Point(face_pos1.x, face_pos1.y);
-		Point left_pos2 = new Point(eyedown_pos1.x, eyedown_pos1.y);
-
-		Imgproc.rectangle(ReferenceMat, left_pos1, left_pos2, new Scalar(255, 0, 0));
-
-		Mat subimg = ReferenceMat.submat(new Range((int)left_pos1.y, (int)left_pos2.y), new Range((int)left_pos1.x, (int)left_pos2.x));
-		Mat subimgcopy = new Mat();
-
-		subimg.copyTo(subimgcopy);
-
-
-		//Imgproc.cvtColor(subimgcopy, subimgcopy, Imgproc.COLOR_RGB2HSV);
-		for (int col = 0; col < subimgcopy.cols(); col++)
-		{
-			for (int row = 0; row < subimgcopy.rows(); row++)
-			{
-				double[] hsv = subimgcopy.get(row, col);
-
-				Color rgbcol = new Color((float)hsv[0] / 255, (float)hsv[1] / 255, (float)hsv[2] / 255);
-
-				float h;
-				float s;
-				float v;
-				Color.RGBToHSV(rgbcol, out h, out s, out v);
-
-				hsv[0] = h * 255;
-				hsv[1] = s * 255;
-				hsv[2] = v * 255;
-
-				subimgcopy.put(row, col, hsv);
-			}
-		}
-
-
-		Scalar meancolor = Core.mean(subimgcopy);
-
-		return meancolor;
-	}
-
-
-	return new Scalar(0);
-
-
+	Vector3f rgb(ref_RGB.x / 255, ref_RGB.y / 255, ref_RGB.z / 255);
+	UpdateRef_RGB(inputTexture, ref_RGB, value, outputTexture, leftpoint, rightpoint);
+	return rgb;
 }
-*/
+
+
