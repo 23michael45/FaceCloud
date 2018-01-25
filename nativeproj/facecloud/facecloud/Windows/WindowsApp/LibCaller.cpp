@@ -156,11 +156,7 @@ int main(int argc, char** argv)
 
 
 
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	glFrontFace(GL_CW);
-	glCullFace(GL_BACK);
-	glEnable(GL_CULL_FACE);
-	glEnable(GL_DEPTH_TEST);
+
 
 
 	/*glutDisplayFunc(RenderSceneCB);
@@ -168,13 +164,13 @@ int main(int argc, char** argv)
 	glutSpecialFunc(SpecialKeyboardCB);
 	
 
-	string jsonfacestring = LoadJsonStringFromFile(jsonfacepath);
+	jsonfacestring = LoadJsonStringFromFile(jsonfacepath);
 
 	
 	glutMainLoop();
 
-	//lib.Calculate(currentModelID, "data/face/photoface.jpg", jsonfacestring,outPhotoPath, outJsonModelOut);
-	//string path = string("data/export/outjson.json");
-	//SaveFile(outJsonModelOut,path);
+	/*lib.Calculate(currentModelID, "data/face/photoface.jpg", jsonfacestring, outPhotoPath, outJsonModelOut);
+	string path = string("data/export/outjson.json");
+	SaveFile(outJsonModelOut, path);*/
 	return 0;
 }
