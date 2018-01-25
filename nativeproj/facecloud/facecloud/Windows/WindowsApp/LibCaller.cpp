@@ -31,6 +31,7 @@ Tutorial 13 - Camera Space
 
 
 FaceCloudLib lib;
+string currentModelID = "10002";
 
 JsonFaceInfo jsonfaceinfo;
 
@@ -86,10 +87,10 @@ void RenderSceneCB()
 	if (!hasdone)
 	{
 		hasdone = true;
-		lib.CalculateBone("10002", jsonfaceinfo, outPhotoPath, outJsonPath, center,uvsize,yoffset);
+		lib.CalculateBone(currentModelID, jsonfaceinfo, outPhotoPath, outJsonPath, center,uvsize,yoffset);
 	}
 
-	lib.DrawOnce("10002",center,uvsize);
+	lib.DrawOnce(currentModelID,center,uvsize);
 
 	glutSwapBuffers();
 }
@@ -122,7 +123,7 @@ int main(int argc, char** argv)
 
 	//glutMainLoop();
 
-	lib.Calculate("10002", "data/face/photoface.jpg", jsonfacestring,outPhotoPath, outJsonModelOut);
+	lib.Calculate(currentModelID, "data/face/photoface.jpg", jsonfacestring,outPhotoPath, outJsonModelOut);
 	string path = string("data/export/outjson.json");
 	SaveFile(outJsonModelOut,path);
 	return 0;

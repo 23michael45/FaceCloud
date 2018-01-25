@@ -255,6 +255,56 @@ private:
 
 };
 
+class  JsonDebug
+{
+public:
+	JsonDebug()
+	{
+
+	};
+	~JsonDebug()
+	{
+
+	};
+	void AddNode(vector<string>& keys, vector<string>& values)
+	{
+		Json::Value jnode;
+
+		for (int i = 0; i < keys.size(); i++)
+		{
+			jnode[keys[i]] = values[i];
+			root.append(jnode);
+		}
+
+	}
+	void Save(string& path)
+	{
+		SaveJsonFile(root, path);
+	}
+	void Clear()
+	{
+		root.clear();
+	}
+private:
+	void SaveFile(string& s, string& path)
+	{
+		ofstream write;
+
+		write.open(path.c_str(), ios::out | ios::binary);
+		write.write(s.c_str(), s.length());
+		write.close();
+	}
+	void SaveJsonFile(Json::Value jvalue, string& path)
+	{
+		Json::StreamWriterBuilder  builder;
+		builder.settings_["commentStyle"] = "All";
+		std::string s = Json::writeString(builder, jvalue);
+
+		SaveFile(s, path);
+	}
+
+	Json::Value root;
+};
 class JsonKeyPointBonePairs
 {
 	
@@ -317,4 +367,9 @@ public:
 	void MoveUV(SkinnedMesh* pmesh, JsonRole bonedef);
 
 	Matrix4f GetLocalMatrixFromGlobal(SkinnedMesh* pmesh ,string bonename,Matrix4f globalmat);
+
+	JsonDebug m_JsonDB;
 };
+
+
+
