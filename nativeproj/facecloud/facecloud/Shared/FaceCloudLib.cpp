@@ -175,9 +175,8 @@ void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, 
 
 	SaveTextureToFile(m_RenderTexture, m_Width, m_Width, photoPathOut,true);
 
-	SaveTextureToFile(ptexture->GetTextureObj(), m_Width, m_Width, "data/export/preskin.jpg");
-
-	SaveTextureToFile(paftertex->GetTextureObj(), m_Width, m_Width, "data/export/afterskin.jpg");
+	//SaveTextureToFile(ptexture->GetTextureObj(), m_Width, m_Width, "data/export/preskin.jpg");
+	//SaveTextureToFile(paftertex->GetTextureObj(), m_Width, m_Width, "data/export/afterskin.jpg");
 
 	SAFE_DELETE(ptexture);
 	SAFE_DELETE(m_pCurrentSkinTexture);

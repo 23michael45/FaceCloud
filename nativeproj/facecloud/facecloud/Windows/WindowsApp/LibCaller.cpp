@@ -28,13 +28,32 @@ Tutorial 13 - Camera Space
 #include "ogldev_util.h"
 #include "ogldev_pipeline.h"
 #include "FaceCloudLib.h"
-
+#include <ctime>
+#include <sys/timeb.h>
 
 FaceCloudLib lib;
 string currentModelID = "10002";
-
+string outJsonModelOut = "";
+string outPhotoPath = "data/export/outphoto.jpg";
+string jsonfacepath = "data/face/photojson.json";
+string jsonfacestring;
+string outjsonoffsetpath = "data/export/outjson.json";
 JsonFaceInfo jsonfaceinfo;
 
+
+int getMilliCount() {
+	timeb tb;
+	ftime(&tb);
+	int nCount = tb.millitm + (tb.time & 0xfffff) * 1000;
+	return nCount;
+}
+
+int getMilliSpan(int nTimeStart) {
+	int nSpan = getMilliCount() - nTimeStart;
+	if (nSpan < 0)
+		nSpan += 0x100000 * 1000;
+	return nSpan;
+}
 void SaveFile(string& s,string& path)
 {
 	ofstream write;
@@ -94,6 +113,36 @@ void RenderSceneCB()
 
 	glutSwapBuffers();
 }
+
+static void SpecialKeyboardCB(int Key, int x, int y)
+{
+	int start;
+	int milliSecondsElapsed;
+ 	OGLDEV_KEY OgldevKey = GLUTKeyToOGLDEVKey(Key);
+
+	switch (OgldevKey) {
+	case OGLDEV_KEY_ESCAPE:
+		GLUTBackendLeaveMainLoop();
+		break;
+	case OGLDEV_KEY_F5:
+		
+
+		printf("\n\nStarting timer...");
+		start = getMilliCount();
+
+		lib.Calculate(currentModelID, "data/face/photoface.jpg", jsonfacestring, outPhotoPath, outJsonModelOut);
+		SaveFile(outJsonModelOut, outjsonoffsetpath);
+
+
+
+		milliSecondsElapsed = getMilliSpan(start);
+		printf("\n\nElapsed time = %u milliseconds", milliSecondsElapsed);
+
+		break;
+	default:
+		break;
+	}
+}
 int main(int argc, char** argv)
 {
 
@@ -104,11 +153,7 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
-	string outJsonModelOut = "";
-	string outPhotoPath = "data/export/outphoto.jpg";
 
-	string jsonfacestring = LoadJsonStringFromFile("data/face/photojson.json");
-	jsonfaceinfo.LoadFromString(jsonfacestring);
 
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -118,13 +163,18 @@ int main(int argc, char** argv)
 	glEnable(GL_DEPTH_TEST);
 
 
-	glutDisplayFunc(RenderSceneCB);
-	glutIdleFunc(RenderSceneCB);
+	/*glutDisplayFunc(RenderSceneCB);
+	glutIdleFunc(RenderSceneCB);*/
+	glutSpecialFunc(SpecialKeyboardCB);
+	
 
-	//glutMainLoop();
+	string jsonfacestring = LoadJsonStringFromFile(jsonfacepath);
 
-	lib.Calculate(currentModelID, "data/face/photoface.jpg", jsonfacestring,outPhotoPath, outJsonModelOut);
-	string path = string("data/export/outjson.json");
-	SaveFile(outJsonModelOut,path);
+	
+	glutMainLoop();
+
+	//lib.Calculate(currentModelID, "data/face/photoface.jpg", jsonfacestring,outPhotoPath, outJsonModelOut);
+	//string path = string("data/export/outjson.json");
+	//SaveFile(outJsonModelOut,path);
 	return 0;
 }

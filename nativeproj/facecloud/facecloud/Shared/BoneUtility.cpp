@@ -308,8 +308,8 @@ void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFa
 	centerpos = headCenter;
 	uvsize = Vector2f(bonedef.uvsize, bonedef.uvsize);
 
-	string s = "data/export/bonertdb.json";
-	m_JsonDB.Save(s);
+	/*string s = "data/export/bonertdb.json";
+	m_JsonDB.Save(s);*/
 
 
 
@@ -723,7 +723,7 @@ void BoneUtility::MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo fac
 	Vector3f aftloct = final.ExtractTranslation();
 	if (pmesh->m_BoneNodeMap.find(bonename) != pmesh->m_BoneNodeMap.end())
 	{
-		pmesh->m_BoneNodeMap[bonename]->mTransformation = final.GetaiMatrix4x4();
+		//pmesh->m_BoneNodeMap[bonename]->mTransformation = final.GetaiMatrix4x4();
 		
 		Matrix4f totalfinal = parentMat * final;
 		pmesh->m_BoneGlobalTrasMap[bonename] = totalfinal;
@@ -737,23 +737,23 @@ void BoneUtility::MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo fac
 		printf("");
 	}
 
-	if (pmesh->m_BoneMapping.find(bonename) != pmesh->m_BoneMapping.end())
-	{
-		uint index = pmesh->m_BoneMapping[bonename];
-		Matrix4f matinv = mat;
-		matinv.Inverse();
-		//pmesh->m_BoneInfo[index].BoneOffset = matinv;
+	//if (pmesh->m_BoneMapping.find(bonename) != pmesh->m_BoneMapping.end())
+	//{
+	//	uint index = pmesh->m_BoneMapping[bonename];
+	//	Matrix4f matinv = mat;
+	//	matinv.Inverse();
+	//	//pmesh->m_BoneInfo[index].BoneOffset = matinv;
 
 
-		Matrix4f globalm = Matrix4f(pmesh->GetNodeGlobalTransformation(pmesh->m_BoneNodeMap[bonename]));
+	//	Matrix4f globalm = Matrix4f(pmesh->GetNodeGlobalTransformation(pmesh->m_BoneNodeMap[bonename]));
 
-		Matrix4f test = globalm * pmesh->m_BoneInfo[index].BoneOffset;
-		printf("");
-	}
-	else
-	{
-		printf("");
-	}
+	//	Matrix4f test = globalm * pmesh->m_BoneInfo[index].BoneOffset;
+	//	printf("");
+	//}
+	//else
+	//{
+	//	printf("");
+	//}
 
 	return;
 
