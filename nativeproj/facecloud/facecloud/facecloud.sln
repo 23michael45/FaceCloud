@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WindowsApp", "Windows\Windo
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LinuxApp", "Linux\LinuxApp\LinuxApp.vcxproj", "{CB589660-2564-4913-A2C3-B282AA086F81}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WindowsLib", "Windows\WindowsLib\WindowsLib\WindowsLib.vcxproj", "{C04C22B5-9C38-42C0-B8A5-5C5556CA1060}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -39,6 +41,16 @@ Global
 		{CB589660-2564-4913-A2C3-B282AA086F81}.Release|x64.Build.0 = Release|x64
 		{CB589660-2564-4913-A2C3-B282AA086F81}.Release|x86.ActiveCfg = Release|x86
 		{CB589660-2564-4913-A2C3-B282AA086F81}.Release|x86.Build.0 = Release|x86
+		{C04C22B5-9C38-42C0-B8A5-5C5556CA1060}.Debug|ARM.ActiveCfg = Debug|Win32
+		{C04C22B5-9C38-42C0-B8A5-5C5556CA1060}.Debug|x64.ActiveCfg = Debug|x64
+		{C04C22B5-9C38-42C0-B8A5-5C5556CA1060}.Debug|x64.Build.0 = Debug|x64
+		{C04C22B5-9C38-42C0-B8A5-5C5556CA1060}.Debug|x86.ActiveCfg = Debug|Win32
+		{C04C22B5-9C38-42C0-B8A5-5C5556CA1060}.Debug|x86.Build.0 = Debug|Win32
+		{C04C22B5-9C38-42C0-B8A5-5C5556CA1060}.Release|ARM.ActiveCfg = Release|Win32
+		{C04C22B5-9C38-42C0-B8A5-5C5556CA1060}.Release|x64.ActiveCfg = Release|x64
+		{C04C22B5-9C38-42C0-B8A5-5C5556CA1060}.Release|x64.Build.0 = Release|x64
+		{C04C22B5-9C38-42C0-B8A5-5C5556CA1060}.Release|x86.ActiveCfg = Release|Win32
+		{C04C22B5-9C38-42C0-B8A5-5C5556CA1060}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

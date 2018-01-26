@@ -37,5 +37,8 @@ void main()
     TexCoord1    = C2;
     vec4 NormalL = BoneTransform * vec4(Normal, 0.0);
     Normal0      = (gWorld * NormalL).xyz;
-    WorldPos0    = (gWorld * PosL).xyz;                                
+    WorldPos0    = (gWorld * PosL).xyz;   
+
+
+	gl_Position = 	gWVP * vec4((fract(TexCoord.x) - 0.5) * -gUVSize.x,(fract(TexCoord.y) - 0.5) * -gUVSize.y,0,1);
 }

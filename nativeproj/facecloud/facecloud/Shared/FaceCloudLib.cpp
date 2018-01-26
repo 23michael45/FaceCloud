@@ -135,8 +135,8 @@ bool FaceCloudLib::Init()
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glFrontFace(GL_CW);
-	glCullFace(GL_BACK);
-	glEnable(GL_CULL_FACE);
+	//glCullFace(GL_BACK);
+	//glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 }
 void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, string& photoPathOut, string& jsonModelOut)
@@ -233,7 +233,7 @@ bool FaceCloudLib::InitCamera()
 bool FaceCloudLib::InitMesh()
 {
 	vector<string> modelIDs;
-	//modelIDs.push_back("10001");
+	modelIDs.push_back("10001");
 	modelIDs.push_back("10002");
 
 	for (vector<string>::iterator iter = modelIDs.begin();iter != modelIDs.end();iter++)
@@ -307,7 +307,7 @@ bool FaceCloudLib::CreateRenderTarget()
 	GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
 	glDrawBuffers(1, DrawBuffers); // "1" is the size of DrawBuffers
 
-	
+	glBindTexture(GL_TEXTURE_2D, 0);
 	return true;
 }
 
@@ -327,7 +327,6 @@ bool FaceCloudLib::BeginRenterTexture()
 }
 void FaceCloudLib::EndRenderTexture()
 {
-
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glutSwapBuffers();
 }
@@ -343,11 +342,13 @@ bool FaceCloudLib::DrawOnce(string modelID,Vector3f& center,Vector2f& uvsize)
 
 	m_pGameCamera->OnRender();
 
+	Vector3f campos = Vector3f(0, 0, 0);// center;
+
 	Pipeline p;
 	p.WorldPos(0.0f, 0, 0.0f);
 	p.Rotate(0.0f, 180.0f, 0.0f);
 	p.Scale(1, 1, 1);
-	p.SetCamera(center, m_pGameCamera->GetTarget(), m_pGameCamera->GetUp());
+	p.SetCamera(campos, m_pGameCamera->GetTarget(), m_pGameCamera->GetUp());
 
 	m_orthoProjInfo.b = -uvsize.x/2;
 	m_orthoProjInfo.t = uvsize.x / 2;
@@ -355,7 +356,7 @@ bool FaceCloudLib::DrawOnce(string modelID,Vector3f& center,Vector2f& uvsize)
 	m_orthoProjInfo.r = uvsize.y / 2;
 
 	p.SetOrthographicProj(m_orthoProjInfo);
-	//p.SetPerspectiveProj(m_persProjInfo);
+	p.SetPerspectiveProj(m_persProjInfo);
 	m_pSkinningRenderer->Enable();
 	m_pSkinningRenderer->SetWVP(p.GetWVOrthoPTrans());
 
@@ -386,11 +387,9 @@ bool FaceCloudLib::DrawOnce(string modelID,Vector3f& center,Vector2f& uvsize)
 	}
 
 
-	/*p.WorldPos(0.0f, 175, 0.0f);
-	m_pCommonRenderer->Enable();
-	m_pCommonRenderer->SetWVP(p.GetWVOrthoPTrans());*/
-
-	DisplayGrid();
+	/*m_pCommonRenderer->Enable();
+	m_pCommonRenderer->SetWVP(p.GetWVOrthoPTrans());
+	DisplayGrid();*/
 
 
 	return true;

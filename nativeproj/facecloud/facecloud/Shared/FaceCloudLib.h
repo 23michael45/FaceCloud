@@ -33,6 +33,11 @@ public:
 
 	void CalculateBone(string modelID, JsonFaceInfo jsonfaceinfo, string& photoPathOut, string& jsonModelOut, Vector3f& centerpos, Vector2f& uvsize, float& yOffset);
 	bool DrawOnce(string modelID, Vector3f& center, Vector2f& uvsize);
+
+
+	Camera * GetCamera() {
+		return m_pGameCamera;
+	};
 private:
 	Camera * m_pGameCamera;
 	PersProjInfo m_persProjInfo;

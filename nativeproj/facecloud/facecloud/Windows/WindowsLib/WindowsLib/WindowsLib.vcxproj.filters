@@ -1,0 +1,888 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Shared">
+      <UniqueIdentifier>{7903dd07-a794-49aa-a7bd-cf38bbee9af4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared\JsonCpp">
+      <UniqueIdentifier>{69d67927-2d83-47bc-9c5b-7e1b8ed25cdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared\Utility">
+      <UniqueIdentifier>{733c5acd-7282-45f7-9c8f-d1ce66d3d14f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared\FBXLoader">
+      <UniqueIdentifier>{4e8e02c7-482b-4c93-a320-deccf8a2f92f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared\Utility\Common">
+      <UniqueIdentifier>{3552104a-2cd5-4b3e-a829-ac3e976e65c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared\Utility\Include">
+      <UniqueIdentifier>{da0abdd3-3e8a-478c-bd4f-0ca082b2be85}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\BoneUtility.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\CommonTechnique.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\FaceCloudLib.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\FacePlusWrapper.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\FBXImportUtility.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\ImageOptimizedUtility.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\MeshBase.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\RenderTextureTechnique.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\SkinningTechnique.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\UnlitSkinningTechnique.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ATB\AntTweakBar.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\GL\freeglut.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\GL\freeglut_ext.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\GL\freeglut_std.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\GL\glew.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\GL\glxew.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\GL\wglew.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\GLFW\glfw3.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\GLFW\glfw3native.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\glfx.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\accelerate.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\animate-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\animate.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\annotate.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\api.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\artifact.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\attribute.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\blob-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\blob.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\cache-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\cache-view.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\cache.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\channel.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\cipher.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\client.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\coder.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\color-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\color.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\colormap-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\colormap.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\colorspace-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\colorspace.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\compare.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\composite-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\composite.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\compress.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\configure.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\constitute.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\decorate.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\delegate-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\delegate.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\deprecate.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\display-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\display.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\distort.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\draw-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\draw.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\effect.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\enhance.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\exception-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\exception.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\feature.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\fourier.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\fx-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\fx.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\gem.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\geometry.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\hashmap.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\histogram.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\identify.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\image-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\image-view.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\image.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\ImageMagick.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\layer.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\list.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\locale_.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\log.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\mac.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\magic.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\magick-config.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\magick-type.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\magick.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\MagickCore.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\matrix.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\memory-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\memory_.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\method-attribute.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\methods.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\mime-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\mime.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\module.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\monitor-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\monitor.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\montage.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\morphology-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\morphology.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\nt-base.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\nt-feature.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\option.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\paint.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\pixel-accessor.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\pixel-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\pixel.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\policy.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\prepress.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\PreRvIcccm.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\profile.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\property.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\quantize.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\quantum-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\quantum.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\random-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\random_.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\registry.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\resample-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\resample.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\resize-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\resize.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\resource_.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\segment.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\semaphore-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\semaphore.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\shear.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\signature-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\signature.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\splay-tree.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\static.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\statistic.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\stream-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\stream.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\string-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\string_.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\studio.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\thread-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\thread_.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\threshold.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\timer.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\token-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\token.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\transform.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\type.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\utility-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\utility.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\version.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\vms.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\widget.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\xml-tree.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\xwindow-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\xwindow.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\Blob.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\BlobRef.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\CoderInfo.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\Color.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\Drawable.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\Exception.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\Functions.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\Geometry.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\Image.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\ImageRef.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\Include.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\Montage.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\Options.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\Pixels.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\STL.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\Thread.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\TypeMetric.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\animate.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\compare.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\composite.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\conjure.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\convert.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\deprecate.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\display.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\drawing-wand.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\identify.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\import.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\magick-image.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\magick-property.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\magick-wand-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\magick-wand.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\MagickWand.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\magick_wand.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\method-attribute.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\mogrify-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\mogrify.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\montage.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\pixel-iterator.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\pixel-wand-private.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\pixel-wand.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\stream.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\studio.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\wand-config.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\wand-view.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\wand.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_app.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_atb.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_backend.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_basic_lighting.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_basic_mesh.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_callbacks.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_camera.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_cubemap_texture.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_engine_common.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_glfw_backend.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_glut_backend.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_io_buffer.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_keys.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_lights_common.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_math_3d.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_pipeline.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_random_texture.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_shadow_map_fbo.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_skinned_mesh.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_texture.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_types.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_util.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_vulkan.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_vulkan_core.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_win32_control.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_xcb_control.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\Utility\Include\technique.h">
+      <Filter>Shared\Utility\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\JsonCpp\include\json\allocator.h">
+      <Filter>Shared\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\JsonCpp\include\json\assertions.h">
+      <Filter>Shared\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\JsonCpp\include\json\autolink.h">
+      <Filter>Shared\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\JsonCpp\include\json\config.h">
+      <Filter>Shared\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\JsonCpp\include\json\features.h">
+      <Filter>Shared\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\JsonCpp\include\json\forwards.h">
+      <Filter>Shared\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\JsonCpp\include\json\json.h">
+      <Filter>Shared\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\JsonCpp\include\json\reader.h">
+      <Filter>Shared\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\JsonCpp\include\json\value.h">
+      <Filter>Shared\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\JsonCpp\include\json\version.h">
+      <Filter>Shared\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\JsonCpp\include\json\writer.h">
+      <Filter>Shared\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\JsonCpp\src\json_tool.h">
+      <Filter>Shared\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\FBXLoader\FBXLoader.h">
+      <Filter>Shared\FBXLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Shared\FBXLoader\targa.h">
+      <Filter>Shared\FBXLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="com_facecloud_FaceCloudLib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\BoneUtility.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\CommonTechnique.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\FaceCloudLib.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\FacePlusWrapper.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\FBXImportUtility.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\ImageOptimizedUtility.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\MeshBase.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\RenderTextureTechnique.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\SkinningTechnique.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\UnlitSkinningTechnique.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\JsonCpp\src\json_reader.cpp">
+      <Filter>Shared\JsonCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\JsonCpp\src\json_value.cpp">
+      <Filter>Shared\JsonCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\JsonCpp\src\json_writer.cpp">
+      <Filter>Shared\JsonCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\FBXLoader\FBXLoader.cpp">
+      <Filter>Shared\FBXLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\FBXLoader\targa.cpp">
+      <Filter>Shared\FBXLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\Utility\Common\camera.cpp">
+      <Filter>Shared\Utility\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\Utility\Common\cubemap_texture.cpp">
+      <Filter>Shared\Utility\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\Utility\Common\glut_backend.cpp">
+      <Filter>Shared\Utility\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\Utility\Common\io_buffer.cpp">
+      <Filter>Shared\Utility\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\Utility\Common\math_3d.cpp">
+      <Filter>Shared\Utility\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_app.cpp">
+      <Filter>Shared\Utility\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_atb.cpp">
+      <Filter>Shared\Utility\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_backend.cpp">
+      <Filter>Shared\Utility\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_basic_lighting.cpp">
+      <Filter>Shared\Utility\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_basic_mesh.cpp">
+      <Filter>Shared\Utility\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_glfw_backend.cpp">
+      <Filter>Shared\Utility\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_shadow_map_fbo.cpp">
+      <Filter>Shared\Utility\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_skinned_mesh.cpp">
+      <Filter>Shared\Utility\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_texture.cpp">
+      <Filter>Shared\Utility\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_util.cpp">
+      <Filter>Shared\Utility\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_vulkan.cpp">
+      <Filter>Shared\Utility\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_vulkan_core.cpp">
+      <Filter>Shared\Utility\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_win32_control.cpp">
+      <Filter>Shared\Utility\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_xcb_control.cpp">
+      <Filter>Shared\Utility\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\Utility\Common\pipeline.cpp">
+      <Filter>Shared\Utility\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\Utility\Common\random_texture.cpp">
+      <Filter>Shared\Utility\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared\Utility\Common\technique.cpp">
+      <Filter>Shared\Utility\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="com_facecloud_FaceCloudLib.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\Shared\JsonCpp\src\json_valueiterator.inl">
+      <Filter>Shared\JsonCpp</Filter>
+    </None>
+    <None Include="packages.config" />
+    <None Include="..\..\..\Shared\Utility\Common\.dep.inc">
+      <Filter>Shared\Utility\Common</Filter>
+    </None>
+  </ItemGroup>
+</Project>

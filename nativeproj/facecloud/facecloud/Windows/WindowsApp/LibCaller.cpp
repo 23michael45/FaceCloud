@@ -103,15 +103,16 @@ void RenderSceneCB()
 	Vector3f center;
 	Vector2f uvsize;
 	float yoffset;
-	if (!hasdone)
-	{
-		hasdone = true;
-		lib.CalculateBone(currentModelID, jsonfaceinfo, outPhotoPath, outJsonPath, center,uvsize,yoffset);
-	}
 
+
+	lib.CalculateBone(currentModelID, jsonfaceinfo, outPhotoPath, outJsonPath, center,uvsize,yoffset);
 	lib.DrawOnce(currentModelID,center,uvsize);
 
 	glutSwapBuffers();
+}
+static void PassiveMouseCB(int x, int y)
+{
+	lib.GetCamera()->OnMouse(x, y);
 }
 
 static void SpecialKeyboardCB(int Key, int x, int y)
@@ -140,6 +141,7 @@ static void SpecialKeyboardCB(int Key, int x, int y)
 
 		break;
 	default:
+		lib.GetCamera()->OnKeyboard(OgldevKey);
 		break;
 	}
 }
@@ -159,18 +161,21 @@ int main(int argc, char** argv)
 
 
 
-	/*glutDisplayFunc(RenderSceneCB);
-	glutIdleFunc(RenderSceneCB);*/
+	glutDisplayFunc(RenderSceneCB);
+	glutIdleFunc(RenderSceneCB);
 	glutSpecialFunc(SpecialKeyboardCB);
+	//glutPassiveMotionFunc(PassiveMouseCB);
 	
 
 	jsonfacestring = LoadJsonStringFromFile(jsonfacepath);
 
 	
-	glutMainLoop();
+	/*glutMainLoop();*/
 
-	/*lib.Calculate(currentModelID, "data/face/photoface.jpg", jsonfacestring, outPhotoPath, outJsonModelOut);
+
+	
+	lib.Calculate(currentModelID, "data/face/photoface.jpg", jsonfacestring, outPhotoPath, outJsonModelOut);
 	string path = string("data/export/outjson.json");
-	SaveFile(outJsonModelOut, path);*/
+	SaveFile(outJsonModelOut, path);
 	return 0;
 }

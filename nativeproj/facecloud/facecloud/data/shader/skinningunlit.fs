@@ -32,6 +32,10 @@ void main()
     vec4 mask = texture(gMaskMap, In.TexCoord.xy);
 	vec4 detail = texture(gDetailMap, In.TexCoord_C2.xy);
 			
-    float blend = (mask.x + mask.y + mask.z)/3;					   
+    float blend = (mask.x + mask.y + mask.z)/3;	
+	if(blend >= 0.991)
+	{
+		color = vec4(0,0,0,0);
+	}
     FragColor = (color * blend + detail * (1 - blend));
 }

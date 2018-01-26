@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{C04C22B5-9C38-42C0-B8A5-5C5556CA1060}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>WindowsLib</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;WINDOWSLIB_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Program Files\Java\jdk1.8.0_25\include\win32;C:\Program Files\Java\jdk1.8.0_25\include;C:\Program Files\Autodesk\FBX\FBX SDK\2018.1.1\include;G:\DevelopProj\FaceCloud\tutorial\opengl\ogldev-source\ogldev-source\Include\ImageMagick-6;G:\DevelopProj\FaceCloud\plugin\assimp\assimp\include\assimp;G:\DevelopProj\FaceCloud\plugin\assimp\assimp\include;G:\DevelopProj\FaceCloud\plugin\assimp\proj\include;G:\DevelopProj\FaceCloud\nativeproj\facecloud\facecloud\Shared\Utility\Include;G:\DevelopProj\FaceCloud\nativeproj\facecloud\facecloud\Shared\JsonCpp\include;G:\DevelopProj\FaceCloud\nativeproj\facecloud\facecloud\Shared;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\calib3d\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\features2d\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\highgui\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\videoio\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\imgcodecs\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\video\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\photo\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\imgproc\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\flann\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\core\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\videostab\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\superres\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\stitching\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\shape\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\objdetect\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\ml\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\dnn\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\3rdparty\ippicv\ippicv_win\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\3rdparty\ippicv\ippiw_win\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>C:\Program Files\Autodesk\FBX\FBX SDK\2018.1.1\lib\vs2015\x86\debug\libfbxsdk-md.lib;G:\DevelopProj\FaceCloud\plugin\assimp\proj\code\Debug\assimp-vc140-mt.lib;G:\DevelopProj\FaceCloud\tutorial\opengl\ogldev-source\ogldev-source\Lib\CORE_DB_Magick++_.lib;G:\DevelopProj\FaceCloud\tutorial\opengl\ogldev-source\ogldev-source\Windows\ogldev\Debug\AntTweakBar.lib;opengl32.lib;glu32.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\3rdparty\lib\Debug\ippiwd.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\3rdparty\ippicv\ippicv_win\lib\ia32\ippicvmt.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_dnn340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_ml340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_objdetect340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_shape340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_stitching340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_superres340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_videostab340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_photo340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_calib3d340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_features2d340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_flann340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_highgui340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_videoio340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_imgcodecs340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_video340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_imgproc340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_core340d.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;WINDOWSLIB_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Program Files\Java\jdk1.8.0_25\include\win32;C:\Program Files\Java\jdk1.8.0_25\include;G:\DevelopProj\FaceCloud\tutorial\opengl\ogldev-source\ogldev-source\Include\ImageMagick-6;G:\DevelopProj\FaceCloud\plugin\assimp\assimp\include\assimp;G:\DevelopProj\FaceCloud\plugin\assimp\assimp\include;G:\DevelopProj\FaceCloud\plugin\assimp\proj\include;G:\DevelopProj\FaceCloud\nativeproj\facecloud\facecloud\Shared\Utility\Include;G:\DevelopProj\FaceCloud\nativeproj\facecloud\facecloud\Shared\JsonCpp\include;G:\DevelopProj\FaceCloud\nativeproj\facecloud\facecloud\Shared;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\calib3d\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\features2d\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\highgui\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\videoio\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\imgcodecs\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\video\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\photo\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\imgproc\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\flann\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\core\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\videostab\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\superres\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\stitching\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\shape\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\objdetect\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\ml\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\modules\dnn\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\opencv-3.4.0\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\3rdparty\ippicv\ippicv_win\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\3rdparty\ippicv\ippiw_win\include;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>G:\DevelopProj\FaceCloud\plugin\assimp\proj\code\Debug\assimp-vc140-mt.lib;G:\DevelopProj\FaceCloud\tutorial\opengl\ogldev-source\ogldev-source\Lib\CORE_DB_Magick++_.lib;G:\DevelopProj\FaceCloud\tutorial\opengl\ogldev-source\ogldev-source\Windows\ogldev\Debug\AntTweakBar.lib;opengl32.lib;glu32.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\3rdparty\lib\Debug\ippiwd.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\3rdparty\ippicv\ippicv_win\lib\ia32\ippicvmt.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_dnn340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_ml340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_objdetect340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_shape340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_stitching340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_superres340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_videostab340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_photo340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_calib3d340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_features2d340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_flann340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_highgui340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_videoio340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_imgcodecs340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_video340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_imgproc340d.lib;G:\DevelopProj\FaceCloud\plugin\opencv-3.4.0\proj\lib\Debug\opencv_core340d.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;WINDOWSLIB_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;WINDOWSLIB_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Shared\BoneUtility.h" />
+    <ClInclude Include="..\..\..\Shared\CommonTechnique.h" />
+    <ClInclude Include="..\..\..\Shared\FaceCloudLib.h" />
+    <ClInclude Include="..\..\..\Shared\FacePlusWrapper.h" />
+    <ClInclude Include="..\..\..\Shared\FBXImportUtility.h" />
+    <ClInclude Include="..\..\..\Shared\FBXLoader\FBXLoader.h" />
+    <ClInclude Include="..\..\..\Shared\FBXLoader\targa.h" />
+    <ClInclude Include="..\..\..\Shared\ImageOptimizedUtility.h" />
+    <ClInclude Include="..\..\..\Shared\JsonCpp\include\json\allocator.h" />
+    <ClInclude Include="..\..\..\Shared\JsonCpp\include\json\assertions.h" />
+    <ClInclude Include="..\..\..\Shared\JsonCpp\include\json\autolink.h" />
+    <ClInclude Include="..\..\..\Shared\JsonCpp\include\json\config.h" />
+    <ClInclude Include="..\..\..\Shared\JsonCpp\include\json\features.h" />
+    <ClInclude Include="..\..\..\Shared\JsonCpp\include\json\forwards.h" />
+    <ClInclude Include="..\..\..\Shared\JsonCpp\include\json\json.h" />
+    <ClInclude Include="..\..\..\Shared\JsonCpp\include\json\reader.h" />
+    <ClInclude Include="..\..\..\Shared\JsonCpp\include\json\value.h" />
+    <ClInclude Include="..\..\..\Shared\JsonCpp\include\json\version.h" />
+    <ClInclude Include="..\..\..\Shared\JsonCpp\include\json\writer.h" />
+    <ClInclude Include="..\..\..\Shared\JsonCpp\src\json_tool.h" />
+    <ClInclude Include="..\..\..\Shared\MeshBase.h" />
+    <ClInclude Include="..\..\..\Shared\RenderTextureTechnique.h" />
+    <ClInclude Include="..\..\..\Shared\SkinningTechnique.h" />
+    <ClInclude Include="..\..\..\Shared\UnlitSkinningTechnique.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ATB\AntTweakBar.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\GLFW\glfw3.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\GLFW\glfw3native.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\glfx.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\GL\freeglut.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\GL\freeglut_ext.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\GL\freeglut_std.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\GL\glew.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\GL\glxew.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\GL\wglew.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\Blob.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\BlobRef.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\CoderInfo.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\Color.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\Drawable.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\Exception.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\Functions.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\Geometry.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\Image.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\ImageRef.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\Include.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\Montage.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\Options.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\Pixels.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\STL.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\Thread.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\Magick++\TypeMetric.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\accelerate.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\animate-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\animate.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\annotate.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\api.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\artifact.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\attribute.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\blob-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\blob.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\cache-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\cache-view.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\cache.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\channel.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\cipher.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\client.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\coder.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\color-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\color.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\colormap-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\colormap.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\colorspace-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\colorspace.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\compare.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\composite-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\composite.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\compress.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\configure.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\constitute.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\decorate.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\delegate-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\delegate.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\deprecate.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\display-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\display.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\distort.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\draw-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\draw.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\effect.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\enhance.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\exception-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\exception.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\feature.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\fourier.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\fx-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\fx.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\gem.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\geometry.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\hashmap.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\histogram.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\identify.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\image-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\image-view.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\image.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\ImageMagick.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\layer.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\list.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\locale_.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\log.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\mac.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\magic.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\magick-config.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\magick-type.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\magick.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\MagickCore.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\matrix.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\memory-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\memory_.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\method-attribute.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\methods.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\mime-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\mime.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\module.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\monitor-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\monitor.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\montage.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\morphology-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\morphology.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\nt-base.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\nt-feature.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\option.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\paint.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\pixel-accessor.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\pixel-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\pixel.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\policy.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\prepress.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\PreRvIcccm.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\profile.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\property.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\quantize.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\quantum-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\quantum.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\random-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\random_.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\registry.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\resample-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\resample.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\resize-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\resize.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\resource_.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\segment.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\semaphore-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\semaphore.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\shear.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\signature-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\signature.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\splay-tree.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\static.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\statistic.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\stream-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\stream.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\string-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\string_.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\studio.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\thread-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\thread_.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\threshold.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\timer.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\token-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\token.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\transform.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\type.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\utility-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\utility.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\version.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\vms.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\widget.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\xml-tree.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\xwindow-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\magick\xwindow.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\animate.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\compare.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\composite.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\conjure.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\convert.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\deprecate.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\display.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\drawing-wand.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\identify.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\import.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\magick-image.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\magick-property.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\magick-wand-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\magick-wand.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\MagickWand.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\magick_wand.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\method-attribute.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\mogrify-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\mogrify.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\montage.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\pixel-iterator.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\pixel-wand-private.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\pixel-wand.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\stream.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\studio.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\wand-config.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\wand-view.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ImageMagick-6\wand\wand.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_app.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_atb.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_backend.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_basic_lighting.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_basic_mesh.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_callbacks.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_camera.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_cubemap_texture.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_engine_common.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_glfw_backend.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_glut_backend.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_io_buffer.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_keys.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_lights_common.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_math_3d.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_pipeline.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_random_texture.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_shadow_map_fbo.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_skinned_mesh.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_texture.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_types.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_util.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_vulkan.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_vulkan_core.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_win32_control.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\ogldev_xcb_control.h" />
+    <ClInclude Include="..\..\..\Shared\Utility\Include\technique.h" />
+    <ClInclude Include="com_facecloud_FaceCloudLib.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Shared\BoneUtility.cpp" />
+    <ClCompile Include="..\..\..\Shared\CommonTechnique.cpp" />
+    <ClCompile Include="..\..\..\Shared\FaceCloudLib.cpp" />
+    <ClCompile Include="..\..\..\Shared\FacePlusWrapper.cpp" />
+    <ClCompile Include="..\..\..\Shared\FBXImportUtility.cpp" />
+    <ClCompile Include="..\..\..\Shared\FBXLoader\FBXLoader.cpp" />
+    <ClCompile Include="..\..\..\Shared\FBXLoader\targa.cpp" />
+    <ClCompile Include="..\..\..\Shared\ImageOptimizedUtility.cpp" />
+    <ClCompile Include="..\..\..\Shared\JsonCpp\src\json_reader.cpp" />
+    <ClCompile Include="..\..\..\Shared\JsonCpp\src\json_value.cpp" />
+    <ClCompile Include="..\..\..\Shared\JsonCpp\src\json_writer.cpp" />
+    <ClCompile Include="..\..\..\Shared\MeshBase.cpp" />
+    <ClCompile Include="..\..\..\Shared\RenderTextureTechnique.cpp" />
+    <ClCompile Include="..\..\..\Shared\SkinningTechnique.cpp" />
+    <ClCompile Include="..\..\..\Shared\UnlitSkinningTechnique.cpp" />
+    <ClCompile Include="..\..\..\Shared\Utility\Common\camera.cpp" />
+    <ClCompile Include="..\..\..\Shared\Utility\Common\cubemap_texture.cpp" />
+    <ClCompile Include="..\..\..\Shared\Utility\Common\glut_backend.cpp" />
+    <ClCompile Include="..\..\..\Shared\Utility\Common\io_buffer.cpp" />
+    <ClCompile Include="..\..\..\Shared\Utility\Common\math_3d.cpp" />
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_app.cpp" />
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_atb.cpp" />
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_backend.cpp" />
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_basic_lighting.cpp" />
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_basic_mesh.cpp" />
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_glfw_backend.cpp" />
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_shadow_map_fbo.cpp" />
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_skinned_mesh.cpp" />
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_texture.cpp" />
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_util.cpp" />
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_vulkan.cpp" />
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_vulkan_core.cpp" />
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_win32_control.cpp" />
+    <ClCompile Include="..\..\..\Shared\Utility\Common\ogldev_xcb_control.cpp" />
+    <ClCompile Include="..\..\..\Shared\Utility\Common\pipeline.cpp" />
+    <ClCompile Include="..\..\..\Shared\Utility\Common\random_texture.cpp" />
+    <ClCompile Include="..\..\..\Shared\Utility\Common\technique.cpp" />
+    <ClCompile Include="com_facecloud_FaceCloudLib.cpp" />
+    <ClCompile Include="dllmain.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\Shared\JsonCpp\src\json_valueiterator.inl" />
+    <None Include="..\..\..\Shared\Utility\Common\.dep.inc" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\..\..\packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets" Condition="Exists('..\..\..\packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets')" />
+  </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\..\packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets'))" />
+  </Target>
+</Project>
