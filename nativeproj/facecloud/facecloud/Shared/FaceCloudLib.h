@@ -35,6 +35,9 @@ public:
 	bool DrawOnce(string modelID, Vector3f& center, Vector2f& uvsize);
 
 
+
+	void CombineTexture(GLuint FaceTexture, Texture* pWhole, Texture* pMask, string& photoPathOut);
+	cv::Mat GLTextureToMat(GLuint texture, unsigned char*& outimagptr);
 	Camera * GetCamera() {
 		return m_pGameCamera;
 	};
@@ -68,7 +71,7 @@ private:
 	bool CreateRenderTarget();
 	bool BeginRenterTexture();
 	void EndRenderTexture();
-	void SaveTextureToFile(GLuint texture, int width, int height,string path, bool flip = false);
+	void SaveTextureToFile(cv::Mat imag, int format, string path, bool flip = false);
 
 	void DisplayGrid();
 };

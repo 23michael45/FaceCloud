@@ -179,7 +179,7 @@ void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, 
 		EndRenderTexture();
 	}
 
-	SaveTextureToFile(m_RenderTexture, m_Width, m_Width, photoPathOut,true);
+	CombineTexture(m_RenderTexture, m_ColorTextureMap[modelID], m_pMaskTexture, photoPathOut);
 
 	//SaveTextureToFile(ptexture->GetTextureObj(), m_Width, m_Width, "data/export/preskin.jpg");
 	//SaveTextureToFile(paftertex->GetTextureObj(), m_Width, m_Width, "data/export/afterskin.jpg");
@@ -188,6 +188,42 @@ void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, 
 	SAFE_DELETE(m_pCurrentSkinTexture);
 }
 
+void FaceCloudLib::CombineTexture(GLuint FaceTexure, Texture* pWhole, Texture* pMask,string& photoPathOut)
+{
+	unsigned char* faceptr;
+	/*unsigned char* maskptr;
+	unsigned char* colorptr;*/
+	cv::Mat facemat = GLTextureToMat(FaceTexure, faceptr);
+	/*cv::Mat maskmat = GLTextureToMat(pMask->GetTextureObj(), maskptr);
+	cv::Mat colormat = GLTextureToMat(pWhole->GetTextureObj(), colorptr);
+
+
+
+	cv::Mat maskmat2;
+	cv::resize(maskmat, maskmat2, cv::Size(m_Width, m_Height));
+	cv::Mat colormat2;
+	cv::resize(colormat, colormat2, cv::Size(m_Width, m_Height));
+
+
+	facemat.convertTo(facemat, CV_16UC3);
+	maskmat2.convertTo(maskmat2, CV_16UC3);
+	colormat2.convertTo(colormat2, CV_16UC3);*/
+
+	//cv::Mat facemat2;
+	//cv::cvtColor(facemat, facemat2, CV_RGB2RGBA);
+
+	/*cv::cvtColor(maskmat2, maskmat2, CV_RGBA2RGB);
+	cv::cvtColor(colormat2, colormat2, CV_RGBA2RGB);*/
+
+
+	//facemat = (facemat * maskmat2 * cv::Scalar(1/255,1/255,1/255) );// +colormat2 * (255 - maskmat2) / 255;
+
+	SaveTextureToFile(facemat,GL_RGB, photoPathOut, true);
+
+	SAFE_DELETE(faceptr);
+	/*SAFE_DELETE(maskptr);
+	SAFE_DELETE(colorptr);*/
+}
 
 
 bool FaceCloudLib::InitCamera()
@@ -395,13 +431,9 @@ bool FaceCloudLib::DrawOnce(string modelID,Vector3f& center,Vector2f& uvsize)
 	return true;
 
 }
-void FaceCloudLib::SaveTextureToFile(GLuint texture, int width, int height,string path,bool flip)
+
+cv::Mat FaceCloudLib::GLTextureToMat(GLuint texture, unsigned char*& outimagptr)
 {
-	width = 2048;
-	height = 2048;
-	long size = 0;
-
-
 	glBindTexture(GL_TEXTURE_2D, texture);
 
 	GLint wtex, htex, comp, rs, gs, bs, as;
@@ -413,37 +445,54 @@ void FaceCloudLib::SaveTextureToFile(GLuint texture, int width, int height,strin
 	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_BLUE_SIZE, &bs);
 	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_ALPHA_SIZE, &as);
 
+	long size = 0;
+
 	if (comp == GL_RGB)
 	{
 
-		size = width * height * 3;
+		size = wtex * htex * 3;
 	}
 	else if (comp == GL_RGBA)
 	{
-		size = width * height * 4;
+		size = wtex * htex * 4;
 	}
-	unsigned char* output_image = new unsigned char[size];
-	glGetTexImage(GL_TEXTURE_2D, 0, comp, GL_UNSIGNED_BYTE, output_image);
+
+	outimagptr = new unsigned char[size];
+
+	glGetTexImage(GL_TEXTURE_2D, 0, comp, GL_UNSIGNED_BYTE, outimagptr);
+
 
 	GLenum error = glGetError();
 	const GLubyte * eb = gluErrorString(error);
 	string errorstring((char*)eb);
 
-	//WriteTGA((char*)"data/export/rendertexture.tga", wtex, htex, output_image);
-
-
 	cv::Mat  img;
-	cv::Mat  bgra;
 
 	if (comp == GL_RGB)
 	{
-		img = cv::Mat(wtex, htex, CV_8UC3, (unsigned*)output_image);
-		cv::cvtColor(img, bgra, cv::COLOR_RGB2BGRA);
+		img = cv::Mat(wtex, htex, CV_8UC3, (unsigned*)outimagptr);
 	}
 	else if (comp == GL_RGBA)
 	{
-		img = cv::Mat(wtex, htex, CV_8UC4, (unsigned*)output_image);
-		cv::cvtColor(img, bgra, cv::COLOR_RGBA2BGRA);
+		img = cv::Mat(wtex, htex, CV_8UC4, (unsigned*)outimagptr);
+	}
+
+
+	return img;
+}
+void FaceCloudLib::SaveTextureToFile(cv::Mat imag, int format,string path,bool flip)
+{
+	//WriteTGA((char*)"data/export/rendertexture.tga", wtex, htex, output_image);
+
+	cv::Mat  bgra;
+
+	if (format == GL_RGB)
+	{
+		cv::cvtColor(imag, bgra, cv::COLOR_RGB2BGRA);
+	}
+	else if (format == GL_RGBA)
+	{
+		cv::cvtColor(imag, bgra, cv::COLOR_RGBA2BGRA);
 	}
 
 	if (flip)
@@ -461,10 +510,6 @@ void FaceCloudLib::SaveTextureToFile(GLuint texture, int width, int height,strin
 
 		cv::imwrite(path, bgra);
 	}
-
-	
-
-	SAFE_DELETE( output_image);
 
 }
 
