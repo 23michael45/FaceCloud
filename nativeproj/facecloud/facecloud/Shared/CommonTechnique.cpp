@@ -15,25 +15,39 @@ CommonTechnique::CommonTechnique()
 
 bool CommonTechnique::Init()
 {
+	printf("\nCommonTechnique start Init");
 	if (!Technique::Init()) {
+
+		printf("\nCommonTechnique vs Init Failed");
 		return false;
 	}
+	printf("\nxxx start Init");
 
 	if (!AddShader(GL_VERTEX_SHADER, "data/shader/common.vs")) {
+
+		printf("\nCommonTechnique vs Finalize Failed");
 		return false;
 	}
 
+	printf("\nxxxx start Init");
 	if (!AddShader(GL_FRAGMENT_SHADER, "data/shader/common.fs")) {
+
+		printf("\nCommonTechnique vs fs Failed");
 		return false;
 	}
 
+	printf("\nxxxxx start Init");
 	if (!Finalize()) {
+
+		printf("\nCommonTechnique vs Finalize Failed");
 		return false;
 	}
+	printf("\nxxxxxxx start Init");
 
 	m_WVPLocation = GetUniformLocation("gWVP");
 	InitSampler();
-	
+
+	printf("\nxxxff start Init");
 	return true;
 }
 

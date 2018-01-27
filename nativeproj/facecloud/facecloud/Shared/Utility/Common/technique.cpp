@@ -52,6 +52,9 @@ bool Technique::Init()
 
     if (m_shaderProg == 0) {
         fprintf(stderr, "Error creating shader program\n");
+
+        printf("\nError Init Shader Program");
+
         return false;
     }
 

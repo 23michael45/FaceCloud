@@ -30,11 +30,11 @@ cv::Mat ImageOptimizedUtility::UpdateDermabrasion(cv::Mat img, float v1, float v
 
 
 
-		float dx = v1 * 5;    //Ë«±ßÂË²¨²ÎÊýÖ®Ò»  
-		double fc = v1 * 12.5f; //Ë«±ßÂË²¨²ÎÊýÖ®Ò»  
-		float alpha = 50; //Í¸Ã÷¶È  
+		float dx = v1 * 5;    //Ë«ï¿½ï¿½ï¿½Ë²ï¿½ï¿½ï¿½ï¿½ï¿½Ö®Ò»  
+		double fc = v1 * 12.5f; //Ë«ï¿½ï¿½ï¿½Ë²ï¿½ï¿½ï¿½ï¿½ï¿½Ö®Ò»  
+		float alpha = 50; //Í¸ï¿½ï¿½ï¿½ï¿½  
 
-						  //Ë«±ßÂË²¨  
+						  //Ë«ï¿½ï¿½ï¿½Ë²ï¿½  
 		int i = 409;
 		int j = 409;
 
@@ -88,10 +88,10 @@ vector<Rect> ImageOptimizedUtility::detectFace(Mat src)
 {
 
 	Mat gray, smallImg;
-	cvtColor(src, gray, COLOR_BGR2GRAY);;//ÒòÎªÓÃµÄÊÇÀàhaarÌØÕ÷£¬ËùÒÔ¶¼ÊÇ»ùÓÚ»Ò¶ÈÍ¼ÏñµÄ£¬ÕâÀïÒª×ª»»³É»Ò¶ÈÍ¼Ïñ
+	cvtColor(src, gray, COLOR_BGR2GRAY);;//ï¿½ï¿½Îªï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½haarï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½Ç»ï¿½ï¿½Ú»Ò¶ï¿½Í¼ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½Òª×ªï¿½ï¿½ï¿½É»Ò¶ï¿½Í¼ï¿½ï¿½
 
-															//Imgproc.resize(temp8uc1, temp8uc1, temp8uc1.size(), 0, 0, Imgproc.INTER_LINEAR);//½«³ß´çËõÐ¡µ½1/scale,ÓÃÏßÐÔ²åÖµ
-															//Imgproc.equalizeHist(temp8uc1, temp8uc1);//Ö±·½Í¼¾ùºâ
+															//Imgproc.resize(temp8uc1, temp8uc1, temp8uc1.size(), 0, 0, Imgproc.INTER_LINEAR);//ï¿½ï¿½ï¿½ß´ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½1/scale,ï¿½ï¿½ï¿½ï¿½ï¿½Ô²ï¿½Öµ
+															//Imgproc.equalizeHist(temp8uc1, temp8uc1);//Ö±ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½
 	float scale = 1;
 	double fx = 1 / scale;
 	resize(gray, smallImg, Size(), fx, fx, INTER_LINEAR_EXACT);
@@ -112,7 +112,7 @@ void ImageOptimizedUtility::UpdateRef_RGB(Mat img, Vector3f refcolor, float valu
 {
 
 
-	//Ö÷»­Ãæ·ÖÀë
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	Mat main_channel[3];
 	cv::split(img, main_channel);
 
@@ -127,7 +127,7 @@ void ImageOptimizedUtility::UpdateRef_RGB(Mat img, Vector3f refcolor, float valu
 	img.copyTo(image_RT);
 
 
-	//×ó²àÈ¡Ñù
+	//ï¿½ï¿½ï¿½È¡ï¿½ï¿½
 
 	Vector2f eyedown_pos1 = rightpoint;
 	Vector2f face_pos1 = leftpoint;
@@ -142,7 +142,7 @@ void ImageOptimizedUtility::UpdateRef_RGB(Mat img, Vector3f refcolor, float valu
 	Mat subimgcopy_1;
 	subimg_1.copyTo(subimgcopy_1);
 
-	//²ÉÑù·ÖÀë
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	Mat LF_vChannels[3];
 	cv::split(subimgcopy_1, LF_vChannels);
@@ -159,7 +159,7 @@ void ImageOptimizedUtility::UpdateRef_RGB(Mat img, Vector3f refcolor, float valu
 
 
 
-	//ÓÒ²àÈ¡Ñù
+	//ï¿½Ò²ï¿½È¡ï¿½ï¿½
 
 	double left2_x = img.rows - face_pos1.x;
 	double right2_x = img.rows - eyedown_pos1.x;
@@ -169,7 +169,7 @@ void ImageOptimizedUtility::UpdateRef_RGB(Mat img, Vector3f refcolor, float valu
 
 	// Debug.Log(left_2 + "................" + right_2);
 
-	//µÚ1´Îµ÷É« 
+	//ï¿½ï¿½1ï¿½Îµï¿½É« 
 
 	Rect roi2(left_2.x, left_2.y, left_2.x - right_2.x, right_2.y - left_2.y);
 
@@ -223,7 +223,7 @@ void ImageOptimizedUtility::UpdateRef_RGB(Mat img, Vector3f refcolor, float valu
 	double Red_offest_RT = refcolor.x - r_avg_RT;
 	double Green_offest_RT = refcolor.y - g_avg_RT;
 	double Blue_offest_RT = refcolor.z - b_avg_RT;
-	//×ó²àµ÷É«
+	//ï¿½ï¿½ï¿½ï¿½É«
 
 
 	for (int col = 0; col < img.cols; col++)
@@ -375,7 +375,7 @@ void ImageOptimizedUtility::UpdateRef_RGB(Mat img, Vector3f refcolor, float valu
 	}
 
 
-	//ÓÒ²àµ÷É«
+	//ï¿½Ò²ï¿½ï¿½É«
 
 	for (int col = 0; col < img.cols; col++)
 	{
@@ -493,7 +493,7 @@ void ImageOptimizedUtility::UpdateRef_RGB(Mat img, Vector3f refcolor, float valu
 
 
 
-	//×îÖÕºÏ³É
+	//ï¿½ï¿½ï¿½ÕºÏ³ï¿½
 	for (int col = 0; col < img.cols; col++)
 	{
 

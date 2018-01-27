@@ -33,18 +33,26 @@ UnlitSkinningTechnique::UnlitSkinningTechnique()
 bool UnlitSkinningTechnique::Init()
 {
 	if (!Technique::Init()) {
+
+		printf("\nUnlitSkinningTechnique Init Failed");
 		return false;
 	}
 
 	if (!AddShader(GL_VERTEX_SHADER, "data/shader/skinningunlit.vs")) {
+
+		printf("\nUnlitSkinningTechnique vs Init Failed");
 		return false;
 	}
 
 	if (!AddShader(GL_FRAGMENT_SHADER, "data/shader/skinningunlit.fs")) {
+
+		printf("\nUnlitSkinningTechnique fs Init Failed");
 		return false;
 	}
 
 	if (!Finalize()) {
+
+		printf("\nUnlitSkinningTechnique vs Finalize Failed");
 		return false;
 	}
 

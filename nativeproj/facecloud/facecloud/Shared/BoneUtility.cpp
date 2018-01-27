@@ -137,7 +137,7 @@ void BoneUtility::Init()
 int BoneUtility::ReadJsonFromFile(const char* filename)
 {
 
-	Json::Value root; // Json::ValueÊÇÒ»ÖÖºÜÖØÒªµÄÀàÐÍ£¬¿ÉÒÔ´ú±íÈÎÒâÀàÐÍ¡£Èçint, string, object, array         
+	Json::Value root; // Json::Valueï¿½ï¿½Ò»ï¿½Öºï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Í£ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¡ï¿½ï¿½ï¿½int, string, object, array         
 
 
 					  // Here, using a specialized Builder, we discard comments and
@@ -239,7 +239,7 @@ void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFa
 	Vector3f toothup_Lf_pos1 = toothup_Lf.ExtractTranslation();
 	Vector3f toothdown_Rt_pos1 = toothdown_Rt.ExtractTranslation();
 
-	//¶îÍ·Æ«ÒÆ
+	//ï¿½ï¿½Í·Æ«ï¿½ï¿½
 
 	Matrix4f forehead_RT = pmesh->GetBoneNode("face_temple_Rt_joint1");
 	Matrix4f forehead_LF = pmesh->GetBoneNode("face_temple_Lf_joint1");
@@ -248,7 +248,7 @@ void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFa
 	Vector3f forhead_RT_pos1 = forehead_RT.ExtractTranslation();
 	Vector3f forhead_LF_pos1 = forehead_LF.ExtractTranslation();
 
-	//Ã¼Ã«ÐÞÕý
+	//Ã¼Ã«ï¿½ï¿½ï¿½ï¿½
 
 	Matrix4f brow_LF02 = pmesh->GetBoneNode("face_brow_Lf_joint2");
 	Matrix4f brow_LF03 = pmesh->GetBoneNode("face_brow_Lf_joint3");
@@ -256,16 +256,16 @@ void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFa
 	Vector3f brow_LF02_pos1 = brow_LF02.ExtractTranslation();
 	Vector3f brow_LF03_pos1 = brow_LF03.ExtractTranslation();
 
-	//±Ç×ÓÐÞÕý
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	Matrix4f nose_tr = pmesh->GetBoneNode("face_nose_joint2");
 	Vector3f nose_tr_pos1 = nose_tr.ExtractTranslation();
 
 
-	//×ì°ÍÐÞÕý
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	Vector3f mouth_tr_pos1 = pmesh->GetBoneNode("face_mouthLip_up_joint0").ExtractTranslation();
 
-	//ÑÛ¾¦ÐÞÕý
+	//ï¿½Û¾ï¿½ï¿½ï¿½ï¿½ï¿½
 	float righteye_conner_pos1 = pmesh->GetBoneNode("face_eyeLids_Rt_joint1").ExtractTranslation().x;
 	float righteye_conner_pos2 = pmesh->GetBoneNode("face_eyeLids_Rt_joint2").ExtractTranslation().x;
 	float Lefteye_conner_pos1 = pmesh->GetBoneNode("face_eyeLids_Lf_joint1").ExtractTranslation().x;
@@ -360,7 +360,7 @@ void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFa
 	_bones["face_tooth_down_joint2"].localPosition += new Vector3f(toothLf_x, toothpos_y, 0);
 	_bones["face_tooth_up_joint2"].localPosition += new Vector3f(-toothpos_y, 0, toothLf_x);
 
-	//ÐÞÕý±Ç×Ó
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	Vector3f forhead_RT_pos2 = forehead_RT.localPosition;
 	Vector3f forhead_LF_pos2 = forehead_LF.localPosition;
@@ -501,7 +501,7 @@ void BoneUtility::ResetBone()
 {
 
 }
-//Ãæ²¿¹Ç÷À±äÐÎ
+//ï¿½æ²¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void BoneUtility::MoveBonePYR(SkinnedMesh* pmesh,string bonename, JsonFaceInfo faceinfo, string facekeypoint, JsonRole bonedef, string boneoffsetname, Vector3f headCenter,float offsetrate)
 {
 	SkinnedMesh::BoneInfo boneinfo = pmesh->GetBoneInfo(bonename);
@@ -516,7 +516,7 @@ void BoneUtility::MoveBonePYR(SkinnedMesh* pmesh,string bonename, JsonFaceInfo f
 	float zepos = bonedef.face_zero_pointy;
 
 	// Vector3f  planpos = _faceplan.Matrix4f.position; 
-	//ÖØ¶¨ÒåÁãµã
+	//ï¿½Ø¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	Vector3f planpos = headCenter;
 
@@ -533,7 +533,7 @@ void BoneUtility::MoveBonePYR(SkinnedMesh* pmesh,string bonename, JsonFaceInfo f
 	Vector3f OriPosition = trspos;
 
 	float yaw_angle = (float)(faceinfo.yaw_angle);          //Ò¡Í·
-	float roll_angle = (float)(faceinfo.roll_angle);        //Æ½ÃæÐý×ª
+	float roll_angle = (float)(faceinfo.roll_angle);        //Æ½ï¿½ï¿½ï¿½ï¿½×ª
 	float pitch_angle = (float)(faceinfo.pitch_angle);   //Ì§Í·
 
 
@@ -605,7 +605,7 @@ Matrix4f BoneUtility::GetLocalMatrixFromGlobal(SkinnedMesh* pmesh,string bonenam
 
 }
 
-//Ãæ²¿¹Ç÷À±äÐÎ
+//ï¿½æ²¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void BoneUtility::MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo faceinfo, string facekeypoint, JsonRole bonedef, string boneoffsetname, Vector3f headCenter, float offsetrate)
 {
 	Matrix4f transformtochange;
@@ -637,7 +637,7 @@ void BoneUtility::MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo fac
 	float sizeuv = bonedef.uvsize;
 	float scale_1024_to_model = sizeuv / 1024;
 
-	float zero_px = headCenter.x + sizeuv / 2;//open ÓÒÊÖ×ø±ê unity ×óÊÖ×ø±ê 
+	float zero_px = headCenter.x + sizeuv / 2;//open ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ unity ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 	float zero_py = headCenter.y - sizeuv / 2;
 
 	Vector3f zero(zero_px, zero_py, trspos.z);

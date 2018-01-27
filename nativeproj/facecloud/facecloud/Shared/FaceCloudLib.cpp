@@ -115,19 +115,26 @@ bool FaceCloudLib::Init()
 	GLUTBackendInit(argc, argv, true, false);
 
 	if (!GLUTBackendCreateWindow(m_Width / 2, m_Height /2, false, "FaceCloudLib")) {
-		return 1;
-	}
 
-	if (!InitCamera())
-	{
+		printf("\nGLUTBackendCreateWindow Failed");
 		return false;
 	}
-	if (!InitMesh())
+
+	bool rt = InitCamera();
+	if (rt == false)
 	{
+		printf("\nInitCamera Failed");
+		return false;
+	}
+	rt = InitMesh();
+	if (rt == false)
+	{
+		printf("\nInitMesh Failed");
 		return false;
 	}
 	if (!InitJson())
 	{
+		printf("\nInitJson Failed");
 		return false;
 	}
 	
@@ -138,6 +145,8 @@ bool FaceCloudLib::Init()
 	//glCullFace(GL_BACK);
 	//glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
+
+	return true;
 }
 void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, string& photoPathOut, string& jsonModelOut)
 {
@@ -250,6 +259,7 @@ bool FaceCloudLib::InitCamera()
 
 	m_pGameCamera = new Camera(m_Width, m_Height, Pos, Target, Up);
 
+	printf("\nStart UnlitSkinningTechnique init\n");
 	m_pSkinningRenderer = new UnlitSkinningTechnique(); 
 	if (!m_pSkinningRenderer->Init()) {
 		printf("Error initializing the UnlitSkinningTechnique\n");
@@ -260,11 +270,15 @@ bool FaceCloudLib::InitCamera()
 	m_pSkinningRenderer->SetDetailTextureUnit(COLOR_TEXTURE_UNIT_INDEX + 1);
 	m_pSkinningRenderer->SetMaskTextureUnit(COLOR_TEXTURE_UNIT_INDEX + 2);
 
+
+	printf("\nStart CommonTechnique init\n");
 	m_pCommonRenderer = new CommonTechnique();
 	if (!m_pCommonRenderer->Init()) {
 		printf("Error initializing the CommonTechnique\n");
 		return false;
 	}
+
+	return true;
 }
 bool FaceCloudLib::InitMesh()
 {
@@ -284,16 +298,17 @@ bool FaceCloudLib::InitMesh()
 
 		Texture* ptexture = new Texture(GL_TEXTURE_2D, "data/facecloud/" + *iter + ".jpg");
 		if (!ptexture->Load()) {
-			return 1;
+			return false;
 		}
 		m_ColorTextureMap[*iter] = ptexture;
 	}
 	m_pMaskTexture = new Texture(GL_TEXTURE_2D, "data/facecloud/mask.jpg");
 	if (!m_pMaskTexture->Load()) {
-		return 1;
+		return false;
 	}
 	
 
+	return true;
 }
 bool FaceCloudLib::InitJson()
 {
@@ -499,9 +514,9 @@ void FaceCloudLib::SaveTextureToFile(cv::Mat imag, int format,string path,bool f
 	{
 		cv::Mat flipimg;
 		/*	flipCode	Anno
-		1	水平翻转
-		0	垂直翻转
-		- 1	水平垂直翻转*/
+		1	水平锟斤拷转
+		0	锟斤拷直锟斤拷转
+		- 1	水平锟斤拷直锟斤拷转*/
 		cv::flip(bgra, flipimg, 0);
 		cv::imwrite(path, flipimg);
 	}
