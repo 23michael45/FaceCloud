@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cdtprojectproperties>
+<section name="org.eclipse.cdt.internal.ui.wizards.settingswizards.IncludePaths">
+<language name="C++ Source File">
+<includepath>/usr/include/freetype2</includepath>
+<includepath>/home/michael/workspace/nativeproj/nativeproj/facecloud/facecloud/Shared/Utility/Include</includepath>
+<includepath>/home/michael/workspace/nativeproj/nativeproj/plugin/assimp/linuxproj/include</includepath>
+<includepath>/home/michael/workspace/nativeproj/nativeproj/plugin/assimp/assimp/include/assimp</includepath>
+<includepath>/home/michael/workspace/nativeproj/nativeproj/facecloud/facecloud/Shared/Utility/Include/ImageMagick-6</includepath>
+<includepath>/home/michael/workspace/nativeproj/nativeproj/facecloud/facecloud/Shared/Utility/Common/FreetypeGL</includepath>
+<includepath>/home/michael/workspace/nativeproj/nativeproj/plugin/assimp/assimp/include/</includepath>
+<includepath>/home/michael/workspace/nativeproj/nativeproj/facecloud/facecloud/Shared/JsonCpp/include</includepath>
+<includepath>/home/michael/workspace/nativeproj/nativeproj/facecloud/facecloud/Shared</includepath>
+
+</language>
+<language name="C Source File">
+<includepath>/usr/include/freetype2</includepath>
+<includepath>/home/michael/workspace/nativeproj/nativeproj/facecloud/facecloud/Shared/Utility/Include</includepath>
+<includepath>/home/michael/workspace/nativeproj/nativeproj/facecloud/facecloud/Shared/Utility/Include/ImageMagick-6</includepath>
+<includepath>/home/michael/workspace/nativeproj/nativeproj/facecloud/facecloud/Shared</includepath>
+
+</language>
+<language name="Object File">
+
+</language>
+<language name="Assembly Source File">
+
+</language>
+</section>
+<section name="org.eclipse.cdt.internal.ui.wizards.settingswizards.Macros">
+<language name="C++ Source File">
+
+</language>
+<language name="C Source File">
+
+</language>
+<language name="Object File">
+
+</language>
+<language name="Assembly Source File">
+
+</language>
+</section>
+</cdtprojectproperties>
