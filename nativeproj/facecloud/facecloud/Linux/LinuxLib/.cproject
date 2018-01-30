@@ -38,7 +38,7 @@
 									<listOptionValue builtIn="false" value="/usr/lib/jvm/java-8-openjdk-amd64/include"/>
 									<listOptionValue builtIn="false" value="${ProjDirPath}/../../Shared/Utility/Include"/>
 									<listOptionValue builtIn="false" value="/usr/local/include/"/>
-									<listOptionValue builtIn="false" value="/usr/local/include/ImageMagick-7"/>
+									<listOptionValue builtIn="false" value="${ProjDirPath}/../../Shared/Utility/Include/ImageMagick-6"/>
 									<listOptionValue builtIn="false" value="${ProjDirPath}/../../Shared/Utility/Common/FreetypeGL"/>
 									<listOptionValue builtIn="false" value="/usr/local/include/assimp"/>
 									<listOptionValue builtIn="false" value="${ProjDirPath}/../../Shared/JsonCpp/include"/>
@@ -52,7 +52,7 @@
 								<option id="gnu.c.compiler.option.include.paths.2113423182" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/usr/include/freetype2"/>
 									<listOptionValue builtIn="false" value="${ProjDirPath}/../../Shared/Utility/Include"/>
-									<listOptionValue builtIn="false" value="/usr/local/include/ImageMagick-7"/>
+									<listOptionValue builtIn="false" value="${ProjDirPath}/../../Shared/Utility/Include/ImageMagick-6"/>
 									<listOptionValue builtIn="false" value="${ProjDirPath}/../../Shared"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1084284171" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
