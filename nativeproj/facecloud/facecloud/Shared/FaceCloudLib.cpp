@@ -166,12 +166,16 @@ void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, 
 		isman = false;
 	}
 
+	JsonFaceInfo jsonfaceinfo;
+	jsonfaceinfo.LoadFromString(jsonFace,true);
 
-	Texture* paftertex = m_BoneUtility.CalculateSkin(ptexture->GetTextureObj(), isman);
+	Texture* paftertex = m_BoneUtility.CalculateSkin(ptexture->GetTextureObj(), isman, m_JsonRoles.roles[modelID],jsonfaceinfo);
 	m_pCurrentSkinTexture = paftertex;
 
-	JsonFaceInfo jsonfaceinfo;
-	jsonfaceinfo.LoadFromString(jsonFace);
+	unsigned char* ptr;
+	cv::Mat mat = GLTextureToMat(m_pCurrentSkinTexture->GetTextureObj(), ptr);
+	SaveTextureToFile(mat, GL_RGBA, "data/export/test.jpg");
+	SAFE_DELETE(ptr);
 
 	if (BeginRenterTexture())
 	{
@@ -200,10 +204,11 @@ void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, 
 void FaceCloudLib::CombineTexture(GLuint FaceTexure, Texture* pWhole, Texture* pMask,string& photoPathOut)
 {
 	unsigned char* faceptr;
-	/*unsigned char* maskptr;
-	unsigned char* colorptr;*/
+	unsigned char* maskptr;
+	unsigned char* colorptr;
+
 	cv::Mat facemat = GLTextureToMat(FaceTexure, faceptr);
-	/*cv::Mat maskmat = GLTextureToMat(pMask->GetTextureObj(), maskptr);
+	cv::Mat maskmat = GLTextureToMat(pMask->GetTextureObj(), maskptr);
 	cv::Mat colormat = GLTextureToMat(pWhole->GetTextureObj(), colorptr);
 
 
@@ -214,24 +219,30 @@ void FaceCloudLib::CombineTexture(GLuint FaceTexure, Texture* pWhole, Texture* p
 	cv::resize(colormat, colormat2, cv::Size(m_Width, m_Height));
 
 
-	facemat.convertTo(facemat, CV_16UC3);
+
+	cv::Mat facemat2;
+
+	facemat.convertTo(facemat2, CV_16UC3);
 	maskmat2.convertTo(maskmat2, CV_16UC3);
-	colormat2.convertTo(colormat2, CV_16UC3);*/
+	colormat2.convertTo(colormat2, CV_16UC3);
 
-	//cv::Mat facemat2;
-	//cv::cvtColor(facemat, facemat2, CV_RGB2RGBA);
+	cv::flip(maskmat2, maskmat2, 0);
+	cv::flip(colormat2, colormat2, 0);
 
-	/*cv::cvtColor(maskmat2, maskmat2, CV_RGBA2RGB);
-	cv::cvtColor(colormat2, colormat2, CV_RGBA2RGB);*/
+	cv::cvtColor(maskmat2, maskmat2, CV_RGBA2RGB);
+	cv::cvtColor(colormat2, colormat2, CV_RGBA2RGB);
 
 
-	//facemat = (facemat * maskmat2 * cv::Scalar(1/255,1/255,1/255) );// +colormat2 * (255 - maskmat2) / 255;
+	int type = facemat2.type();
+	type = maskmat2.type();
+	type = colormat2.type();
+	facemat2 = 1.0f / 255 * ((facemat2.mul(cv::Scalar(255, 255, 255) - maskmat2)) +colormat2.mul( maskmat2));
 
-	SaveTextureToFile(facemat,GL_RGB, photoPathOut, true);
+	SaveTextureToFile(facemat2,GL_RGBA, photoPathOut, true);
 
 	SAFE_DELETE(faceptr);
-	/*SAFE_DELETE(maskptr);
-	SAFE_DELETE(colorptr);*/
+	SAFE_DELETE(maskptr);
+	SAFE_DELETE(colorptr);
 }
 
 

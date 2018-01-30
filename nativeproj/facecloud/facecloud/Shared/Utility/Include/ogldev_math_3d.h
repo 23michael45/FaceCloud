@@ -60,6 +60,43 @@ struct Vector2f
         x = _x;
         y = _y;
     }
+	Vector2f operator+(const Vector2f& r)
+	{
+		Vector2f v(x + r.x, y + r.y);
+		return v;
+	}
+	Vector2f operator-(const Vector2f& r)
+	{
+		Vector2f v(x - r.x, y - r.y);
+
+		return v;
+	}
+	Vector2f operator*(const float& f)
+	{
+		Vector2f v(x * f, y * f);
+
+		return v;
+	}
+	float operator*(Vector2f& v)
+	{
+		return this->x*v.x + this->y*v.y;
+	}
+	float dist()
+	{
+		return sqrt(x*x + y * y); 
+	}  // length
+	float magnitude()
+	{
+		return x * x + y * y;
+	}
+	double prd_vect(Vector2f& v)
+	{
+		return this->x*v.y -this->y*v.x;
+	}
+	double angle_rad(Vector2f& v)
+	{
+		return (prd_vect(v) < 0 ? -1 : 1) * acos(*this*v / (dist()*v.dist()));
+	}
 };
 
 
@@ -171,6 +208,22 @@ struct Vector4f
         Vector3f v(x, y, z);
         return v;
     }
+
+	Vector4f& operator*(float f)
+	{
+		Vector4f v(x * f, y * f,z*f,w*f);
+
+		return v;
+	}
+	Vector4f& operator+=(Vector4f& f)
+	{
+		x += f.x;
+		y += f.y;
+		z += f.z;
+		w += f.w;
+
+		return *this;
+	}
 };
 
 

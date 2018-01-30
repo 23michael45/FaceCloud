@@ -34,9 +34,11 @@ Tutorial 13 - Camera Space
 FaceCloudLib lib;
 string currentModelID = "10002";
 string outJsonModelOut = "";
-string outPhotoPath = "data/export/outphoto.jpg";
-string jsonfacepath = "data/face/photojson.json";
+string jsonfacepath = "data/face/photojson_raw.json";
+string photopath = "data/face/photoface_raw.jpg";
 string jsonfacestring;
+
+string outPhotoPath = "data/export/outphoto.jpg";
 string outjsonoffsetpath = "data/export/outjson.json";
 JsonFaceInfo jsonfaceinfo;
 
@@ -96,16 +98,13 @@ bool hasdone = false;
 void RenderSceneCB()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	string outJsonPath = "data/export/outjson.json";
-	string outPhotoPath = "data/export/outphoto.jpg";
-
+	
 	Vector3f center;
 	Vector2f uvsize;
 	float yoffset;
 
 
-	lib.CalculateBone(currentModelID, jsonfaceinfo, outPhotoPath, outJsonPath, center,uvsize,yoffset);
+	lib.CalculateBone(currentModelID, jsonfaceinfo, outPhotoPath, outJsonModelOut, center,uvsize,yoffset);
 	lib.DrawOnce(currentModelID,center,uvsize);
 
 	glutSwapBuffers();
@@ -131,7 +130,7 @@ static void SpecialKeyboardCB(int Key, int x, int y)
 		printf("\n\nStarting timer...");
 		start = getMilliCount();
 
-		lib.Calculate(currentModelID, "data/face/photoface.jpg", jsonfacestring, outPhotoPath, outJsonModelOut);
+		lib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath, outJsonModelOut);
 		SaveFile(outJsonModelOut, outjsonoffsetpath);
 
 
@@ -169,13 +168,14 @@ int main(int argc, char** argv)
 
 	jsonfacestring = LoadJsonStringFromFile(jsonfacepath);
 
+	//jsonfacestring = LoadJsonStringFromFile("data/face/photojson_raw.json");
 	
 	/*glutMainLoop();*/
 
 
 	
-	lib.Calculate(currentModelID, "data/face/photoface.jpg", jsonfacestring, outPhotoPath, outJsonModelOut);
-	string path = string("data/export/outjson.json");
-	SaveFile(outJsonModelOut, path);
+	lib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath, outJsonModelOut);
+	
+	SaveFile(outJsonModelOut, outjsonoffsetpath);
 	return 0;
 }

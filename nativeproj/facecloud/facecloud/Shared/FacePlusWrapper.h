@@ -29,8 +29,12 @@ public:
 	{
 
 		Json::Value root;
-		Json::Reader reader;
-		bool ok = reader.parse(jsonStr, root,true);
+		Json::CharReaderBuilder rbuilder;
+		Json::CharReader * reader = rbuilder.newCharReader();	
+		string errors;
+		bool ok = reader->parse(jsonStr.c_str(), jsonStr.c_str() + jsonStr.length(), &root,&errors);
+		delete reader;
+
 
 		FP_headpose ret;
 		ret.pitch_angle = root["pitch_angle"].asFloat();
@@ -68,9 +72,13 @@ public:
 	static FP_Landmark FromJson(std::string jsonStr)
 	{
 
-		Json::Value root;
-		Json::Reader reader;
-		bool ok = reader.parse(jsonStr, root, true);
+		Json::Value root;	
+		Json::CharReaderBuilder rbuilder;
+		Json::CharReader * reader = rbuilder.newCharReader();
+		string errors;
+		bool ok = reader->parse(jsonStr.c_str(), jsonStr.c_str() + jsonStr.length(), &root, &errors);
+		delete reader;
+
 
 		FP_Landmark ret;
 

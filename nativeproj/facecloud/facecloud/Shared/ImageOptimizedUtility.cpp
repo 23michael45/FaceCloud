@@ -575,3 +575,82 @@ Vector3f ImageOptimizedUtility::UpdateRefSkin(Mat inputTexture, Vector3f ref_RGB
 }
 
 
+Mat ImageOptimizedUtility::FacePhotoProcess(JsonFaceInfo& faceinfo, JsonRole bonedef, Mat src32)
+{
+	int srcWidth = src32.cols;
+	int srcHeight = src32.rows;
+
+	int resultWidth = 1024;
+	int resultHeight = 1024;
+
+
+
+	Vector2f leftp = faceinfo.landmarkdata["left_eye_right_corner"];
+	//leftp.y = srcHeight - leftp.y;
+
+	Vector2f rightp = faceinfo.landmarkdata["right_eye_left_corner"];
+	//rightp.y = srcHeight - rightp.y;
+
+	Vector2f srcPos1 = (leftp + rightp) * 0.5f;
+
+	Vector2f srcPos2 = faceinfo.landmarkdata["contour_chin"];
+	//srcPos2.y = srcHeight - srcPos2.y;
+
+	float targetpos2_y = bonedef.face_zero_pointy / 1024;
+
+	Vector2f targetPos1(resultWidth * 0.5f, resultHeight * 0.5f); // 百分比 //
+	Vector2f targetPos2(resultWidth * 0.5f, resultHeight * (1 - targetpos2_y));
+
+	//cv::Mat mat;
+
+
+
+	Vector2f srcVec = srcPos2 - srcPos1;
+	Vector2f dstVec = targetPos2 - targetPos1;
+	float srcLen = srcVec.dist();
+	float dstLen = dstVec.dist();
+
+
+	float yaw_angle = (float)(faceinfo.yaw_angle);          //摇头
+	float roll_angle = (float)(faceinfo.roll_angle);        //平面旋转
+	float pitch_angle = (float)(faceinfo.pitch_angle);      //抬头
+
+
+	float yaw_dstLen = cos(yaw_angle) * dstLen;
+	float pitch_dstlen = cos(pitch_angle) * yaw_dstLen;
+
+
+	float scale = dstLen / srcLen;
+	float rotrad = VectorAngle(srcVec, dstVec);
+
+
+	Point2f srcCenterPoint(srcPos1.x, srcPos1.y);
+
+	//cv::Mat affineMat = cv::Mat::eye(3, 2, CV_64FC1);
+	cv::Mat rotateMat = cv::getRotationMatrix2D(srcCenterPoint, rotrad, scale);
+
+	Point2f dstPt = ApplyAffineMat(rotateMat,srcCenterPoint);
+	
+	cv::Point2f delta = Point2f(targetPos1.x,targetPos1.y)- dstPt;
+
+	Mat t = (Mat_<double>(2, 3) << 0, 0, delta.x, 0, 0, delta.y);
+	
+	Mat rt32;
+	Mat affine = t + rotateMat;
+	cv::warpAffine(src32, rt32, affine,Size(resultWidth,resultHeight));
+
+	Mat rt8;
+	rt32.convertTo(rt8, CV_8UC3);
+
+	for (map<string, Vector2f>::iterator iter = faceinfo.landmarkdata.begin(); iter != faceinfo.landmarkdata.end(); iter++)
+	{
+		Vector2f v = iter->second;
+		Point2f pt(v.x, v.y);
+		pt = ApplyAffineMat(affine, pt);
+
+		iter->second = Vector2f(pt.x, resultHeight - pt.y);
+	}
+
+	
+	return rt8;
+}

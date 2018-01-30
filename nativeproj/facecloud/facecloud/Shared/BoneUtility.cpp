@@ -168,7 +168,7 @@ int BoneUtility::ReadJsonFromFile(const char* filename)
 
 	return 0;
 }
-Texture* BoneUtility::CalculateSkin(GLuint texture,bool isman)
+Texture* BoneUtility::CalculateSkin(GLuint texture,bool isman, JsonRole bonedef, JsonFaceInfo& faceinfo)
 {
 	GLint wtex, htex, comp, rs, gs, bs, as;
 	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &wtex);
@@ -189,8 +189,21 @@ Texture* BoneUtility::CalculateSkin(GLuint texture,bool isman)
 	GLenum error = glGetError();
 	const GLubyte * eb = gluErrorString(error);
 	string errorstring((char*)eb);
-	cv::Mat img = cv::Mat(wtex, htex, CV_8UC4, (unsigned*)output_image);
-	
+	cv::Mat srcimg = cv::Mat(wtex, htex, CV_8UC4, (unsigned*)output_image);
+
+	cv::Mat srcimg32;
+	srcimg.convertTo(srcimg32, CV_32FC4);
+
+
+
+	ImageOptimizedUtility iou;
+
+	//do photo pre process
+	cv::Mat img = iou.FacePhotoProcess(faceinfo, bonedef, srcimg32);
+
+
+	iou.SaveTextureToFile(img, GL_RGBA, "data/export/affinetest.jpg");
+
 	Mat rgbimg;
 	cv::cvtColor(img, rgbimg, CV_RGBA2RGB);
 
@@ -208,15 +221,9 @@ Texture* BoneUtility::CalculateSkin(GLuint texture,bool isman)
 
 
 
-	int _V1 = 1;
-	int _V2 = 9;
-	int _VB = 7;
-
-
 	Vector2f leftpoint(350, 340);
 	Vector2f rightpoint(475, 420);
 
-	ImageOptimizedUtility iou;
 	Vector3f rgb = iou.UpdateRefSkin(rgbimg, ref_color, 1.0f, rtmat, leftpoint, rightpoint);
 	
 

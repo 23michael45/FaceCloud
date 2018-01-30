@@ -174,7 +174,7 @@ public:
 class JsonFaceInfo
 {
 public:
-	void LoadFromString(string jsonstring)
+	void LoadFromString(string jsonstring,bool israw = true)
 	{
 		Json::Value root;
 		Json::CharReaderBuilder rbuilder;
@@ -183,7 +183,15 @@ public:
 		bool ok = reader->parse(jsonstring.c_str(), jsonstring.c_str() + jsonstring.size(), &root, &errors);
 		delete reader;
 		
-		Load(root);
+		if (israw)
+		{
+			LoadRaw(root);
+
+		}
+		else {
+
+			Load(root);
+		}
 	}
 	void LoadFromFile(string filename)
 	{
@@ -199,7 +207,37 @@ public:
 
 		Load(root);
 	}
+	void LoadRaw(Json::Value& root)
+	{
+		Json::Value froot = root["faces"][0];
+		face_token = froot["face_token"].asString();
 
+		float top = froot["face_rectangle"]["top"].asFloat();
+		float width = froot["face_rectangle"]["width"].asFloat();
+		float left = froot["face_rectangle"]["left"].asFloat();
+		float height = froot["face_rectangle"]["height"].asFloat();
+
+		face_rectangle.x = top;
+		face_rectangle.y = left;
+		face_rectangle.z = width;
+		face_rectangle.w = height;
+
+		yaw_angle = froot["attributes"]["headpose"]["yaw_angle"].asDouble();
+		roll_angle = froot["attributes"]["headpose"]["roll_angle"].asDouble();
+		pitch_angle = froot["attributes"]["headpose"]["pitch_angle"].asDouble();
+
+		gender = froot["attributes"]["gender"]["value"].asString();
+
+		Json::Value landmarkdataValue = froot["landmark"];
+		vector<string> namesvec = landmarkdataValue.getMemberNames();
+		for (vector<string>::iterator it = namesvec.begin(); it != namesvec.end(); it++)
+		{
+			float x = landmarkdataValue[*it]["x"].asFloat();
+			float y = landmarkdataValue[*it]["y"].asFloat();
+			landmarkdata[*it] = Vector2f(x, y);
+		}
+
+	}
 	void Load(Json::Value& root)
 	{
 
@@ -229,6 +267,9 @@ public:
 		}
 
 	}
+
+	
+
 public:
 	string face_token;
 	Vector4f face_rectangle;
@@ -237,6 +278,7 @@ public:
 	float roll_angle;
 	float pitch_angle;
 
+	string gender;
 
 	map<string, Vector2f> landmarkdata;
 };
@@ -357,7 +399,7 @@ public:
 	void Init();
 	int ReadJsonFromFile(const char* filename);
 
-	Texture* CalculateSkin(GLuint texture,bool isman);
+	Texture* CalculateSkin(GLuint texture,bool isman, JsonRole bonedef, JsonFaceInfo& faceinfo);
 	void CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonfdef, JsonFaceInfo faceinfo, string& outOffsetJson, Vector3f& centerpos, Vector2f& uvsize,float& yOffset);
 
 	void ResetBone();
