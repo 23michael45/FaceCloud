@@ -34,14 +34,36 @@ public:
 	void CalculateBone(string modelID, JsonFaceInfo jsonfaceinfo, string& photoPathOut, string& jsonModelOut, Vector3f& centerpos, Vector2f& uvsize, float& yOffset);
 	bool DrawOnce(string modelID, Vector3f& center, Vector2f& uvsize);
 
-
-
 	void CombineTexture(GLuint FaceTexture, Texture* pWhole, Texture* pMask, string& photoPathOut);
 	cv::Mat GLTextureToMat(GLuint texture, unsigned char*& outimagptr);
 	Camera * GetCamera() {
 		return m_pGameCamera;
 	};
+
+	void RenderToScreen()
+	{
+		EndRenderTexture();
+	}
+	void DisplayGrid();
+	PersProjInfo GetPersProjInfo()
+	{
+		return m_persProjInfo;
+	}
+	OrthoProjInfo GetOrthoProjInfo()
+	{
+		return m_orthoProjInfo;
+	}
+
+	bool m_bRenderToTexture = true;
+	bool m_bHasCalculate = false;
+
+
+	Vector3f m_Lastcenter;
+	Vector2f m_Lastuvsize;
+	float m_Lastyoffset = 0;
 private:
+
+
 	Camera * m_pGameCamera;
 	PersProjInfo m_persProjInfo;
 	OrthoProjInfo m_orthoProjInfo;
@@ -73,7 +95,6 @@ private:
 	void EndRenderTexture();
 	void SaveTextureToFile(cv::Mat imag, int format, string path, bool flip = false);
 
-	void DisplayGrid();
 };
 
 

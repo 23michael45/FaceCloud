@@ -41,7 +41,10 @@ public:
     {
         return m_pos;
     }
-
+	void SetPos(Vector3f pos)
+	{
+		m_pos = pos;
+	}
     const Vector3f& GetTarget() const
     {
         return m_target;

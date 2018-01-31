@@ -90,11 +90,19 @@ string JsonModelFormat::ToString()
 		jnodes[i]["pos"][1] = Json::Value(nodemap[jnodes[i]["name"].asString()].pos.y);
 		jnodes[i]["pos"][2] = Json::Value(nodemap[jnodes[i]["name"].asString()].pos.z);
 
+		jnodes[i]["localpos"][0] = Json::Value(nodemap[jnodes[i]["name"].asString()].localpos.x);
+		jnodes[i]["localpos"][1] = Json::Value(nodemap[jnodes[i]["name"].asString()].localpos.y);
+		jnodes[i]["localpos"][2] = Json::Value(nodemap[jnodes[i]["name"].asString()].localpos.z);
+
 		Json::Value jnewnode;
 		jnewnode["name"] = jnodes[i]["name"];
 		jnewnode["pos"][0] = jnodes[i]["pos"][0];
 		jnewnode["pos"][1] = jnodes[i]["pos"][1];
 		jnewnode["pos"][2] = jnodes[i]["pos"][2];
+
+		jnewnode["localpos"][0] = jnodes[i]["localpos"][0];
+		jnewnode["localpos"][1] = jnodes[i]["localpos"][1];
+		jnewnode["localpos"][2] = jnodes[i]["localpos"][2];
 
 		nodes.append(jnewnode);
 	}
@@ -211,10 +219,10 @@ Texture* BoneUtility::CalculateSkin(GLuint texture,bool isman, JsonRole bonedef,
 
 	if (isman)
 	{
-		ref_color = Vector3f(171, 133, 97);
+		ref_color = Vector3f(201, 159, 117);
 	}
 	else {
-		ref_color = Vector3f(170, 140, 106);
+		ref_color = Vector3f(205, 175, 141);
 	}
 
 
@@ -615,6 +623,19 @@ Matrix4f BoneUtility::GetLocalMatrixFromGlobal(SkinnedMesh* pmesh,string bonenam
 
 }
 
+
+
+Vector3f GetLocalPosition(Matrix4f totalTrs, Matrix4f parentTrs)
+{
+
+	Matrix4f parentinv = parentTrs;
+	parentinv.Inverse();
+	Matrix4f curlocal = parentinv * totalTrs;
+
+	Vector3f localpos = curlocal.ExtractTranslation();
+	return localpos;
+}
+
 //�沿��������
 void BoneUtility::MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo faceinfo, string facekeypoint, JsonRole bonedef, string boneoffsetname, Vector3f headCenter, float offsetrate)
 {
@@ -739,6 +760,10 @@ void BoneUtility::MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo fac
 		pmesh->m_BoneGlobalTrasMap[bonename] = totalfinal;
 		Vector3f diff = totalfinal.ExtractTranslation() - transformtochange.ExtractTranslation();
 
+		Matrix4f curparent = pmesh->GetNodeGlobalTransformation(pmesh->m_BoneNodeMap[bonename]->mParent);
+		Vector3f localdiff = GetLocalPosition(totalfinal, curparent) - GetLocalPosition(transformtochange, curparent);
+
+		jsonModelFormat.nodemap[bonename].localpos = localdiff;
 		jsonModelFormat.nodemap[bonename].pos = diff;
 		
 	}

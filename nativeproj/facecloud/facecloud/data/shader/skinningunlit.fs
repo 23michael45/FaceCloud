@@ -38,4 +38,6 @@ void main()
 		color = vec4(0,0,0,0);
 	}
     FragColor = (color * blend + detail * (1 - blend));
+	
+    //FragColor = vec4(1.0, 0.0, 0.0, 1.0);
 }

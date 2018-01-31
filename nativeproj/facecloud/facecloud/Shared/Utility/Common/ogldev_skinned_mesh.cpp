@@ -425,8 +425,8 @@ void SkinnedMesh::Render()
     
     for (uint i = 0 ; i < m_Entries.size() ; i++) {
         
-		if (m_Entries[i].NumBones == 101)
-		{
+		/*if (m_Entries[i].NumBones == 101)
+		{*/
 			const uint MaterialIndex = m_Entries[i].MaterialIndex;
 
 			assert(MaterialIndex < m_Textures.size());
@@ -440,7 +440,7 @@ void SkinnedMesh::Render()
 				GL_UNSIGNED_INT,
 				(void*)(sizeof(uint) * m_Entries[i].BaseIndex),
 				m_Entries[i].BaseVertex);
-		}
+		//}
 		
 	
     }

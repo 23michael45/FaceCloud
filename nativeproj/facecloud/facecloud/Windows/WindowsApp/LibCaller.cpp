@@ -40,7 +40,7 @@ string jsonfacestring;
 
 string outPhotoPath = "data/export/outphoto.jpg";
 string outjsonoffsetpath = "data/export/outjson.json";
-JsonFaceInfo jsonfaceinfo;
+
 
 
 int getMilliCount() {
@@ -97,17 +97,27 @@ string LoadJsonStringFromFile(string filepath)
 bool hasdone = false;
 void RenderSceneCB()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	Vector3f center;
-	Vector2f uvsize;
-	float yoffset;
+	if (!hasdone)
+	{
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		lib.GetCamera()->SetPos(Vector3f(0, 175, -50));
 
+		//只计算一次
+		lib.m_bRenderToTexture = false;
+		lib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath, outJsonModelOut);
 
-	lib.CalculateBone(currentModelID, jsonfaceinfo, outPhotoPath, outJsonModelOut, center,uvsize,yoffset);
-	lib.DrawOnce(currentModelID,center,uvsize);
+		hasdone = true;
+		glutSwapBuffers();
+	}
+	else
+	{
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		lib.DrawOnce(currentModelID, lib.m_Lastcenter, lib.m_Lastuvsize);
+		lib.DisplayGrid();
 
-	glutSwapBuffers();
+		glutSwapBuffers();
+	}
 }
 static void PassiveMouseCB(int x, int y)
 {
@@ -146,7 +156,7 @@ static void SpecialKeyboardCB(int Key, int x, int y)
 }
 int main(int argc, char** argv)
 {
-
+	bool bRenderToTarget = true;
 
 	if (!lib.Init())
 	{
@@ -156,26 +166,27 @@ int main(int argc, char** argv)
 
 
 
-
-
-
+	jsonfacestring = LoadJsonStringFromFile(jsonfacepath);
 
 	glutDisplayFunc(RenderSceneCB);
 	glutIdleFunc(RenderSceneCB);
 	glutSpecialFunc(SpecialKeyboardCB);
-	//glutPassiveMotionFunc(PassiveMouseCB);
-	
-
-	jsonfacestring = LoadJsonStringFromFile(jsonfacepath);
-
-	//jsonfacestring = LoadJsonStringFromFile("data/face/photojson_raw.json");
-	
-	/*glutMainLoop();*/
 
 
+	if (bRenderToTarget)
+	{
+		lib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath, outJsonModelOut);
+		SaveFile(outJsonModelOut, outjsonoffsetpath);
+
+		//实际服务器不生成文件，只返回STRING就可以
+		//jsonfacestring = LoadJsonStringFromFile("data/face/photojson_raw.json");
+	}
+	else
+	{
+		glutPassiveMotionFunc(PassiveMouseCB);
+		glutMainLoop();
+	}
+
 	
-	lib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath, outJsonModelOut);
-	
-	SaveFile(outJsonModelOut, outjsonoffsetpath);
 	return 0;
 }

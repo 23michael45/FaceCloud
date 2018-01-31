@@ -174,22 +174,33 @@ void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, 
 
 	unsigned char* ptr;
 	cv::Mat mat = GLTextureToMat(m_pCurrentSkinTexture->GetTextureObj(), ptr);
-	//SaveTextureToFile(mat, GL_RGBA, "data/export/test.jpg");
+	SaveTextureToFile(mat, GL_RGBA, "data/export/test.jpg");
 	SAFE_DELETE(ptr);
 
-	if (BeginRenterTexture())
+	Vector3f center;
+	Vector2f uvsize;
+	float yoffset = 0;
+
+	CalculateBone(modelID, jsonfaceinfo, photoPathOut, jsonModelOut, center, uvsize, yoffset);
+
+	m_pSkinningRenderer->SetUVSize(uvsize);
+	m_pSkinningRenderer->SetYOffset(yoffset);
+
+
+	if (m_bRenderToTexture)
 	{
-		Vector3f center;
-		Vector2f uvsize;
-		float yoffset;
 
-		CalculateBone(modelID, jsonfaceinfo, photoPathOut, jsonModelOut,center,uvsize,yoffset);
-
-		m_pSkinningRenderer->SetUVSize(uvsize);
-		m_pSkinningRenderer->SetYOffset(yoffset);
-
-		DrawOnce(modelID,center,uvsize);
+		m_pGameCamera->SetPos(Vector3f(0, 0, 0));
+		if (BeginRenterTexture())
+		{
+			DrawOnce(modelID, center, uvsize);
+			EndRenderTexture();
+		}
+	}
+	else
+	{
 		EndRenderTexture();
+		DrawOnce(modelID, center, uvsize);
 	}
 
 	CombineTexture(m_RenderTexture, m_ColorTextureMap[modelID], m_pMaskTexture, photoPathOut);
@@ -197,8 +208,12 @@ void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, 
 	//SaveTextureToFile(ptexture->GetTextureObj(), m_Width, m_Width, "data/export/preskin.jpg");
 	//SaveTextureToFile(paftertex->GetTextureObj(), m_Width, m_Width, "data/export/afterskin.jpg");
 
-	SAFE_DELETE(ptexture);
-	SAFE_DELETE(m_pCurrentSkinTexture);
+	if (m_bRenderToTexture)
+	{
+		SAFE_DELETE(ptexture);
+		SAFE_DELETE(m_pCurrentSkinTexture);
+
+	}
 }
 
 void FaceCloudLib::CombineTexture(GLuint FaceTexure, Texture* pWhole, Texture* pMask,string& photoPathOut)
@@ -251,7 +266,7 @@ void FaceCloudLib::CombineTexture(GLuint FaceTexure, Texture* pWhole, Texture* p
 
 bool FaceCloudLib::InitCamera()
 {
-	Vector3f Pos(0.0f, 175, 0);
+	Vector3f Pos(0.0f, 0, 0);
 	Vector3f Target(0.0f,0.0f, 1.0f);
 	Vector3f Up(0.0, 1.0f, 0.0f);
 
@@ -403,17 +418,17 @@ void FaceCloudLib::CalculateBone(string modelID, JsonFaceInfo jsonfaceinfo, stri
 }
 bool FaceCloudLib::DrawOnce(string modelID,Vector3f& center,Vector2f& uvsize)
 {
-	// Always check that our framebuffer is ok
+	m_Lastcenter = center;
+	m_Lastuvsize = uvsize;
 
 	m_pGameCamera->OnRender();
-
-	Vector3f campos = Vector3f(0, 0, 0);// center;
+	// Always check that our framebuffer is ok
 
 	Pipeline p;
 	p.WorldPos(0.0f, 0, 0.0f);
 	p.Rotate(0.0f, 180.0f, 0.0f);
 	p.Scale(1, 1, 1);
-	p.SetCamera(campos, m_pGameCamera->GetTarget(), m_pGameCamera->GetUp());
+	p.SetCamera(m_pGameCamera->GetPos(), m_pGameCamera->GetTarget(), m_pGameCamera->GetUp());
 
 	m_orthoProjInfo.b = -uvsize.x/2;
 	m_orthoProjInfo.t = uvsize.x / 2;
@@ -423,9 +438,21 @@ bool FaceCloudLib::DrawOnce(string modelID,Vector3f& center,Vector2f& uvsize)
 	p.SetOrthographicProj(m_orthoProjInfo);
 	p.SetPerspectiveProj(m_persProjInfo);
 	m_pSkinningRenderer->Enable();
-	m_pSkinningRenderer->SetWVP(p.GetWVOrthoPTrans());
+
+	if (m_bRenderToTexture)
+	{
+		m_pSkinningRenderer->SetWVP(p.GetWVOrthoPTrans());
+	}
+	else
+	{
+		m_pSkinningRenderer->SetWVP(p.GetWVPTrans());
+
+	}
 
 
+
+	/*m_pCommonRenderer->Enable();
+	m_pCommonRenderer->SetWVP(p.GetWVPTrans());*/
 	if (m_MeshMap.find(modelID) != m_MeshMap.end())
 	{
 		if (m_ColorTextureMap.find(modelID) != m_ColorTextureMap.end())
@@ -450,12 +477,6 @@ bool FaceCloudLib::DrawOnce(string modelID,Vector3f& center,Vector2f& uvsize)
 			pmesh->Render();
 		}
 	}
-
-
-	/*m_pCommonRenderer->Enable();
-	m_pCommonRenderer->SetWVP(p.GetWVOrthoPTrans());
-	DisplayGrid();*/
-
 
 	return true;
 
@@ -544,6 +565,17 @@ void FaceCloudLib::SaveTextureToFile(cv::Mat imag, int format,string path,bool f
 
 void FaceCloudLib::DisplayGrid()
 {
+	Pipeline p;
+	p.WorldPos(0.0f, 0, 0.0f);
+	p.Rotate(0.0f, 0.0f, 0.0f);
+	p.Scale(1, 1, 1);
+	p.SetOrthographicProj(m_orthoProjInfo);
+	p.SetPerspectiveProj(m_persProjInfo);
+	p.SetCamera(m_pGameCamera->GetPos(), m_pGameCamera->GetTarget(), m_pGameCamera->GetUp());
+	m_pCommonRenderer->Enable();
+	m_pCommonRenderer->SetWVP(p.GetWVPTrans());
+
+
 	glPushMatrix();
 	//glMultMatrixd(pTransform);
 

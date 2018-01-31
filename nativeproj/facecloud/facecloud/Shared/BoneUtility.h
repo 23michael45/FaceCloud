@@ -27,9 +27,19 @@ class JsonModelFormat
 	class node
 	{
 	public:
+		node()
+		{
+			localpos = Vector3f(0, 0, 0);
+			pos = Vector3f(0, 0, 0);
+			scl = Vector3f(1, 1, 1);
+			rot = Vector4f(0,0,0, 1);
+
+		}
+
 		string name;
 		int parent;
 		Vector3f pos;
+		Vector3f localpos;
 		Vector3f scl;
 		Vector4f rot;
 	};
