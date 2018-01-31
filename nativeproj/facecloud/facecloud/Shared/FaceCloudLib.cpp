@@ -174,7 +174,7 @@ void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, 
 
 	unsigned char* ptr;
 	cv::Mat mat = GLTextureToMat(m_pCurrentSkinTexture->GetTextureObj(), ptr);
-	SaveTextureToFile(mat, GL_RGBA, "data/export/test.jpg");
+	//SaveTextureToFile(mat, GL_RGBA, "data/export/test.jpg");
 	SAFE_DELETE(ptr);
 
 	if (BeginRenterTexture())
@@ -238,7 +238,10 @@ void FaceCloudLib::CombineTexture(GLuint FaceTexure, Texture* pWhole, Texture* p
 	type = colormat2.type();
 	facemat2 = 1.0f / 255 * ((facemat2.mul(cv::Scalar(255, 255, 255) - maskmat2)) +colormat2.mul( maskmat2));
 
-	SaveTextureToFile(facemat2,GL_RGBA, photoPathOut, true);
+	cv::flip(facemat2, facemat2, 0);
+	facemat2 = facemat2(cv::Range(270/2, 1070/2), cv::Range(624 / 2, 1424 / 2));
+
+	SaveTextureToFile(facemat2,GL_RGBA, photoPathOut, false);
 
 	SAFE_DELETE(faceptr);
 	SAFE_DELETE(maskptr);

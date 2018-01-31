@@ -202,8 +202,6 @@ Texture* BoneUtility::CalculateSkin(GLuint texture,bool isman, JsonRole bonedef,
 	cv::Mat img = iou.FacePhotoProcess(faceinfo, bonedef, srcimg32);
 
 
-	iou.SaveTextureToFile(img, GL_RGBA, "data/export/affinetest.jpg");
-
 	Mat rgbimg;
 	cv::cvtColor(img, rgbimg, CV_RGBA2RGB);
 
@@ -220,9 +218,14 @@ Texture* BoneUtility::CalculateSkin(GLuint texture,bool isman, JsonRole bonedef,
 	}
 
 
+	//org left bottom (unity)
+	/*Vector2f leftpoint(350, 340);
+	Vector2f rightpoint(475, 420);*/
 
-	Vector2f leftpoint(350, 340);
-	Vector2f rightpoint(475, 420);
+
+	//org left top (opencv)
+	Vector2f leftpoint(350, 684);
+	Vector2f rightpoint(475, 604);
 
 	Vector3f rgb = iou.UpdateRefSkin(rgbimg, ref_color, 1.0f, rtmat, leftpoint, rightpoint);
 	

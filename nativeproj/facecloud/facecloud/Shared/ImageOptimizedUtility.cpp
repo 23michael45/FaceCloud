@@ -135,8 +135,10 @@ void ImageOptimizedUtility::UpdateRef_RGB(Mat img, Vector3f refcolor, float valu
 	Point left_1(face_pos1.x, face_pos1.y);
 	Point right_1(eyedown_pos1.x, eyedown_pos1.y);
 
-
-	Rect roi1(left_1.x, left_1.y, right_1.x - left_1.x, right_1.y - left_1.y);
+	//lb
+	//Rect roi1(left_1.x, left_1.y, right_1.x - left_1.x, right_1.y - left_1.y);
+	//lt
+	Rect roi1(left_1.x, right_1.y, right_1.x - left_1.x, -right_1.y + left_1.y);
 
 	Mat subimg_1(img,roi1);// = img.(new Range((int)left_1.y, (int)right_1.y), new Range((int)left_1.x, (int)right_1.x));
 	Mat subimgcopy_1;
@@ -163,14 +165,24 @@ void ImageOptimizedUtility::UpdateRef_RGB(Mat img, Vector3f refcolor, float valu
 
 	double left2_x = img.rows - face_pos1.x;
 	double right2_x = img.rows - eyedown_pos1.x;
+	
+	
+	//lb
+	//Point left_2(left2_x, left_1.y);
+	//Point right_2(right2_x, right_1.y);
 
-	Point left_2(left2_x, left_1.y);
-	Point right_2(right2_x, right_1.y);
+	//lt
+	Point left_2(left2_x, right_1.y);
+	Point right_2(right2_x, left_1.y);
 
 	// Debug.Log(left_2 + "................" + right_2);
 
 	//��1�ε�ɫ 
 
+
+	//lb
+	//Rect roi2(left_2.x, left_2.y, left_2.x - right_2.x, right_2.y - left_2.y);
+	//lt
 	Rect roi2(left_2.x, left_2.y, left_2.x - right_2.x, right_2.y - left_2.y);
 
 
@@ -648,7 +660,7 @@ Mat ImageOptimizedUtility::FacePhotoProcess(JsonFaceInfo& faceinfo, JsonRole bon
 		Point2f pt(v.x, v.y);
 		pt = ApplyAffineMat(affine, pt);
 
-		iter->second = Vector2f(pt.x, resultHeight - pt.y);
+		iter->second = Vector2f(pt.x, 1024 - pt.y);
 	}
 
 	

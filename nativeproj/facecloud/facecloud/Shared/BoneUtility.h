@@ -262,7 +262,7 @@ public:
 		for (vector<string>::iterator it = namesvec.begin(); it != namesvec.end(); it++)
 		{
 			float x = landmarkdataValue[*it]["x"].asFloat();
-			float y = landmarkdataValue[*it]["y"].asFloat();
+			float y = 1024 - landmarkdataValue[*it]["y"].asFloat();
 			landmarkdata[*it] = Vector2f(x, y);
 		}
 
