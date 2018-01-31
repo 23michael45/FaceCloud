@@ -104,6 +104,22 @@ string JsonModelFormat::ToString()
 		jnewnode["localpos"][1] = jnodes[i]["localpos"][1];
 		jnewnode["localpos"][2] = jnodes[i]["localpos"][2];
 
+
+		Matrix4f worldmat = nodemap[jnodes[i]["name"].asString()].worldmatrix;
+		for (int i = 0 ; i < 4 ;i++)
+		{
+			for (int j = 0; j < 4; j++)
+			{
+				char key[32];
+				sprintf(key , "m%d%d", i, j);
+				jnewnode[key] = worldmat.m[i][j];
+			}
+		}
+
+		jnewnode["localpos"][0] = jnodes[i]["localpos"][0];
+		jnewnode["localpos"][1] = jnodes[i]["localpos"][1];
+		jnewnode["localpos"][2] = jnodes[i]["localpos"][2];
+
 		nodes.append(jnewnode);
 	}
 	hierarchy["nodes"] = nodes;
@@ -648,12 +664,19 @@ void BoneUtility::MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo fac
 	currentlocalMat = Matrix4f(aicurrentMat);
 
 
-
-	if (bonename == "face_chin_joint3")
+	
+	if (bonename == "face_mouthLip_Rt_joint6")
 	{
 		printf("");
 	}
-
+	if (bonename == "face_nosewing_Rt_joint003")
+	{
+		printf("");
+	}
+	if (bonename == "face_eyeLidsdown_Lf_joint3")
+	{
+		printf("");
+	}
 
 	Vector3f trspos, trsscl;
 	Matrix4f trsrot;
@@ -765,6 +788,7 @@ void BoneUtility::MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo fac
 
 		jsonModelFormat.nodemap[bonename].localpos = localdiff;
 		jsonModelFormat.nodemap[bonename].pos = diff;
+		jsonModelFormat.nodemap[bonename].worldmatrix = totalfinal;
 		
 	}
 	else

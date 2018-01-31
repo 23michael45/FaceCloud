@@ -33,7 +33,7 @@ class JsonModelFormat
 			pos = Vector3f(0, 0, 0);
 			scl = Vector3f(1, 1, 1);
 			rot = Vector4f(0,0,0, 1);
-
+			worldmatrix.InitIdentity();
 		}
 
 		string name;
@@ -42,6 +42,7 @@ class JsonModelFormat
 		Vector3f localpos;
 		Vector3f scl;
 		Vector4f rot;
+		Matrix4f worldmatrix;
 	};
 
 public: 
