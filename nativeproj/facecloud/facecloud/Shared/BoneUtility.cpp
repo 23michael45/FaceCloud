@@ -106,13 +106,15 @@ string JsonModelFormat::ToString()
 
 
 		Matrix4f worldmat = nodemap[jnodes[i]["name"].asString()].worldmatrix;
+		Matrix4f localmat = nodemap[jnodes[i]["name"].asString()].localmatrix;
 		for (int i = 0 ; i < 4 ;i++)
 		{
 			for (int j = 0; j < 4; j++)
 			{
 				char key[32];
 				sprintf(key , "m%d%d", i, j);
-				jnewnode[key] = worldmat.m[i][j];
+				jnewnode["worldmatrix"][key] = worldmat.m[i][j];
+				jnewnode["localmatrix"][key] = localmat.m[i][j];
 			}
 		}
 
@@ -788,7 +790,8 @@ void BoneUtility::MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo fac
 
 		jsonModelFormat.nodemap[bonename].localpos = localdiff;
 		jsonModelFormat.nodemap[bonename].pos = diff;
-		jsonModelFormat.nodemap[bonename].worldmatrix = totalfinal;
+		jsonModelFormat.nodemap[bonename].worldmatrix =totalfinal;
+		jsonModelFormat.nodemap[bonename].localmatrix = curparent.Inverse() * totalfinal;
 		
 	}
 	else
