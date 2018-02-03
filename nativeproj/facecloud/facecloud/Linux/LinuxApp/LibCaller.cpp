@@ -34,11 +34,13 @@ Tutorial 13 - Camera Space
 FaceCloudLib lib;
 string currentModelID = "10002";
 string outJsonModelOut = "";
-string outPhotoPath = "data/export/outphoto.jpg";
-string jsonfacepath = "data/face/photojson.json";
+string jsonfacepath = "data/face/photojson_raw.json";
+string photopath = "data/face/photoface_raw.jpg";
 string jsonfacestring;
+
+string outPhotoPath = "data/export/outphoto.jpg";
 string outjsonoffsetpath = "data/export/outjson.json";
-JsonFaceInfo jsonfaceinfo;
+
 
 
 int getMilliCount() {
@@ -95,20 +97,27 @@ string LoadJsonStringFromFile(string filepath)
 bool hasdone = false;
 void RenderSceneCB()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	string outJsonPath = "data/export/outjson.json";
-	string outPhotoPath = "data/export/outphoto.jpg";
+	if (!hasdone)
+	{
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		lib.GetCamera()->SetPos(Vector3f(0, 175, -50));
 
-	Vector3f center;
-	Vector2f uvsize;
-	float yoffset;
+		//Ö»¼ÆËãÒ»´Î
+		lib.m_bRenderToTexture = false;
+		lib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath, outJsonModelOut);
 
+		hasdone = true;
+		glutSwapBuffers();
+	}
+	else
+	{
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		lib.DrawOnce(currentModelID, lib.m_Lastcenter, lib.m_Lastuvsize);
+		lib.DisplayGrid();
 
-	lib.CalculateBone(currentModelID, jsonfaceinfo, outPhotoPath, outJsonPath, center,uvsize,yoffset);
-	lib.DrawOnce(currentModelID,center,uvsize);
-
-	glutSwapBuffers();
+		glutSwapBuffers();
+	}
 }
 static void PassiveMouseCB(int x, int y)
 {
@@ -131,7 +140,7 @@ static void SpecialKeyboardCB(int Key, int x, int y)
 		printf("\n\nStarting timer...");
 		start = getMilliCount();
 
-		lib.Calculate(currentModelID, "data/face/photoface.jpg", jsonfacestring, outPhotoPath, outJsonModelOut);
+		lib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath, outJsonModelOut);
 		SaveFile(outJsonModelOut, outjsonoffsetpath);
 
 
@@ -147,32 +156,37 @@ static void SpecialKeyboardCB(int Key, int x, int y)
 }
 int main(int argc, char** argv)
 {
-
+	bool bRenderToTarget = true;
 
 	if (!lib.Init())
 	{
-		printf("\nFace Cloud Lib Init Failed");
+		printf("Face Cloud Lib Init Failed");
 		return -1;
 	}
 
 
 
+	jsonfacestring = LoadJsonStringFromFile(jsonfacepath);
 
 	glutDisplayFunc(RenderSceneCB);
 	glutIdleFunc(RenderSceneCB);
 	glutSpecialFunc(SpecialKeyboardCB);
-	//glutPassiveMotionFunc(PassiveMouseCB);
+
+
+	if (bRenderToTarget)
+	{
+		lib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath, outJsonModelOut);
+		SaveFile(outJsonModelOut, outjsonoffsetpath);
+
+		//Êµ¼Ê·þÎñÆ÷²»Éú³ÉÎÄ¼þ£¬Ö»·µ»ØSTRING¾Í¿ÉÒÔ
+		//jsonfacestring = LoadJsonStringFromFile("data/face/photojson_raw.json");
+	}
+	else
+	{
+		glutPassiveMotionFunc(PassiveMouseCB);
+		glutMainLoop();
+	}
+
 	
-
-	jsonfacestring = LoadJsonStringFromFile(jsonfacepath);
-
-	
-	/*glutMainLoop();*/
-
-
-	
-	lib.Calculate(currentModelID, "data/face/photoface.jpg", jsonfacestring, outPhotoPath, outJsonModelOut);
-	string path = string("data/export/outjson.json");
-	SaveFile(outJsonModelOut, path);
 	return 0;
 }
