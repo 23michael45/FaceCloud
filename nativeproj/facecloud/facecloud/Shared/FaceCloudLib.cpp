@@ -174,7 +174,7 @@ void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, 
 
 	unsigned char* ptr;
 	cv::Mat mat = GLTextureToMat(m_pCurrentSkinTexture->GetTextureObj(), ptr);
-	SaveTextureToFile(mat, GL_RGBA, "data/export/test.jpg");
+	//SaveTextureToFile(mat, GL_RGBA, "data/export/test.jpg");
 	SAFE_DELETE(ptr);
 
 	Vector3f center;
