@@ -424,6 +424,21 @@ public:
 	Matrix4f GetLocalMatrixFromGlobal(SkinnedMesh* pmesh ,string bonename,Matrix4f globalmat);
 
 	JsonDebug m_JsonDB;
+
+
+private:
+	Matrix4f GetLocalMatrix(Matrix4f totalTrs, Matrix4f parentTrs);
+	Vector3f GetLocalPosition(Matrix4f totalTrs, Matrix4f parentTrs);
+	Vector3f GetLocalPosition(SkinnedMesh* pmesh, string boneName);
+	void SetLocalPosition(SkinnedMesh* pmesh, string boneName, Vector3f localpos);
+	void SetLocalPositionOffset(SkinnedMesh* pmesh, string boneName, Vector3f offset, float rate = 1);
+	void fixfacedistans_half_x(SkinnedMesh* pmesh, string bons1, string bons2);
+	void fixfacedistans_half_z(SkinnedMesh* pmesh, string bons1, string bons2, float  div);
+	void fixfacedistans_y(SkinnedMesh* pmesh, string bons1, string bons2);
+	void fixfacedistans_x(SkinnedMesh* pmesh, string bons1, string bons2, float add);
+	void fixfacedistans_z(SkinnedMesh* pmesh, string bons1, string bons2, float add);
+
+	void eyemapscale(float scale);
 };
 
 

@@ -96,9 +96,9 @@ string JsonModelFormat::ToString()
 
 		Json::Value jnewnode;
 		jnewnode["name"] = jnodes[i]["name"];
-		jnewnode["pos"][0] = jnodes[i]["pos"][0];
-		jnewnode["pos"][1] = jnodes[i]["pos"][1];
-		jnewnode["pos"][2] = jnodes[i]["pos"][2];
+		//jnewnode["pos"][0] = jnodes[i]["pos"][0];Vector3f
+		//jnewnode["pos"][1] = jnodes[i]["pos"][1];
+		//jnewnode["pos"][2] = jnodes[i]["pos"][2];
 
 		jnewnode["localpos"][0] = jnodes[i]["localpos"][0];
 		jnewnode["localpos"][1] = jnodes[i]["localpos"][1];
@@ -113,14 +113,11 @@ string JsonModelFormat::ToString()
 			{
 				char key[32];
 				sprintf(key , "m%d%d", i, j);
-				jnewnode["worldmatrix"][key] = worldmat.m[i][j];
-				jnewnode["localmatrix"][key] = localmat.m[i][j];
+				//jnewnode["worldmatrix"][key] = worldmat.m[i][j];
+				//jnewnode["localmatrix"][key] = localmat.m[i][j];
 			}
 		}
 
-		jnewnode["localpos"][0] = jnodes[i]["localpos"][0];
-		jnewnode["localpos"][1] = jnodes[i]["localpos"][1];
-		jnewnode["localpos"][2] = jnodes[i]["localpos"][2];
 
 		nodes.append(jnewnode);
 	}
@@ -299,7 +296,10 @@ void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFa
 
 	//�������
 
-	Vector3f mouth_tr_pos1 = pmesh->GetBoneNode("face_mouthLip_up_joint0").ExtractTranslation();
+	//嘴巴修正
+
+	Matrix4f mouth_tr = pmesh->GetBoneNode("face_mouthLip_up_joint0");
+	Vector3f mouth_tr_pos1 = mouth_tr.ExtractTranslation();
 
 	//�۾�����
 	float righteye_conner_pos1 = pmesh->GetBoneNode("face_eyeLids_Rt_joint1").ExtractTranslation().x;
@@ -349,29 +349,60 @@ void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFa
 
 
 
-	/*
 
 
-	Vector3f brow_LF02_pos2 = brow_LF02.localPosition;
-	Vector3f brow_LF03_pos2 = brow_LF03.localPosition;
-
-	float  brow_LF02_offset = brow_LF02_pos2.x - brow_LF02_pos1.x;
-	float  brow_LF03_offset = brow_LF02_pos2.x - brow_LF02_pos1.x;
 
 
-	_bones["face_brow_Lf_joint2"].localPosition += new Vector3f(0, 0, brow_LF02_offset / 2);
-	_bones["face_brow_Lf_joint3"].localPosition += new Vector3f(0, 0, brow_LF03_offset / 2);
-	_bones["face_brow_Rt_joint2"].localPosition += new Vector3f(0, 0, brow_LF02_offset / 2);
-	_bones["face_brow_Rt_joint3"].localPosition += new Vector3f(0, 0, brow_LF03_offset / 2);
+
+	/////////////////////////////////
+	float righteye_conner_posf1 = GetLocalPosition(pmesh ,"face_eyeLids_Rt_joint1").x;
+	float righteye_conner_posf2 = GetLocalPosition(pmesh, "face_eyeLids_Rt_joint2").x;
+	float Lefteye_conner_posf1 = GetLocalPosition(pmesh, "face_eyeLids_Lf_joint1").x;
+	float Lefteye_conner_posf2 = GetLocalPosition(pmesh, "face_eyeLids_Lf_joint2").x;
+
+	float Eye_Rt_dis2 = righteye_conner_posf1 - righteye_conner_posf2;
+	float Eye_LF_dis2 = Lefteye_conner_posf1 - Lefteye_conner_posf2;
 
 
-	Vector3f nose_tr_pos2 = nose_tr.localPosition;
+	float eyescalmap = (Eye_Rt_dis2 / Eye_Rt_dis + Eye_LF_dis2 / Eye_LF_dis) / 2;
+	eyemapscale(eyescalmap);
+
+	Vector3f brow_LF02_pos2 = brow_LF02.ExtractTranslation();
+	Vector3f brow_LF03_pos2 = brow_LF03.ExtractTranslation();
+
+	float brow_LF02_offset = brow_LF02_pos2.x - brow_LF02_pos1.x;
+	float brow_LF03_offset = brow_LF03_pos2.x - brow_LF03_pos1.x;
+
+
+
+	SetLocalPositionOffset(pmesh, "face_brow_Lf_joint2",  Vector3f(0, 0, brow_LF02_offset / 2));
+	SetLocalPositionOffset(pmesh, "face_brow_Lf_joint3",Vector3f(0, 0, brow_LF03_offset / 2));
+	SetLocalPositionOffset(pmesh, "face_brow_Rt_joint2", Vector3f(0, 0, brow_LF02_offset / 2));
+	SetLocalPositionOffset(pmesh, "face_brow_Rt_joint3", Vector3f(0, 0, brow_LF03_offset / 2));
+
+	/////////////////////////////////////        
+
+
+	SetLocalPositionOffset(pmesh, "face_forehead_Lf_joint4",Vector3f(0, brow_LF03_offset / 2, brow_LF03_offset / 2));
+	SetLocalPositionOffset(pmesh, "face_forehead_Rt_joint2", Vector3f(0, brow_LF03_offset / 2, -brow_LF03_offset / 2));
+	SetLocalPositionOffset(pmesh, "face_chin_Lf_joint7", Vector3f(0, brow_LF03_offset / 2, brow_LF03_offset / 2));
+	SetLocalPositionOffset(pmesh, "face_chin_Rt_joint7", Vector3f(0, brow_LF03_offset / 2, -brow_LF03_offset / 2));
+
+
+
+
+
+
+
+
+
+	Vector3f nose_tr_pos2 = nose_tr.ExtractTranslation();
 	float nose_offset = nose_tr_pos2.y - nose_tr_pos1.y;
-	//  _bones["face_nose_joint0"].localPosition += new Vector3f(0, nose_offset/3f, 0);
+	//  _bones["face_nose_joint0"].localPosition += Vector3f(0, nose_offset/3f, 0);
 
-	Vector3f mouth_tr_pos2 = mouth_tr.localPosition;
+	Vector3f mouth_tr_pos2 = mouth_tr.ExtractTranslation();
 	float mouth_offset = mouth_tr_pos2.y - mouth_tr_pos1.y;
-	//  _bones["face_mouthLip_joint0"].localPosition -= new Vector3f(0, mouth_offset/3f, 0);
+	//  _bones["face_mouthLip_joint0"].localPosition -= Vector3f(0, mouth_offset/3f, 0);
 
 
 
@@ -379,93 +410,153 @@ void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFa
 	// float eyescal = ((Eye_Rt_dis2 / Eye_Rt_dis) + (Eye_LF_dis2 / Eye_LF_dis)) / 2 ;
 	// Debug.Log("eyescal" + eyescal);
 
+	///////////////////////////////////////////////       
 
-
-	Vector3f tooth_MID_pos2 = tooth_MID.localPosition;
-	Vector3f toothup_Lf_pos2 = toothup_Lf.localPosition;
-	Vector3f toothdown_Rt_pos2 = toothdown_Rt.localPosition;
+	Vector3f tooth_MID_pos2 = tooth_MID.ExtractTranslation();
+	Vector3f toothup_Lf_pos2 = toothup_Lf.ExtractTranslation();
+	Vector3f toothdown_Rt_pos2 = toothdown_Rt.ExtractTranslation();
 
 	float toothpos_y = tooth_MID_pos2.y - tooth_MID_pos1.y;
 	float toothLf_x = toothup_Lf_pos2.x - toothup_Lf_pos1.x;
 	float toothRT_z = toothdown_Rt_pos2.x - toothdown_Rt_pos2.x;
 
-	_bones["face_tooth_down_joint1"].localPosition += new Vector3f(0, toothpos_y, 0);
-	_bones["face_tooth_up_joint3"].localPosition += new Vector3f(-toothpos_y, 0, 0);
-	_bones["face_tooth_down_joint3"].localPosition += new Vector3f(toothLf_x, toothpos_y, 0);
-	_bones["face_tooth_up_joint1"].localPosition += new Vector3f(-toothpos_y, 0, toothLf_x);
-	_bones["face_tooth_down_joint2"].localPosition += new Vector3f(toothLf_x, toothpos_y, 0);
-	_bones["face_tooth_up_joint2"].localPosition += new Vector3f(-toothpos_y, 0, toothLf_x);
+	SetLocalPositionOffset(pmesh,"face_tooth_down_joint1",Vector3f(0, toothpos_y, 0));
+	SetLocalPositionOffset(pmesh,"face_tooth_up_joint3",Vector3f(-toothpos_y, 0, 0));
+	SetLocalPositionOffset(pmesh,"face_tooth_down_joint3",Vector3f(toothLf_x, toothpos_y, 0));
+	SetLocalPositionOffset(pmesh,"face_tooth_up_joint1",Vector3f(-toothpos_y, 0, toothLf_x));
+	SetLocalPositionOffset(pmesh,"face_tooth_down_joint2",Vector3f(toothLf_x, toothpos_y, 0));
+	SetLocalPositionOffset(pmesh,"face_tooth_up_joint2",Vector3f(-toothpos_y, 0, toothLf_x));
 
-	//��������
 
-	Vector3f forhead_RT_pos2 = forehead_RT.localPosition;
-	Vector3f forhead_LF_pos2 = forehead_LF.localPosition;
+
+
+
+
+	////////////////////////////////////////
+
+
+
+
+
+
+
+
+	//修正鼻子
+
+	//Vector3 fixnose_lf2 = _bones["nosewing_Lf_joint1"].localPosition;
+	//Vector3 fixnose_RT2 = _bones["nosewing_Rt_joint1"].localPosition;
+
+	//float fixnosedis_LF = (fixnose_lf2.x - fixnose_lf1.x) / 4;
+	//float fixnosedis_RT = (fixnose_RT2.x - fixnose_RT1.x) / 4;
+
+	//_bones["nosewing_Lf_joint1"].localPosition += Vector3f(-fixnosedis_LF, 0, 0);
+	//_bones["nosewing_Rt_joint1"].localPosition += Vector3f(-fixnosedis_RT, 0, 0);
+
+	Vector3f forhead_RT_pos2 = forehead_RT.ExtractTranslation();
+	Vector3f forhead_LF_pos2 = forehead_LF.ExtractTranslation();
 
 	Vector3f forhead_RT_offset = forhead_RT_pos2 - forhead_RT_pos1;
 	Vector3f forhead_LF_offset = forhead_LF_pos2 - forhead_LF_pos1;
+	///////////////////////////////////////////
 
 
-	_bones["face_temple_Lf_joint2"].localPosition -= forhead_LF_offset;
-	_bones["face_temple_Lf_joint3"].localPosition -= forhead_LF_offset;
-	_bones["face_forehead_Lf_joint1"].localPosition -= forhead_LF_offset;
-	_bones["face_forehead_Lf_joint4"].localPosition -= forhead_LF_offset;
-	_bones["face_forehead_Lf_joint2"].localPosition -= forhead_LF_offset;
 
 
-	_bones["face_temple_Rt_joint2"].localPosition += forhead_RT_offset;
-	_bones["face_temple_Rt_joint3"].localPosition += forhead_RT_offset;
-	_bones["face_forehead_Rt_joint1"].localPosition += forhead_RT_offset;
-	_bones["face_forehead_Rt_joint2"].localPosition += forhead_RT_offset;
-	_bones["face_forehead_Lf_joint3"].localPosition += forhead_RT_offset;
+
+	SetLocalPositionOffset(pmesh, "face_temple_Lf_joint2", forhead_LF_offset * 0.5);
+	SetLocalPositionOffset(pmesh, "face_temple_Lf_joint3", forhead_LF_offset * 0.5);
+	SetLocalPositionOffset(pmesh, "face_forehead_Lf_joint1", forhead_LF_offset * 0.5);
+	SetLocalPositionOffset(pmesh, "face_forehead_Lf_joint4", forhead_LF_offset * 0.5);
+	SetLocalPositionOffset(pmesh, "face_forehead_Lf_joint2", forhead_LF_offset * 0.5);
+
+
+	SetLocalPositionOffset(pmesh, "face_temple_Rt_joint2", forhead_RT_offset * -0.5);
+	SetLocalPositionOffset(pmesh, "face_temple_Rt_joint3", forhead_RT_offset * -0.5);
+	SetLocalPositionOffset(pmesh, "face_forehead_Rt_joint1", forhead_RT_offset * -0.5);
+	SetLocalPositionOffset(pmesh, "face_forehead_Rt_joint2", forhead_RT_offset * -0.5);
+	SetLocalPositionOffset(pmesh, "face_forehead_Lf_joint3", forhead_RT_offset * -0.5);
+
+
+
+
+
+
+
+
+
+
 
 
 	float face_calvaria_joint1updown = forhead_RT_pos2.z - forhead_RT_pos1.z;
 
 
-	if (face_calvaria_joint1updown < 0) {
+	if (face_calvaria_joint1updown < 0)
+	{
 
-		_bones["face_calvaria_joint1"].localPosition += new Vector3f(face_calvaria_joint1updown, 0, 0);
-
-
-		_bones["face_temple_Lf_joint3"].localPosition += new Vector3f(0, face_calvaria_joint1updown, 0);
-		_bones["face_temple_Rt_joint3"].localPosition += new Vector3f(0, face_calvaria_joint1updown, 0);
-
-		_bones["face_forehead_joint1"].localPosition += new Vector3f(0, face_calvaria_joint1updown, 0);
-		_bones["face_forehead_Lf_joint3"].localPosition += new Vector3f(0, face_calvaria_joint1updown, 0);
-		_bones["face_forehead_Lf_joint2"].localPosition += new Vector3f(0, face_calvaria_joint1updown, 0);
-
-		_bones["face_forehead_Lf_joint6"].localPosition += new Vector3f(0, face_calvaria_joint1updown, 0);
-		_bones["face_forehead_joint2"].localPosition += new Vector3f(0, face_calvaria_joint1updown, 0);
-		_bones["face_forehead_Lf_joint5"].localPosition += new Vector3f(0, face_calvaria_joint1updown, 0);
-
+		SetLocalPositionOffset(pmesh, "face_calvaria_joint1",Vector3f(face_calvaria_joint1updown, 0, 0));
+		SetLocalPositionOffset(pmesh, "face_temple_Lf_joint3",Vector3f(0, face_calvaria_joint1updown, 0));
+		SetLocalPositionOffset(pmesh, "face_temple_Rt_joint3",Vector3f(0, face_calvaria_joint1updown, 0));
+		SetLocalPositionOffset(pmesh, "face_forehead_joint1",Vector3f(0, face_calvaria_joint1updown, 0));
+		SetLocalPositionOffset(pmesh, "face_forehead_Lf_joint3",Vector3f(0, face_calvaria_joint1updown, 0));
+		SetLocalPositionOffset(pmesh, "face_forehead_Lf_joint2",Vector3f(0, face_calvaria_joint1updown, 0));
+		SetLocalPositionOffset(pmesh, "face_forehead_Lf_joint6",Vector3f(0, face_calvaria_joint1updown, 0));
+		SetLocalPositionOffset(pmesh, "face_forehead_joint2",Vector3f(0, face_calvaria_joint1updown, 0));
+		SetLocalPositionOffset(pmesh, "face_forehead_Lf_joint5",Vector3f(0, face_calvaria_joint1updown, 0));
 	}
 
 
 
 
-	fixfacedistans_x(_bones["face_temple_Lf_joint1"], _bones["face_temple_Rt_joint1"], 0);
-	fixfacedistans_x(_bones["face_temple_Lf_joint2"], _bones["face_temple_Rt_joint2"], 0);
-	fixfacedistans_y(_bones["face_temple_Lf_joint1"], _bones["face_temple_Lf_joint1"]);
-	fixfacedistans_y(_bones["face_temple_Lf_joint2"], _bones["face_temple_Rt_joint2"]);
-	fixfacedistans_z(_bones["face_temple_Lf_joint1"], _bones["face_temple_Lf_joint1"], 0);
-	fixfacedistans_z(_bones["face_temple_Lf_joint2"], _bones["face_temple_Rt_joint2"], 0);
+	fixfacedistans_x(pmesh,"face_temple_Lf_joint1" , "face_temple_Rt_joint1", 0);
+	fixfacedistans_x(pmesh, "face_temple_Lf_joint2" , "face_temple_Rt_joint2", 0);
+	fixfacedistans_y(pmesh, "face_temple_Lf_joint1" , "face_temple_Lf_joint1");
+	fixfacedistans_y(pmesh, "face_temple_Lf_joint2" , "face_temple_Rt_joint2");
+	fixfacedistans_z(pmesh, "face_temple_Lf_joint1" , "face_temple_Lf_joint1", 0);
+	fixfacedistans_z(pmesh, "face_temple_Lf_joint2" , "face_temple_Rt_joint2", 0);
 
-	fixfacedistans_x(_bones["face_forehead_Lf_joint1"], _bones["face_forehead_Rt_joint1"], 0);
-	fixfacedistans_x(_bones["face_forehead_Lf_joint2"], _bones["face_forehead_Lf_joint3"], 0);
-	fixfacedistans_x(_bones["face_forehead_Lf_joint4"], _bones["face_forehead_Rt_joint2"], 0);
-	fixfacedistans_x(_bones["face_forehead_Lf_joint5"], _bones["face_forehead_Lf_joint6"], 0);
+	fixfacedistans_x(pmesh, "face_forehead_Lf_joint1" , "face_forehead_Rt_joint1", 0);
+	fixfacedistans_x(pmesh, "face_forehead_Lf_joint2" , "face_forehead_Lf_joint3", 0);
+	fixfacedistans_x(pmesh, "face_forehead_Lf_joint4" , "face_forehead_Rt_joint2", 0);
+	fixfacedistans_x(pmesh, "face_forehead_Lf_joint5" , "face_forehead_Lf_joint6", 0);
 
-	fixfacedistans_y(_bones["face_forehead_Lf_joint1"], _bones["face_forehead_Rt_joint1"]);
-	fixfacedistans_y(_bones["face_forehead_Lf_joint2"], _bones["face_forehead_Lf_joint3"]);
-	fixfacedistans_y(_bones["face_forehead_Lf_joint4"], _bones["face_forehead_Rt_joint2"]);
-	fixfacedistans_y(_bones["face_forehead_Lf_joint5"], _bones["face_forehead_Lf_joint6"]);
+	fixfacedistans_y(pmesh, "face_forehead_Lf_joint1" , "face_forehead_Rt_joint1");
+	fixfacedistans_y(pmesh, "face_forehead_Lf_joint2" , "face_forehead_Lf_joint3");
+	fixfacedistans_y(pmesh, "face_forehead_Lf_joint4" , "face_forehead_Rt_joint2");
+	fixfacedistans_y(pmesh, "face_forehead_Lf_joint5" , "face_forehead_Lf_joint6");
 
-	fixfacedistans_z(_bones["face_forehead_Lf_joint1"], _bones["face_forehead_Rt_joint1"], 0);
-	fixfacedistans_z(_bones["face_forehead_Lf_joint2"], _bones["face_forehead_Lf_joint3"], 0);
-	fixfacedistans_z(_bones["face_forehead_Lf_joint4"], _bones["face_forehead_Rt_joint2"], 0);
-	fixfacedistans_z(_bones["face_forehead_Lf_joint5"], _bones["face_forehead_Lf_joint6"], 0);
+	fixfacedistans_z(pmesh, "face_forehead_Lf_joint1" , "face_forehead_Rt_joint1", 0);
+	fixfacedistans_z(pmesh, "face_forehead_Lf_joint2" , "face_forehead_Lf_joint3", 0);
+	fixfacedistans_z(pmesh, "face_forehead_Lf_joint4" , "face_forehead_Rt_joint2", 0);
+	fixfacedistans_z(pmesh, "face_forehead_Lf_joint5" , "face_forehead_Lf_joint6", 0);
 
-	*/
+
+
+	////面部修正
+
+
+	fixfacedistans_half_x(pmesh, "face_chin_joint2" , "face_chin_joint3");
+	fixfacedistans_half_x(pmesh, "face_chin_Lf_joint02" , "face_chin_Rt_joint02");
+	fixfacedistans_half_x(pmesh, "face_chin_Lf_joint03" , "face_chin_Rt_joint03");
+	fixfacedistans_half_x(pmesh, "face_chin_Lf_joint04" , "face_chin_Rt_joint04");
+
+
+
+	fixfacedistans_half_z(pmesh, "face_chin_Lf_joint05" , "face_chin_Rt_joint05", 3);
+	fixfacedistans_half_z(pmesh, "face_chin_Lf_joint06" , "face_chin_Rt_joint06", 2);
+	fixfacedistans_half_z(pmesh, "face_chin_Lf_joint07" , "face_chin_Rt_joint07", 1);
+
+	fixfacedistans_z(pmesh, "face_chin_Lf_joint08" , "face_chin_Rt_joint08", 0);
+	fixfacedistans_z(pmesh, "face_chin_Lf_joint09" , "face_chin_Rt_joint09", 0);
+
+	fixfacedistans_z(pmesh, "face_temple_Lf_joint1" , "face_temple_Rt_joint1", 0);
+	fixfacedistans_z(pmesh, "face_temple_Lf_joint3" , "face_temple_Rt_joint3", 0);
+
+
+
+
+
+
+	return;
 
 
 }
@@ -643,17 +734,284 @@ Matrix4f BoneUtility::GetLocalMatrixFromGlobal(SkinnedMesh* pmesh,string bonenam
 
 
 
-Vector3f GetLocalPosition(Matrix4f totalTrs, Matrix4f parentTrs)
+
+
+void BoneUtility::eyemapscale(float scale) {
+
+	/*Vector2f oldoffest = _eyes.GetComponent<Renderer>().material.GetTextureOffset("_Diffusemap");
+	Vector2f oldscale = _eyes.GetComponent<Renderer>().material.GetTextureScale("_Diffusemap");
+
+	Vector2f newscale = oldscale / scale;
+	Vector2f newoffset = oldoffest + Vector2f((1 - 1 / scale) / 2, (1 - 1 / scale) / 2);
+	_eyes.GetComponent<Renderer>().material.SetTextureScale("_Diffusemap", newscale);
+	_eyes.GetComponent<Renderer>().material.SetTextureOffset("_Diffusemap", newoffset);*/
+
+
+}
+void BoneUtility::fixfacedistans_half_x(SkinnedMesh* pmesh,string bons1, string bons2)
+{
+	Vector3f local1 = GetLocalPosition(pmesh, bons1);
+	Vector3f local2 = GetLocalPosition(pmesh, bons2);
+
+
+	float posx = (abs(local1.x) + abs(local2.x)) / 2;
+
+	float posxfix = abs(abs(local1.x) - abs(local2.x)) / 2;
+
+
+
+
+	if (abs(local1.x) > abs(local2.x))
+	{
+
+		if (local2.x < 0)
+		{
+			SetLocalPosition(pmesh,bons2, Vector3f(local2.x - posxfix, local2.y, local2.z));
+		}
+		else
+		{
+			SetLocalPosition(pmesh, bons2, Vector3f(local2.x + posxfix, local2.y, local2.z));
+		}
+
+	}
+	else {
+
+
+		if (local1.x < 0)
+		{
+			SetLocalPosition(pmesh, bons1 , Vector3f(local1.x - posxfix, local1.y, local1.z));
+		}
+		else
+		{
+			SetLocalPosition(pmesh, bons1, Vector3f(local1.x + posxfix, local1.y, local1.z));
+		}
+
+
+	}
+
+
+
+}
+
+
+
+
+void BoneUtility::fixfacedistans_half_z(SkinnedMesh* pmesh, string bons1, string bons2, float  div)
+{
+
+	Vector3f local1 = GetLocalPosition(pmesh, bons1);
+	Vector3f local2 = GetLocalPosition(pmesh, bons2);
+
+	float posx = (abs(local1.z) + abs(local2.z)) / 2;
+
+	float posxfix = abs(abs(local1.z) - abs(local2.z)) / 2;
+
+	posxfix = posxfix / div;
+
+
+	if (abs(local1.z) > abs(local2.z))
+	{
+
+		if (local2.z < 0)
+		{
+			local2 = Vector3f(local2.x, local2.y, local2.z - posxfix);
+		}
+		else
+		{
+			local2 = Vector3f(local2.x, local2.y, local2.z + posxfix);
+		}
+
+	}
+	else
+	{
+
+
+		if (local1.x < 0)
+		{
+			local1 = Vector3f(local1.x, local1.y, local1.z - posxfix);
+		}
+		else
+		{
+			local1 = Vector3f(local1.x, local1.y, local1.z + posxfix);
+		}
+
+
+	}
+
+
+
+}
+
+
+
+
+
+
+
+
+
+void BoneUtility::fixfacedistans_y(SkinnedMesh* pmesh, string bons1, string bons2)
+{
+
+	Vector3f local1 = GetLocalPosition(pmesh, bons1);
+	Vector3f local2 = GetLocalPosition(pmesh, bons2);
+	if (local1.y > local2.y)
+	{
+		local1 = Vector3f(local1.x, local2.y, local1.z);
+	}
+
+	else {
+		local2 = Vector3f(local2.x, local1.y, local2.z);
+	}
+}
+
+
+void BoneUtility::fixfacedistans_x(SkinnedMesh* pmesh, string bons1, string bons2, float add) {
+
+
+	Vector3f local1 = GetLocalPosition(pmesh, bons1);
+	Vector3f local2 = GetLocalPosition(pmesh, bons2);
+	float posx = (abs(local1.x) + abs(local2.x)) / 2 + add;
+
+	if (local1.x < 0)
+	{
+		local1 = Vector3f(-posx, local1.y, local1.z);
+	}
+	else {
+		local1 = Vector3f(posx, local1.y, local1.z);
+	}
+
+	if (local2.x < 0)
+	{
+		local2 = Vector3f(-posx, local2.y, local2.z);
+	}
+	else {
+		local2 = Vector3f(posx, local2.y, local2.z);
+	}
+
+
+	/*
+	if (abs(local1.x) > abs(local2.x))
+	{
+	local2 = Vector3f(-local1.x, local2.y, local2.z); }
+
+	else {
+	local1 = Vector3f(-local2.x, local1.y, local1.z);
+	}
+	*/
+
+}
+void BoneUtility::fixfacedistans_z(SkinnedMesh* pmesh, string bons1, string bons2, float add)
+{
+
+	Vector3f local1 = GetLocalPosition(pmesh, bons1);
+	Vector3f local2 = GetLocalPosition(pmesh, bons2);
+
+	float posz = (abs(local1.z) + abs(local2.z)) / 2 + add;
+
+	if (local2.z < 0)
+	{
+		local2 = Vector3f(local2.x, local2.y, -posz);
+
+	}
+	else
+	{
+		local2 = Vector3f(local2.x, local2.y, posz);
+	}
+
+
+
+	if (local1.z < 0)
+	{
+		local1 = Vector3f(local1.x, local1.y, -posz);
+
+	}
+	else
+	{
+		local1 = Vector3f(local1.x, local1.y, posz);
+	}
+
+
+}
+Matrix4f BoneUtility::GetLocalMatrix(Matrix4f totalTrs, Matrix4f parentTrs)
 {
 
 	Matrix4f parentinv = parentTrs;
 	parentinv.Inverse();
 	Matrix4f curlocal = parentinv * totalTrs;
-
-	Vector3f localpos = curlocal.ExtractTranslation();
+	return curlocal;
+}
+Vector3f BoneUtility::GetLocalPosition(Matrix4f totalTrs, Matrix4f parentTrs)
+{
+	Matrix4f localmat = GetLocalMatrix(totalTrs, parentTrs);
+	Vector3f localpos = localmat.ExtractTranslation();
 	return localpos;
 }
+Vector3f BoneUtility::GetLocalPosition(SkinnedMesh* pmesh, string boneName)
+{
+	if (pmesh->m_BoneNodeMap.find(boneName) != pmesh->m_BoneNodeMap.end())
+	{
+		Matrix4f curparent = pmesh->GetNodeGlobalTransformation(pmesh->m_BoneNodeMap[boneName]->mParent);
 
+		Matrix4f total;
+		if (pmesh->m_BoneGlobalTrasMap.find(boneName) != pmesh->m_BoneGlobalTrasMap.end())
+		{
+			total = pmesh->m_BoneGlobalTrasMap[boneName];
+		}
+		else
+		{
+			total = pmesh->GetNodeGlobalTransformation(pmesh->m_BoneNodeMap[boneName]);
+		}
+		Vector3f localpos = GetLocalPosition(total, curparent);
+
+		return localpos;
+	}
+	return Vector3f(0, 0, 0);
+}
+void BoneUtility::SetLocalPositionOffset(SkinnedMesh* pmesh, string boneName, Vector3f offset,float rate)
+{
+	Vector3f localpos = GetLocalPosition(pmesh, boneName);
+	Vector3f rtoffset(-offset.x, offset.y, offset.z);
+	SetLocalPosition(pmesh, boneName, localpos + rtoffset * rate);
+}
+void BoneUtility::SetLocalPosition(SkinnedMesh* pmesh, string boneName,Vector3f localpos)
+{
+
+	Matrix4f curparent = pmesh->GetNodeGlobalTransformation(pmesh->m_BoneNodeMap[boneName]->mParent);
+
+	Matrix4f total;
+	if (pmesh->m_BoneGlobalTrasMap.find(boneName) != pmesh->m_BoneGlobalTrasMap.end())
+	{
+		total = pmesh->m_BoneGlobalTrasMap[boneName];
+	}
+	else
+	{
+		total = pmesh->GetNodeGlobalTransformation(pmesh->m_BoneNodeMap[boneName]);
+	}
+
+
+	Matrix4f curlocalMat = GetLocalMatrix(total, curparent);
+
+	Vector3f cpos, cscale;
+	Matrix4f crot;
+	curlocalMat.MatrixDecompose(cpos, cscale, crot);
+
+	Pipeline cp;
+	cp.Scale(cscale);
+	Matrix4f crs = crot * cp.GetWorldTrans();
+	Matrix4f crsinv = crs;
+	crsinv.Inverse();
+
+
+	Matrix4f tx = curlocalMat * crsinv;
+	tx.m[0][3] = localpos.x;
+	tx.m[1][3] = localpos.y;
+	tx.m[2][3] = localpos.z;
+
+	Matrix4f rt = curparent * tx *crs;
+	pmesh->m_BoneGlobalTrasMap[boneName] = rt;
+
+}
 //�沿��������
 void BoneUtility::MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo faceinfo, string facekeypoint, JsonRole bonedef, string boneoffsetname, Vector3f headCenter, float offsetrate)
 {
@@ -747,7 +1105,6 @@ void BoneUtility::MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo fac
 
 
 	Matrix4f x = parentinv * mat;
-
 	Matrix4f tx = x * crsinv;
 
 
