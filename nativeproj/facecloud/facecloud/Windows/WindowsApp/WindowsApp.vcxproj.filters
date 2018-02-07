@@ -340,5 +340,6 @@
     <None Include="..\..\Shared\JsonCpp\src\json_valueiterator.inl">
       <Filter>Shared\JsonCpp\src</Filter>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

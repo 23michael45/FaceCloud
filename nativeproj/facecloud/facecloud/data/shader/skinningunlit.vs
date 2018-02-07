@@ -1,18 +1,19 @@
-#version 120                                                                        
+#version 330                                                                        
                                                                                     
-attribute   vec3 Position;                                             
-attribute   vec2 TexCoord;                                             
-attribute   vec3 Normal;                                               
-attribute   ivec4 BoneIDs;
-attribute   vec4 Weights;
-attribute   vec2 TexCoord_C2;  
+layout (location = 0) in vec3 Position;                                             
+layout (location = 1) in vec2 TexCoord;                                             
+layout (location = 2) in vec3 Normal;                                               
+layout (location = 3) in ivec4 BoneIDs;
+layout (location = 4) in vec4 Weights;
+                                          
+layout (location = 5) in vec2 TexCoord_C2;  
 
-varying  vec2 TexCoord0;
-varying  vec2 TexCoord1;
-varying  vec3 Normal0;                                                                   
-varying  vec3 WorldPos0;                                                                 
+out vec2 TexCoord0;
+out vec2 TexCoord1;
+out vec3 Normal0;                                                                   
+out vec3 WorldPos0;                                                                 
 
-const int MAX_BONES = 240;
+const int MAX_BONES = 250;
 uniform float gYOffset;
 uniform vec2 gUVSize;
 uniform mat4 gWVP;

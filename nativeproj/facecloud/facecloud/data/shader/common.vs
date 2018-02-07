@@ -1,11 +1,11 @@
-#version 120
+#version 330
 
-attribute vec3 Position;
-attribute vec2 TexCoord;
+layout (location = 0) in vec3 Position;
+layout (location = 1) in vec2 TexCoord;
 
 uniform mat4 gWVP;
 
-varying vec2 TexCoord0;
+out vec2 TexCoord0;
 
 void main()
 {

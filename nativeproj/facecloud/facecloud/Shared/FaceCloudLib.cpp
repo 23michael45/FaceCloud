@@ -424,7 +424,7 @@ bool FaceCloudLib::BeginRenterTexture()
 void FaceCloudLib::EndRenderTexture()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glutSwapBuffers();
+	//glutSwapBuffers();
 }
 void FaceCloudLib::CalculateBone(string modelID, JsonFaceInfo jsonfaceinfo, string& photoPathOut, string& jsonModelOut, Vector3f& centerpos, Vector2f& uvsize,float& yOffset)
 {

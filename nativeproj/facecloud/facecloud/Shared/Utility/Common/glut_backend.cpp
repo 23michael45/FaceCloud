@@ -212,7 +212,7 @@ bool GLUTBackendCreateWindow(unsigned int Width, unsigned int Height, bool isFul
     GLenum res = glewInit();
     if (res != GLEW_OK) {
         fprintf(stderr, "Error: '%s'\n", glewGetErrorString(res));
-        //return false;
+        return false;
     }
 
     return true;

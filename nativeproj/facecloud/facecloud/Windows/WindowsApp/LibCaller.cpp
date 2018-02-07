@@ -158,7 +158,7 @@ int main(int argc, char** argv)
 {
 	bool bRenderToTarget = true;
 
-	if (!lib.Init(true))
+	if (!lib.Init(false))
 	{
 		printf("Face Cloud Lib Init Failed");
 		return -1;
