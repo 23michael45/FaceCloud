@@ -205,7 +205,8 @@ bool GLUTBackendCreateWindow(unsigned int Width, unsigned int Height, bool isFul
     }
     else {
         glutInitWindowSize(Width, Height);
-        glutCreateWindow(pTitle);
+		glutCreateWindow(pTitle);
+		glutHideWindow();
     }
 
     // Must be done after glut is initialized!
