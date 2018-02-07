@@ -26,6 +26,7 @@
 #include "ogldev_util.h"
 #include "ogldev_glut_backend.h"
 
+#include "OSMesaContext.h"
 // Points to the object implementing the ICallbacks interface which was delivered to
 // GLUTBackendRun(). All events are forwarded to this object.
 static ICallbacks* s_pCallbacks = NULL;
@@ -211,10 +212,24 @@ bool GLUTBackendCreateWindow(unsigned int Width, unsigned int Height, bool isFul
     GLenum res = glewInit();
     if (res != GLEW_OK) {
         fprintf(stderr, "Error: '%s'\n", glewGetErrorString(res));
-        return false;
+        //return false;
     }
 
     return true;
+}
+bool GLUTBackendCreateContext(unsigned int Width, unsigned int Height)
+{
+
+	bool ok = MesaCreateContext(Width, Height);
+
+	// Must be done after glut is initialized!
+	GLenum res = glewInit();
+	if (res != GLEW_OK) {
+		fprintf(stderr, "Error: '%s'\n", glewGetErrorString(res));
+		return false;
+	}
+
+	return ok;
 }
 
 void GLUTBackendRun(ICallbacks* pCallbacks)

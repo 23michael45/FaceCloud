@@ -26,7 +26,7 @@ class FaceCloudLib{
 public:
 	FaceCloudLib(); 
 	~FaceCloudLib();
-	bool Init();
+	bool Init(bool offscreen = true);
 
 	void Calculate(string modelID, string photoPath, string jsonFace, string& photoPathOut, string& jsonModelOut);
 

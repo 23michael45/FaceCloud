@@ -108,18 +108,29 @@ FaceCloudLib::~FaceCloudLib()
 	}
 	m_ColorTextureMap.clear();
 }
-bool FaceCloudLib::Init()
+bool FaceCloudLib::Init(bool offscreen)
 {
 	int argc = 0;
 	char** argv = 0;
 	GLUTBackendInit(argc, argv, true, false);
 
-	if (!GLUTBackendCreateWindow(m_Width / 2, m_Height /2, false, "FaceCloudLib")) {
+	if (offscreen)
+	{
+		if (!GLUTBackendCreateContext(m_Width, m_Height)) {
 
-		printf("\nGLUTBackendCreateWindow Failed");
-		return false;
+			printf("\nGLUTBackendCreateContext Failed");
+			return false;
+		}
 	}
+	else
+	{
+		if (!GLUTBackendCreateWindow(m_Width, m_Height, false, "FaceCloudLib")) {
 
+			printf("\nGLUTBackendCreateWindow Failed");
+			return false;
+		}
+	
+	}	
 	bool rt = InitCamera();
 	if (rt == false)
 	{
@@ -183,8 +194,12 @@ void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, 
 
 	CalculateBone(modelID, jsonfaceinfo, photoPathOut, jsonModelOut, center, uvsize, yoffset);
 
-	m_pSkinningRenderer->SetUVSize(uvsize);
-	m_pSkinningRenderer->SetYOffset(yoffset);
+	if (m_pSkinningRenderer)
+	{
+		m_pSkinningRenderer->SetUVSize(uvsize);
+		m_pSkinningRenderer->SetYOffset(yoffset);
+
+	}
 
 
 	if (m_bRenderToTexture)
@@ -205,8 +220,7 @@ void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, 
 
 	CombineTexture(m_RenderTexture, m_ColorTextureMap[modelID], m_pMaskTexture, photoPathOut);
 
-	//SaveTextureToFile(ptexture->GetTextureObj(), m_Width, m_Width, "data/export/preskin.jpg");
-	//SaveTextureToFile(paftertex->GetTextureObj(), m_Width, m_Width, "data/export/afterskin.jpg");
+
 
 	if (m_bRenderToTexture)
 	{
@@ -289,6 +303,8 @@ bool FaceCloudLib::InitCamera()
 	m_pGameCamera = new Camera(m_Width, m_Height, Pos, Target, Up);
 
 	printf("\nStart UnlitSkinningTechnique init\n");
+
+
 	m_pSkinningRenderer = new UnlitSkinningTechnique(); 
 	if (!m_pSkinningRenderer->Init()) {
 		printf("Error initializing the UnlitSkinningTechnique\n");
@@ -381,7 +397,7 @@ bool FaceCloudLib::CreateRenderTarget()
 
 
 	// Set "renderedTexture" as our colour attachement #0
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_RenderTexture, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_RenderTexture, 0);
 
 	// Set the list of draw buffers.
 	GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
@@ -437,17 +453,23 @@ bool FaceCloudLib::DrawOnce(string modelID,Vector3f& center,Vector2f& uvsize)
 
 	p.SetOrthographicProj(m_orthoProjInfo);
 	p.SetPerspectiveProj(m_persProjInfo);
-	m_pSkinningRenderer->Enable();
 
-	if (m_bRenderToTexture)
-	{
-		m_pSkinningRenderer->SetWVP(p.GetWVOrthoPTrans());
-	}
-	else
-	{
-		m_pSkinningRenderer->SetWVP(p.GetWVPTrans());
 
+	if (m_pSkinningRenderer)
+	{
+		m_pSkinningRenderer->Enable();
+
+		if (m_bRenderToTexture)
+		{
+			m_pSkinningRenderer->SetWVP(p.GetWVOrthoPTrans());
+		}
+		else
+		{
+			m_pSkinningRenderer->SetWVP(p.GetWVPTrans());
+
+		}
 	}
+
 
 
 
@@ -472,7 +494,11 @@ bool FaceCloudLib::DrawOnce(string modelID,Vector3f& center,Vector2f& uvsize)
 			vector<Matrix4f> Transforms;
 			pmesh->BoneTransform(0, Transforms);
 			for (uint i = 0; i < Transforms.size(); i++) {
-				m_pSkinningRenderer->SetBoneTransform(i, Transforms[i]);
+
+				if (m_pSkinningRenderer)
+				{
+					m_pSkinningRenderer->SetBoneTransform(i, Transforms[i]);
+				}
 			}
 			pmesh->Render();
 		}

@@ -21,6 +21,7 @@
 
 #include "ogldev_util.h"
 #include "technique.h"
+#include "OSMesaContext.h"
 
 Technique::Technique()
 {
@@ -48,7 +49,8 @@ Technique::~Technique()
 
 bool Technique::Init()
 {
-    m_shaderProg = glCreateProgram();
+	//m_shaderProg = MesaCreateProgram();
+    m_shaderProg = glCreateProgram(); 
 
     if (m_shaderProg == 0) {
         fprintf(stderr, "Error creating shader program\n");

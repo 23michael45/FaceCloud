@@ -26,6 +26,7 @@ void GLUTBackendInit(int argc, char** argv, bool WithDepth, bool WithStencil);
 
 
 bool GLUTBackendCreateWindow(uint Width, uint Height, bool isFullScreen, const char* pTitle);
+bool GLUTBackendCreateContext(uint Width, uint Height);
 
 void GLUTBackendRun(ICallbacks* pCallbacks);
 
