@@ -19,10 +19,9 @@
 #include <iostream>
 #include "ogldev_texture.h"
 
-Texture::Texture(GLenum TextureTarget, const std::string& FileName)
+Texture::Texture(GLenum TextureTarget)
 {
     m_textureTarget = TextureTarget;
-    m_fileName      = FileName;
 }
 Texture::Texture()
 {
@@ -34,8 +33,9 @@ Texture::~Texture()
 		glDeleteTextures(1, &m_textureObj);
 	}
 }
-bool Texture::Load()
+bool Texture::LoadFile( const std::string& FileName)
 {
+	m_fileName = FileName;
     try {
         m_image.read(m_fileName);
         m_image.write(&m_blob, "RGBA");
@@ -45,14 +45,31 @@ bool Texture::Load()
         return false;
     }
 
-    glGenTextures(1, &m_textureObj);
-    glBindTexture(m_textureTarget, m_textureObj);
-    glTexImage2D(m_textureTarget, 0, GL_RGBA, m_image.size().width(), m_image.size().height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, m_blob.data());
-    glTexParameterf(m_textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameterf(m_textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glBindTexture(m_textureTarget, 0);
+	Gen(m_image);
     
     return true;
+}
+bool Texture::LoadBase64(std::string& base64string)
+{
+	try {
+		m_blob.base64(base64string);
+		m_image.read(m_blob);
+	}
+	catch (Magick::Error& Error) {
+		std::cout << "Error loading blob texture '" <<  "': " << Error.what() << std::endl;
+		return false;
+	}
+
+	Gen(m_image);
+}
+void Texture::Gen(Magick::Image image)
+{
+	glGenTextures(1, &m_textureObj);
+	glBindTexture(m_textureTarget, m_textureObj);
+	glTexImage2D(m_textureTarget, 0, GL_RGBA, m_image.size().width(), m_image.size().height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, m_blob.data());
+	glTexParameterf(m_textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameterf(m_textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glBindTexture(m_textureTarget, 0);
 }
 
 void Texture::Bind(GLenum TextureUnit)

@@ -161,10 +161,26 @@ bool FaceCloudLib::Init(bool offscreen)
 }
 void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, string& photoPathOut, string& jsonModelOut)
 {
-	Texture* ptexture = new Texture(GL_TEXTURE_2D, photoPath);
-	if (!ptexture->Load()) {
+
+	Texture* ptexture = new Texture(GL_TEXTURE_2D);
+	
+	//File Path
+	if (!ptexture->LoadFile(photoPath)) {
 		return;
 	}
+
+
+
+	//Base 64 Code	
+	/*Magick::Image img;
+	Magick::Blob blob;
+	img.read(photoPath);
+	img.write(&blob, "RGBA");
+	string base64string = blob.base64();
+	if (!ptexture->LoadBase64(base64string)) {
+		return;
+	}*/
+
 	ptexture->Bind(GL_TEXTURE1);
 
 	bool isman = true;
@@ -341,14 +357,14 @@ bool FaceCloudLib::InitMesh()
 
 		m_MeshMap[*iter] = pmesh;
 
-		Texture* ptexture = new Texture(GL_TEXTURE_2D, "data/facecloud/" + *iter + ".jpg");
-		if (!ptexture->Load()) {
+		Texture* ptexture = new Texture(GL_TEXTURE_2D);
+		if (!ptexture->LoadFile("data/facecloud/" + *iter + ".jpg")) {
 			return false;
 		}
 		m_ColorTextureMap[*iter] = ptexture;
 	}
-	m_pMaskTexture = new Texture(GL_TEXTURE_2D, "data/facecloud/mask.jpg");
-	if (!m_pMaskTexture->Load()) {
+	m_pMaskTexture = new Texture(GL_TEXTURE_2D);
+	if (!m_pMaskTexture->LoadFile("data/facecloud/mask.jpg")) {
 		return false;
 	}
 	

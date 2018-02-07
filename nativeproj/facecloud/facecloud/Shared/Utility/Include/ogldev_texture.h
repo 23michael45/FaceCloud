@@ -31,10 +31,11 @@
 class Texture
 {
 public:
-    Texture(GLenum TextureTarget, const std::string& FileName);
+    Texture(GLenum TextureTarget);
 	Texture();
 	~Texture();
-    bool Load();
+	bool LoadFile(const std::string& FileName);
+	bool LoadBase64(std::string& base64string);
 
     void Bind(GLenum TextureUnit);
 	GLuint GetTextureObj();
@@ -46,6 +47,8 @@ private:
     GLuint m_textureObj;
     Magick::Image m_image;
     Magick::Blob m_blob;
+
+	void Gen(Magick::Image image);
 };
 
 

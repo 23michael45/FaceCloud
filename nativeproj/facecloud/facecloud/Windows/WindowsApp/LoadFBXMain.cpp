@@ -167,12 +167,12 @@ public:
 			return false;
 		}
 		
-		m_pTextureColor = new Texture(GL_TEXTURE_2D, "data/head_women.jpg");
-		if (!m_pTextureColor->Load()) {
+		m_pTextureColor = new Texture(GL_TEXTURE_2D);
+		if (!m_pTextureColor->LoadFile("data/head_women.jpg")) {
 			return 1;
 		}
-		m_pTextureDetail = new Texture(GL_TEXTURE_2D, "data/face/photoface.jpg");
-		if (!m_pTextureDetail->Load()) {
+		m_pTextureDetail = new Texture(GL_TEXTURE_2D);
+		if (!m_pTextureDetail->LoadFile("data/face/photoface.jpg")) {
 			return 1;
 		}
 		

@@ -215,9 +215,9 @@ bool BasicMesh::InitMaterials(const aiScene* pScene, const string& Filename)
                                
                 string FullPath = Dir + "/" + p;
                     
-                m_Textures[i] = new Texture(GL_TEXTURE_2D, FullPath.c_str());
+                m_Textures[i] = new Texture(GL_TEXTURE_2D);
 
-                if (!m_Textures[i]->Load()) {
+                if (!m_Textures[i]->LoadFile(FullPath.c_str())) {
                     printf("Error loading texture '%s'\n", FullPath.c_str());
                     delete m_Textures[i];
                     m_Textures[i] = NULL;
