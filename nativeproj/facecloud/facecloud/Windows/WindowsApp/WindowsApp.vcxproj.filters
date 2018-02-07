@@ -204,6 +204,9 @@
     <ClInclude Include="..\..\Shared\UnlitSkinningTechnique.h">
       <Filter>Shared</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Shared\OSMesaContext.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -329,11 +332,13 @@
     <ClCompile Include="..\..\Shared\UnlitSkinningTechnique.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Shared\OSMesaContext.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Shared\JsonCpp\src\json_valueiterator.inl">
       <Filter>Shared\JsonCpp\src</Filter>
     </None>
-    <None Include="packages.config" />
   </ItemGroup>
 </Project>
