@@ -13,6 +13,8 @@
 #include <opencv2/core/core.hpp> 
 #include "ImageOptimizedUtility.h"
 
+#include <GL/glew.h>
+
 void JsonModelFormat::LoadFromFile(string filename)
 {
 
@@ -193,6 +195,8 @@ int BoneUtility::ReadJsonFromFile(const char* filename)
 }
 Texture* BoneUtility::CalculateSkin(GLuint texture,bool isman, JsonRole bonedef, JsonFaceInfo& faceinfo)
 {
+	glBindTexture(GL_TEXTURE_2D,texture);
+
 	GLint wtex, htex, comp, rs, gs, bs, as;
 	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &wtex);
 	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &htex);

@@ -86,11 +86,15 @@ Json::Value LoadJsonValueFromFile(string filepath)
 }
 string LoadJsonStringFromFile(string filepath)
 {
+	printf("\nLoadJSF Path:%s",filepath.c_str());
 	Json::Value root = LoadJsonValueFromFile(filepath);
 
 	Json::StreamWriterBuilder  builder;
 	builder.settings_["commentStyle"] = "All";
 	std::string s = Json::writeString(builder, root);
+
+
+	printf("\nLoadJSF:%s",s.c_str());
 	return s;
 }
 
@@ -158,7 +162,7 @@ int main(int argc, char** argv)
 {
 	bool bRenderToTarget = true;
 
-	if (!lib.Init())
+	if (!lib.Init(false))
 	{
 		printf("Face Cloud Lib Init Failed");
 		return -1;

@@ -15,20 +15,26 @@ public class Entry {
 
 	        String currentModelID = "10002";
 	        String outJsonModelOut = "";
-	        String outPhotoPath = "data/export/outphoto.jpg";
-	        String jsonfacepath = "data/face/photojson.json";
+	        String jsonfacepath = "data/face/photojson_raw.json";
+	        String photopath = "data/face/photoface_raw.jpg";
+
 	        String jsonfacestring = "";
+
+	        String outPhotoPath = "data/export/outphoto.jpg";
 	        String outjsonoffsetpath = "data/export/outjson.json";
+	        
 	        
 
 	        jsonfacestring = fclib.LoadJsonStringFromFile(jsonfacepath);
-	        
-	        outJsonModelOut = fclib.Calculate(currentModelID, "data/face/photoface.jpg", jsonfacestring, outPhotoPath);
+
+	        //System.out.println("jsonfacestring     :      " + jsonfacestring);
+	        outJsonModelOut = fclib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath);
 	    
 	        fclib.SaveFile(outJsonModelOut, outjsonoffsetpath);
 
+	        //System.out.println("outJsonModelOut: " + outJsonModelOut);
 
-	        System.out.println("outJsonModelOut: " + outJsonModelOut);
+	        System.out.println("Finish");
 	 }
 	 
 	 

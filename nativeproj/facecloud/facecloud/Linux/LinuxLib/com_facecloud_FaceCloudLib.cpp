@@ -11,43 +11,7 @@ extern "C" {
 
 	FaceCloudLib gFaceCloudLib;
 
-	void SaveFile(string& s, string& path)
-	{
-		ofstream write;
 
-		write.open(path.c_str(), ios::out | ios::binary);
-		write.write(s.c_str(), s.length());
-		write.close();
-	}
-	void SaveJsonFile(Json::Value jvalue, string& path)
-	{
-		Json::StreamWriterBuilder  builder;
-		builder.settings_["commentStyle"] = "All";
-		std::string s = Json::writeString(builder, jvalue);
-
-		SaveFile(s, path);
-	}
-	Json::Value LoadJsonValueFromFile(string filepath)
-	{
-		Json::CharReaderBuilder rbuilder;
-		rbuilder["collectComments"] = false;
-		std::string errs;
-		Json::Value root;
-		std::ifstream ifs;
-		ifs.open(filepath);
-		bool ok = Json::parseFromStream(rbuilder, ifs, &root, &errs);
-		ifs.close();
-		return root;
-	}
-	string LoadJsonStringFromFile(string filepath)
-	{
-		Json::Value root = LoadJsonValueFromFile(filepath);
-
-		Json::StreamWriterBuilder  builder;
-		builder.settings_["commentStyle"] = "All";
-		std::string s = Json::writeString(builder, root);
-		return s;
-	}
 	std::string jstring2string(JNIEnv *env, jstring jStr) {
 		if (!jStr)
 			return "";
@@ -73,7 +37,7 @@ extern "C" {
  */
 JNIEXPORT jboolean JNICALL Java_com_facecloud_FaceCloudLib_Init	(JNIEnv *, jobject)
 {
-	return gFaceCloudLib.Init();
+	return gFaceCloudLib.Init(false);
 }
 
 /*
@@ -98,7 +62,9 @@ JNIEXPORT jstring JNICALL Java_com_facecloud_FaceCloudLib_Calculate
 JNIEXPORT jstring JNICALL Java_com_facecloud_FaceCloudLib_LoadJsonStringFromFile
 (JNIEnv * env, jobject jobj, jstring filepath)
 {
-	string rt = LoadJsonStringFromFile(jstring2string(env, filepath));
+	string path = jstring2string(env, filepath);
+	//printf("Java_com_facecloud_FaceCloudLib_LoadJsonStringFromFile : %s" ,path.c_str());
+	string rt = gFaceCloudLib.LoadJsonStringFromFile(path);
 	return env->NewStringUTF(rt.c_str());
 }
 
@@ -112,7 +78,7 @@ JNIEXPORT void JNICALL Java_com_facecloud_FaceCloudLib_SaveFile
 {
 	string s = jstring2string(env, js);
 	string path = jstring2string(env, jpath);
-	SaveFile(s,path);
+	gFaceCloudLib.SaveFile(s,path);
 }
 
 #ifdef __cplusplus

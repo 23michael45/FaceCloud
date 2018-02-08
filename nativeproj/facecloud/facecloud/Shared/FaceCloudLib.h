@@ -40,6 +40,12 @@ public:
 		return m_pGameCamera;
 	};
 
+
+	void SaveFile(string& s, string& path);
+	void SaveJsonFile(Json::Value jvalue, string& path);
+	Json::Value LoadJsonValueFromFile(string filepath);
+	string LoadJsonStringFromFile(string filepath);
+
 	void RenderToScreen()
 	{
 		EndRenderTexture();

@@ -1,4 +1,5 @@
 #include "FaceCloudLib.h"
+#include <iostream>
 #include <math.h>
 #include <GL/glew.h>
 #include <GL/freeglut.h>
@@ -163,6 +164,13 @@ bool FaceCloudLib::Init(bool offscreen)
 void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, string& photoPathOut, string& jsonModelOut)
 {
 
+	printf("\nmodelID:%s \nphotoPath:%s \njsonFace:%s \nphotoPathOut:%s \njsonModelOut:%s \n \n",
+			modelID.c_str(),
+			photoPath.c_str(),
+			"",
+			photoPathOut.c_str(),
+			"");
+
 	Texture* ptexture = new Texture(GL_TEXTURE_2D);
 	
 	//File Path
@@ -202,7 +210,7 @@ void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, 
 
 	unsigned char* ptr;
 	cv::Mat mat = GLTextureToMat(m_pCurrentSkinTexture->GetTextureObj(), ptr);
-	//SaveTextureToFile(mat, GL_RGBA, "data/export/test.jpg");
+	SaveTextureToFile(mat, GL_RGBA, "data/export/test.jpg");
 	SAFE_DELETE(ptr);
 
 	Vector3f center;
@@ -652,3 +660,54 @@ void FaceCloudLib::DisplayGrid()
 	glPopMatrix();
 
 }
+void FaceCloudLib::SaveFile(string& s, string& path)
+	{
+		ofstream write;
+
+		write.open(path.c_str(), ios::out | ios::binary);
+		write.write(s.c_str(), s.length());
+		write.close();
+	}
+	void FaceCloudLib::SaveJsonFile(Json::Value jvalue, string& path)
+	{
+		Json::StreamWriterBuilder  builder;
+		builder.settings_["commentStyle"] = "All";
+		std::string s = Json::writeString(builder, jvalue);
+
+		SaveFile(s, path);
+	}
+	Json::Value FaceCloudLib::LoadJsonValueFromFile(string filepath)
+	{
+		Json::CharReaderBuilder rbuilder;
+		rbuilder["collectComments"] = false;
+		std::string errs;
+		Json::Value root;
+		std::ifstream ifs;
+		ifs.open(filepath);
+		bool ok = Json::parseFromStream(rbuilder, ifs, &root, &errs);
+		if(ok)
+		{
+			printf("\nLoadJsonValueFromFile Ok :  %s" ,filepath.c_str());
+		}
+		else
+		{
+
+			printf("\nLoadJsonValueFromFile Failed  : %s" ,filepath.c_str());
+		}
+		ifs.close();
+		return root;
+	}
+	string FaceCloudLib::LoadJsonStringFromFile(string filepath)
+	{
+		//printf("\nLoadJSF Path:%s",filepath.c_str());
+		string path = filepath;
+		Json::Value root = LoadJsonValueFromFile(path);
+
+		Json::StreamWriterBuilder  builder;
+		builder.settings_["commentStyle"] = "All";
+		std::string s = Json::writeString(builder, root);
+
+
+		//printf("\nLoadJSF:%s",s.c_str());
+		return s;
+	}

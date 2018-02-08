@@ -1,7 +1,7 @@
 #pragma once
 #ifndef OSMESACONTEXT_H
 #define	OSMESACONTEXT_H
-#include <GL/GL.h>
+#include <GL/gl.h>
 
 bool MesaCreateContext(unsigned int Width, unsigned int Height);
 bool MesaDestroyContext();
