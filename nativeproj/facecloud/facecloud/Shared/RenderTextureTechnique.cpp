@@ -5,7 +5,7 @@
 
 #include "RenderTextureTechnique.h"
 #include "ogldev_util.h"
-
+#include "Predefined.h"
 using namespace std;
 
 RenderTextureTechnique::RenderTextureTechnique()
@@ -19,21 +19,14 @@ bool RenderTextureTechnique::Init()
 		return false;
 	}
 
-	if (!AddShader(GL_VERTEX_SHADER, "data/shader/Passthrough.vertexshader")) {
+	if (!AddShader(GL_VERTEX_SHADER, (RES_PATH + string("shader/Passthrough.vertexshader")).c_str())) {
 		return false;
 	}
 
-	if (!AddShader(GL_FRAGMENT_SHADER, "data/shader/WobblyTexture.fragmentshader")) {
+	if (!AddShader(GL_FRAGMENT_SHADER, (RES_PATH + string("shader/WobblyTexture.fragmentshader")).c_str())) {
 		return false;
 	}
 
-
-	/*if (!AddShader(GL_VERTEX_SHADER, "data/shader/c.vs")) {
-		return false;
-	}
-	if (!AddShader(GL_FRAGMENT_SHADER, "data/shader/c.fs")) {
-		return false;
-	}*/
 
 	if (!Finalize()) {
 		return false;

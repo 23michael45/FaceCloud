@@ -9,8 +9,7 @@
 #include <opencv2/core/core.hpp>
 #include "opencv2/imgproc/imgproc.hpp"
 
-//#define RES_PATH "data/facecloud/"
-#define RES_PATH "/root/jni/data/facecloud/"
+#include "Predefined.h"
 
 bool WriteTGA(char *file, short int width, short int height, unsigned char *outImage)
 {
@@ -212,7 +211,7 @@ void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, 
 
 	unsigned char* ptr;
 	cv::Mat mat = GLTextureToMat(m_pCurrentSkinTexture->GetTextureObj(), ptr);
-	SaveTextureToFile(mat, GL_RGBA, "data/export/test.jpg");
+	//SaveTextureToFile(mat, GL_RGBA, "data/export/test.jpg");
 	SAFE_DELETE(ptr);
 
 	Vector3f center;
@@ -361,7 +360,7 @@ bool FaceCloudLib::InitMesh()
 	for (vector<string>::iterator iter = modelIDs.begin();iter != modelIDs.end();iter++)
 	{
 		SkinnedMesh* pmesh = new SkinnedMesh;
-		if (!pmesh->LoadMesh(RES_PATH + *iter + ".fbx")) {
+		if (!pmesh->LoadMesh(RES_PATH + "facecloud/" + *iter + ".fbx")) {
 			printf("Mesh load failed\n");
 			return false;
 		}
@@ -369,13 +368,13 @@ bool FaceCloudLib::InitMesh()
 		m_MeshMap[*iter] = pmesh;
 
 		Texture* ptexture = new Texture(GL_TEXTURE_2D);
-		if (!ptexture->LoadFile(RES_PATH + *iter + ".jpg")) {
+		if (!ptexture->LoadFile(RES_PATH + "facecloud/" + *iter + ".jpg")) {
 			return false;
 		}
 		m_ColorTextureMap[*iter] = ptexture;
 	}
 	m_pMaskTexture = new Texture(GL_TEXTURE_2D);
-	if (!m_pMaskTexture->LoadFile(RES_PATH + string("mask.jpg"))) {
+	if (!m_pMaskTexture->LoadFile(RES_PATH + string("facecloud/mask.jpg"))) {
 		return false;
 	}
 	
@@ -385,7 +384,7 @@ bool FaceCloudLib::InitMesh()
 bool FaceCloudLib::InitJson()
 {
 	m_BoneUtility.Init();
-	m_JsonRoles.LoadFromFile(RES_PATH + string("model_offset.json"));
+	m_JsonRoles.LoadFromFile(RES_PATH + string("facecloud/model_offset.json"));
 
 	return true;
 }

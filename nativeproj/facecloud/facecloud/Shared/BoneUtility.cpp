@@ -14,6 +14,7 @@
 #include "ImageOptimizedUtility.h"
 
 #include <GL/glew.h>
+#include "Predefined.h"
 
 void JsonModelFormat::LoadFromFile(string filename)
 {
@@ -155,8 +156,8 @@ JsonModelFormat::~JsonModelFormat()
 void BoneUtility::Init()
 {
 	hasMoveBones = false;
-	pairs.LoadFromFile("data/face/kp.json");
-	jsonModelFormat.LoadFromFile("data/face/women_head_fix.JD");
+	pairs.LoadFromFile(RES_PATH + string("face/kp.json"));
+	jsonModelFormat.LoadFromFile(RES_PATH + string("face/women_head_fix.JD"));
 }
 
 int BoneUtility::ReadJsonFromFile(const char* filename)

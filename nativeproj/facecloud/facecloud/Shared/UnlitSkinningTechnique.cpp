@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "UnlitSkinningTechnique.h"
 #include "ogldev_util.h"
-
+#include "Predefined.h"
 using namespace std;
 
 UnlitSkinningTechnique::UnlitSkinningTechnique()
@@ -38,13 +38,13 @@ bool UnlitSkinningTechnique::Init()
 		return false;
 	}
 
-	if (!AddShader(GL_VERTEX_SHADER, "data/shader/skinningunlit.vs")) {
+	if (!AddShader(GL_VERTEX_SHADER, (RES_PATH + string("shader/skinningunlit.vs")).c_str())) {
 
 		printf("\nUnlitSkinningTechnique vs Init Failed");
 		return false;
 	}
 
-	if (!AddShader(GL_FRAGMENT_SHADER, "data/shader/skinningunlit.fs")) {
+	if (!AddShader(GL_FRAGMENT_SHADER, (RES_PATH + string("shader/skinningunlit.fs")).c_str())) {
 
 		printf("\nUnlitSkinningTechnique fs Init Failed");
 		return false;

@@ -207,6 +207,9 @@
     <ClInclude Include="..\..\Shared\OSMesaContext.h">
       <Filter>Shared</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Shared\Predefined.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

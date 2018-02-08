@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "Predefined.h"
 #include <limits.h>
 #include <string>
 
@@ -36,11 +37,11 @@ bool SkinningTechnique::Init()
 		return false;
 	}
 
-	if (!AddShader(GL_VERTEX_SHADER, "data/shader/skinning.vs")) {
+	if (!AddShader(GL_VERTEX_SHADER, (RES_PATH + string("shader/skinning.vs")).c_str())) {
 		return false;
 	}
 
-	if (!AddShader(GL_FRAGMENT_SHADER, "data/shader/skinning.fs")) {
+	if (!AddShader(GL_FRAGMENT_SHADER, (RES_PATH + string("shader/skinning.fs")).c_str())) {
 		return false;
 	}
 

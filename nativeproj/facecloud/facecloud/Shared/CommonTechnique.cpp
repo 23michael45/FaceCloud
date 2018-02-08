@@ -5,7 +5,7 @@
 
 #include "CommonTechnique.h"
 #include "ogldev_util.h"
-
+#include "Predefined.h"
 using namespace std;
 
 CommonTechnique::CommonTechnique()
@@ -23,14 +23,14 @@ bool CommonTechnique::Init()
 	}
 	printf("\nxxx start Init");
 
-	if (!AddShader(GL_VERTEX_SHADER, "data/shader/common.vs")) {
+	if (!AddShader(GL_VERTEX_SHADER, (RES_PATH + string("shader/common.vs")).c_str())) {
 
 		printf("\nCommonTechnique vs Finalize Failed");
 		return false;
 	}
 
 	printf("\nxxxx start Init");
-	if (!AddShader(GL_FRAGMENT_SHADER, "data/shader/common.fs")) {
+	if (!AddShader(GL_FRAGMENT_SHADER, (RES_PATH + string("shader/common.fs")).c_str())) {
 
 		printf("\nCommonTechnique vs fs Failed");
 		return false;
