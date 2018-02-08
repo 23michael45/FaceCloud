@@ -30,6 +30,7 @@ void Log(std::string message)
 	{
 		fputs(message.c_str(), pfile);
 		fclose(pfile);
+		pfile = NULL;
 	}
 
 	if (pfile)
