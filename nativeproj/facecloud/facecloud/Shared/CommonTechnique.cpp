@@ -21,7 +21,6 @@ bool CommonTechnique::Init()
 		printf("\nCommonTechnique vs Init Failed");
 		return false;
 	}
-	printf("\nxxx start Init");
 
 	if (!AddShader(GL_VERTEX_SHADER, (RES_PATH + string("shader/common.vs")).c_str())) {
 
@@ -29,25 +28,21 @@ bool CommonTechnique::Init()
 		return false;
 	}
 
-	printf("\nxxxx start Init");
 	if (!AddShader(GL_FRAGMENT_SHADER, (RES_PATH + string("shader/common.fs")).c_str())) {
 
 		printf("\nCommonTechnique vs fs Failed");
 		return false;
 	}
 
-	printf("\nxxxxx start Init");
 	if (!Finalize()) {
 
 		printf("\nCommonTechnique vs Finalize Failed");
 		return false;
 	}
-	printf("\nxxxxxxx start Init");
 
 	m_WVPLocation = GetUniformLocation("gWVP");
 	InitSampler();
 
-	printf("\nxxxff start Init");
 	return true;
 }
 

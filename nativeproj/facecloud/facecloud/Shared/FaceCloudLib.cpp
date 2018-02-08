@@ -112,6 +112,7 @@ FaceCloudLib::~FaceCloudLib()
 }
 bool FaceCloudLib::Init(bool offscreen)
 {
+	printf("\nStart Face Cloud Lib Init\n");
 	int argc = 0;
 	char** argv = 0;
 	GLUTBackendInit(argc, argv, true, false);
