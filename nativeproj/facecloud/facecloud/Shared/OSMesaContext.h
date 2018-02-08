@@ -3,7 +3,8 @@
 #define	OSMESACONTEXT_H
 #include <GL/gl.h>
 #include <string>
-
+#include <ctime>
+#include <sys/timeb.h>
 
 #define LOGFILE	"facelog.log"     // all Log(); messages will be appended to this file
 
@@ -15,4 +16,8 @@ bool MesaCreateContext(unsigned int Width, unsigned int Height);
 bool MesaDestroyContext();
 GLuint MesaCreateShader();
 GLuint MesaCreateProgram();
+
+int getMilliCount();
+
+int getMilliSpan(int nTimeStart);
 #endif	/* OSMESACONTEXT_H */

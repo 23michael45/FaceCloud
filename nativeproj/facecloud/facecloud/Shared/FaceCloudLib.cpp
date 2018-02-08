@@ -166,6 +166,9 @@ bool FaceCloudLib::Init(bool offscreen)
 }
 void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, string& photoPathOut, string& jsonModelOut)
 {
+	printf("\n\nStarting timer...");
+	int start = getMilliCount();
+
 
 	printf("\nmodelID:%s \nphotoPath:%s \njsonFace:%s \nphotoPathOut:%s \njsonModelOut:%s \n \n",
 			modelID.c_str(),
@@ -256,6 +259,10 @@ void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, 
 		SAFE_DELETE(m_pCurrentSkinTexture);
 
 	}
+
+
+	int milliSecondsElapsed = getMilliSpan(start);
+	printf("\n\nElapsed time = %u milliseconds", milliSecondsElapsed);
 }
 
 void FaceCloudLib::CombineTexture(GLuint FaceTexure, Texture* pWhole, Texture* pMask,string& photoPathOut)

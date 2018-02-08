@@ -9,3 +9,4 @@
 #define RES_PATH std::string("/root/jni/data/")
 
 #endif // WIN32
+

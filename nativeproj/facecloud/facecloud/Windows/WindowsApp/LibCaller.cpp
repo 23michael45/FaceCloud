@@ -28,8 +28,7 @@ Tutorial 13 - Camera Space
 #include "ogldev_util.h"
 #include "ogldev_pipeline.h"
 #include "FaceCloudLib.h"
-#include <ctime>
-#include <sys/timeb.h>
+#include "OSMesaContext.h"
 
 FaceCloudLib lib;
 string currentModelID = "10002";
@@ -43,19 +42,6 @@ string outjsonoffsetpath = "data/export/outjson.json";
 
 
 
-int getMilliCount() {
-	timeb tb;
-	ftime(&tb);
-	int nCount = tb.millitm + (tb.time & 0xfffff) * 1000;
-	return nCount;
-}
-
-int getMilliSpan(int nTimeStart) {
-	int nSpan = getMilliCount() - nTimeStart;
-	if (nSpan < 0)
-		nSpan += 0x100000 * 1000;
-	return nSpan;
-}
 void SaveFile(string& s,string& path)
 {
 	ofstream write;
