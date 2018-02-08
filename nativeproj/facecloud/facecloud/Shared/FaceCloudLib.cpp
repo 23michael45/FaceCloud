@@ -10,6 +10,7 @@
 #include "opencv2/imgproc/imgproc.hpp"
 
 #include "Predefined.h"
+#include "OSMesaContext.h"
 
 bool WriteTGA(char *file, short int width, short int height, unsigned char *outImage)
 {
@@ -112,7 +113,7 @@ FaceCloudLib::~FaceCloudLib()
 }
 bool FaceCloudLib::Init(bool offscreen)
 {
-	printf("\nStart Face Cloud Lib Init\n");
+	Log("\nStart Face Cloud Lib Init\n");
 	int argc = 0;
 	char** argv = 0;
 	GLUTBackendInit(argc, argv, true, false);
@@ -122,7 +123,7 @@ bool FaceCloudLib::Init(bool offscreen)
 		if (!GLUTBackendCreateContext(m_Width, m_Height)) {
 
 			glutHideWindow();
-			printf("\nGLUTBackendCreateContext Failed");
+			Log("\nGLUTBackendCreateContext Failed");
 			return false;
 		}
 	}
@@ -130,7 +131,7 @@ bool FaceCloudLib::Init(bool offscreen)
 	{
 		if (!GLUTBackendCreateWindow(m_Width, m_Height, false, "FaceCloudLib")) {
 
-			printf("\nGLUTBackendCreateWindow Failed");
+			Log("\nGLUTBackendCreateWindow Failed");
 			return false;
 		}
 	
@@ -138,18 +139,18 @@ bool FaceCloudLib::Init(bool offscreen)
 	bool rt = InitCamera();
 	if (rt == false)
 	{
-		printf("\nInitCamera Failed");
+		Log("\nInitCamera Failed");
 		return false;
 	}
 	rt = InitMesh();
 	if (rt == false)
 	{
-		printf("\nInitMesh Failed");
+		Log("\nInitMesh Failed");
 		return false;
 	}
 	if (!InitJson())
 	{
-		printf("\nInitJson Failed");
+		Log("\nInitJson Failed");
 		return false;
 	}
 	

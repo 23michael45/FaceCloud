@@ -2,6 +2,41 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <GL/osmesa.h>
+#include "Predefined.h"
+using namespace std;
+
+bool LogCreated = false;
+
+void Log(std::string message)
+{
+	printf(message.c_str());
+	std::string file = string(RES_PATH) + string(LOGFILE);
+	const char * filepath = file.c_str();
+	FILE *pfile;
+
+	if (!LogCreated) {
+		pfile = fopen(filepath, "w");
+		LogCreated = true;
+	}
+	else
+		pfile = fopen(filepath, "a");
+
+	if (pfile == NULL) {
+		if (LogCreated)
+			LogCreated = false;
+		return;
+	}
+	else
+	{
+		fputs(message.c_str(), pfile);
+		fclose(pfile);
+	}
+
+	if (pfile)
+		fclose(pfile);
+}
+
+
 //OSMesaContext ctx;
 GLfloat *buffer = NULL;
 bool MesaCreateContext(unsigned int Width, unsigned int Height)
