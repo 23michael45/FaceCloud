@@ -1,20 +1,27 @@
 #include "OSMesaContext.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <vector>
 #include <GL/osmesa.h>
 #include "Predefined.h"
 using namespace std;
 
-bool LogCreated = false;
+#define FORMAT_MSG_BUFFER_SIZE (204800)  
+bool LogCreated = false; 
 
-void Log(char const* const message,...)
+std::string format(const char *fmt, ...)
 {
-	/*va_list args;
-	va_start(args, message);
-	printf(message, args);
-	va_end(args);*/
-
-
+	char szBuffer[FORMAT_MSG_BUFFER_SIZE + 1] = { 0 };
+	va_list args;
+	va_start(args, fmt);
+	vsnprintf(szBuffer, FORMAT_MSG_BUFFER_SIZE, fmt, args);
+	va_end(args);
+	std::string strRet(szBuffer);
+	return strRet;
+}
+void Log(std::string message)
+{
+	printf(message.c_str());
 	std::string file = string(RES_PATH) + string(LOGFILE);
 	const char * filepath = file.c_str();
 	FILE *pfile;
@@ -33,7 +40,7 @@ void Log(char const* const message,...)
 	}
 	else
 	{
-		fputs(message, pfile);
+		fputs(message.c_str(), pfile);
 		fclose(pfile);
 		pfile = NULL;
 	}

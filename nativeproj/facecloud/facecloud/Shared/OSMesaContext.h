@@ -8,9 +8,10 @@
 
 #define LOGFILE	"facelog.log"     // all Log(); messages will be appended to this file
 
-void Log(char const* const message, ...);    // logs a message to LOGFILE
 
+void Log(std::string message);    // logs a message to LOGFILE
 
+std::string format(const char *fmt, ...);
 
 bool MesaCreateContext(unsigned int Width, unsigned int Height);
 bool MesaDestroyContext();

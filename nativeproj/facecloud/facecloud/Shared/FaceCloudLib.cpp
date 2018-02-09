@@ -171,13 +171,18 @@ string FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace
 		Log("\n\nStarting timer...");
 		int start = getMilliCount();
 
-
-		Log("\nmodelID:%s \nphotoPath:%s \njsonFace:%s \nphotoPathOut:%s \njsonModelOut:%s \n \n",
+		/*string s = format("\nmodelID:%s \nphotoPath:%s \njsonFace:%s \nphotoPathOut:%s \njsonModelOut:%s \n \n",
 			modelID.c_str(),
 			photoPath.c_str(),
 			jsonFace.c_str(),
 			photoPathOut.c_str(),
-			"");
+			"");*/
+		Log(format("\nmodelID:%s \nphotoPath:%s \njsonFace:%s \nphotoPathOut:%s \njsonModelOut:%s \n \n",
+			modelID.c_str(),
+			photoPath.c_str(),
+			jsonFace.c_str(),
+			photoPathOut.c_str(),
+			""));
 
 		Texture* ptexture = new Texture(GL_TEXTURE_2D);
 
@@ -265,8 +270,8 @@ string FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace
 
 
 			int milliSecondsElapsed = getMilliSpan(start);
-			Log("\njsonModelOut:%s", jsonModelOut.c_str());
-			Log("\n\nElapsed time = %u milliseconds", milliSecondsElapsed);
+			Log(format("\njsonModelOut:%s", jsonModelOut.c_str()));
+			Log(format("\n\nElapsed time = %u milliseconds", milliSecondsElapsed));
 
 			return "success";
 		}
@@ -743,3 +748,4 @@ void FaceCloudLib::SaveFile(string& s, string& path)
 		//printf("\nLoadJSF:%s",s.c_str());
 		return s;
 	}
+	
