@@ -265,6 +265,7 @@ string FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace
 
 
 			int milliSecondsElapsed = getMilliSpan(start);
+			printf("\njsonModelOut:%s", jsonModelOut.c_str());
 			printf("\n\nElapsed time = %u milliseconds", milliSecondsElapsed);
 
 			return "success";
