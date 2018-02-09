@@ -173,7 +173,7 @@ void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, 
 	printf("\nmodelID:%s \nphotoPath:%s \njsonFace:%s \nphotoPathOut:%s \njsonModelOut:%s \n \n",
 			modelID.c_str(),
 			photoPath.c_str(),
-			"",
+			jsonFace.c_str(), 
 			photoPathOut.c_str(),
 			"");
 
