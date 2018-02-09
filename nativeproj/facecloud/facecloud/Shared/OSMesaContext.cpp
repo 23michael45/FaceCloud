@@ -9,7 +9,12 @@ bool LogCreated = false;
 
 void Log(char const* const message,...)
 {
-	printf(message);
+	/*va_list args;
+	va_start(args, message);
+	printf(message, args);
+	va_end(args);*/
+
+
 	std::string file = string(RES_PATH) + string(LOGFILE);
 	const char * filepath = file.c_str();
 	FILE *pfile;
