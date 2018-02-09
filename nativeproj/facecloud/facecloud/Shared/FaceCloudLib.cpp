@@ -164,7 +164,7 @@ bool FaceCloudLib::Init(bool offscreen)
 
 	return true;
 }
-void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, string& photoPathOut, string& jsonModelOut)
+string FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, string& photoPathOut, string& jsonModelOut)
 {
 	printf("\n\nStarting timer...");
 	int start = getMilliCount();
@@ -181,7 +181,8 @@ void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, 
 	
 	//File Path
 	if (!ptexture->LoadFile(photoPath)) {
-		return;
+		SAFE_DELETE(ptexture);
+		return "error";
 	}
 
 
@@ -209,60 +210,71 @@ void FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, 
 	}
 
 	JsonFaceInfo jsonfaceinfo;
-	jsonfaceinfo.LoadFromString(jsonFace,true);
-
-	Texture* paftertex = m_BoneUtility.CalculateSkin(ptexture->GetTextureObj(), isman, m_JsonRoles.roles[modelID],jsonfaceinfo);
-	m_pCurrentSkinTexture = paftertex;
-
-	unsigned char* ptr;
-	cv::Mat mat = GLTextureToMat(m_pCurrentSkinTexture->GetTextureObj(), ptr);
-	//SaveTextureToFile(mat, GL_RGBA, "data/export/test.jpg");
-	SAFE_DELETE(ptr);
-
-	Vector3f center;
-	Vector2f uvsize;
-	float yoffset = 0;
-
-	CalculateBone(modelID, jsonfaceinfo, photoPathOut, jsonModelOut, center, uvsize, yoffset);
-
-	if (m_pSkinningRenderer)
+	if (jsonfaceinfo.LoadFromString(jsonFace, true))
 	{
-		m_pSkinningRenderer->SetUVSize(uvsize);
-		m_pSkinningRenderer->SetYOffset(yoffset);
+		Texture* paftertex = m_BoneUtility.CalculateSkin(ptexture->GetTextureObj(), isman, m_JsonRoles.roles[modelID], jsonfaceinfo);
+		m_pCurrentSkinTexture = paftertex;
 
-	}
+		unsigned char* ptr;
+		cv::Mat mat = GLTextureToMat(m_pCurrentSkinTexture->GetTextureObj(), ptr);
+		//SaveTextureToFile(mat, GL_RGBA, "data/export/test.jpg");
+		SAFE_DELETE(ptr);
 
+		Vector3f center;
+		Vector2f uvsize;
+		float yoffset = 0;
 
-	if (m_bRenderToTexture)
-	{
+		CalculateBone(modelID, jsonfaceinfo, photoPathOut, jsonModelOut, center, uvsize, yoffset);
 
-		m_pGameCamera->SetPos(Vector3f(0, 0, 0));
-		if (BeginRenterTexture())
+		if (m_pSkinningRenderer)
 		{
-			DrawOnce(modelID, center, uvsize);
-			EndRenderTexture();
+			m_pSkinningRenderer->SetUVSize(uvsize);
+			m_pSkinningRenderer->SetYOffset(yoffset);
+
 		}
+
+
+		if (m_bRenderToTexture)
+		{
+
+			m_pGameCamera->SetPos(Vector3f(0, 0, 0));
+			if (BeginRenterTexture())
+			{
+				DrawOnce(modelID, center, uvsize);
+				EndRenderTexture();
+			}
+		}
+		else
+		{
+			EndRenderTexture();
+			DrawOnce(modelID, center, uvsize);
+		}
+
+		CombineTexture(m_RenderTexture, m_ColorTextureMap[modelID], m_pMaskTexture, photoPathOut);
+
+
+
+		if (m_bRenderToTexture)
+		{
+			SAFE_DELETE(ptexture);
+			SAFE_DELETE(m_pCurrentSkinTexture);
+
+		}
+
+
+		int milliSecondsElapsed = getMilliSpan(start);
+		printf("\n\nElapsed time = %u milliseconds", milliSecondsElapsed);
+
+		return "success";
 	}
 	else
 	{
-		EndRenderTexture();
-		DrawOnce(modelID, center, uvsize);
-	}
-
-	CombineTexture(m_RenderTexture, m_ColorTextureMap[modelID], m_pMaskTexture, photoPathOut);
-
-
-
-	if (m_bRenderToTexture)
-	{
 		SAFE_DELETE(ptexture);
 		SAFE_DELETE(m_pCurrentSkinTexture);
-
+		return "error";
 	}
 
 
-	int milliSecondsElapsed = getMilliSpan(start);
-	printf("\n\nElapsed time = %u milliseconds", milliSecondsElapsed);
 }
 
 void FaceCloudLib::CombineTexture(GLuint FaceTexure, Texture* pWhole, Texture* pMask,string& photoPathOut)

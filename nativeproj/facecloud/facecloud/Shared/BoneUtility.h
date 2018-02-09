@@ -9,7 +9,7 @@
 #include <json/json.h>
 #include <fstream>
 #include "ogldev_skinned_mesh.h"
-
+#include <exception>  
 using namespace std;
 
 class JsonModelFormat
@@ -187,96 +187,133 @@ public:
 class JsonFaceInfo
 {
 public:
-	void LoadFromString(string jsonstring,bool israw = true)
+	bool LoadFromString(string jsonstring,bool israw = true)
 	{
 		Json::Value root;
 		Json::CharReaderBuilder rbuilder;
 		Json::CharReader * reader = rbuilder.newCharReader();
 		string errors;
 		bool ok = reader->parse(jsonstring.c_str(), jsonstring.c_str() + jsonstring.size(), &root, &errors);
-		delete reader;
-		
-		if (israw)
-		{
-			LoadRaw(root);
 
+		delete reader;
+		if (ok)
+		{
+			try
+			{
+				if (israw)
+				{
+					return LoadRaw(root);
+
+				}
+				else {
+
+					return Load(root);
+				}
+			}
+			catch (...)
+			{
+				return false;
+			}
+			
 		}
-		else {
+		
+		return ok;
+	}
+	bool LoadFromFile(string filename)
+	{
+		try
+		{
+
+			Json::CharReaderBuilder rbuilder;
+			rbuilder["collectComments"] = false;
+			std::string errs;
+			Json::Value root;
+			std::ifstream ifs;
+			ifs.open(filename);
+			bool ok = Json::parseFromStream(rbuilder, ifs, &root, &errs);
+			ifs.close();
 
 			Load(root);
+			return false;
+		}
+		catch (...)
+		{
+			return false;
 		}
 	}
-	void LoadFromFile(string filename)
+	bool LoadRaw(Json::Value& root)
 	{
-
-		Json::CharReaderBuilder rbuilder;
-		rbuilder["collectComments"] = false;
-		std::string errs;
-		Json::Value root;
-		std::ifstream ifs;
-		ifs.open(filename);
-		bool ok = Json::parseFromStream(rbuilder, ifs, &root, &errs);
-		ifs.close();
-
-		Load(root);
-	}
-	void LoadRaw(Json::Value& root)
-	{
-		Json::Value froot = root["faces"][0];
-		face_token = froot["face_token"].asString();
-
-		float top = froot["face_rectangle"]["top"].asFloat();
-		float width = froot["face_rectangle"]["width"].asFloat();
-		float left = froot["face_rectangle"]["left"].asFloat();
-		float height = froot["face_rectangle"]["height"].asFloat();
-
-		face_rectangle.x = top;
-		face_rectangle.y = left;
-		face_rectangle.z = width;
-		face_rectangle.w = height;
-
-		yaw_angle = froot["attributes"]["headpose"]["yaw_angle"].asDouble();
-		roll_angle = froot["attributes"]["headpose"]["roll_angle"].asDouble();
-		pitch_angle = froot["attributes"]["headpose"]["pitch_angle"].asDouble();
-
-		gender = froot["attributes"]["gender"]["value"].asString();
-
-		Json::Value landmarkdataValue = froot["landmark"];
-		vector<string> namesvec = landmarkdataValue.getMemberNames();
-		for (vector<string>::iterator it = namesvec.begin(); it != namesvec.end(); it++)
+		try
 		{
-			float x = landmarkdataValue[*it]["x"].asFloat();
-			float y = landmarkdataValue[*it]["y"].asFloat();
-			landmarkdata[*it] = Vector2f(x, y);
+			Json::Value froot = root["faces"][0];
+			face_token = froot["face_token"].asString();
+
+			float top = froot["face_rectangle"]["top"].asFloat();
+			float width = froot["face_rectangle"]["width"].asFloat();
+			float left = froot["face_rectangle"]["left"].asFloat();
+			float height = froot["face_rectangle"]["height"].asFloat();
+
+			face_rectangle.x = top;
+			face_rectangle.y = left;
+			face_rectangle.z = width;
+			face_rectangle.w = height;
+
+			yaw_angle = froot["attributes"]["headpose"]["yaw_angle"].asDouble();
+			roll_angle = froot["attributes"]["headpose"]["roll_angle"].asDouble();
+			pitch_angle = froot["attributes"]["headpose"]["pitch_angle"].asDouble();
+
+			gender = froot["attributes"]["gender"]["value"].asString();
+
+			Json::Value landmarkdataValue = froot["landmark"];
+			vector<string> namesvec = landmarkdataValue.getMemberNames();
+			for (vector<string>::iterator it = namesvec.begin(); it != namesvec.end(); it++)
+			{
+				float x = landmarkdataValue[*it]["x"].asFloat();
+				float y = landmarkdataValue[*it]["y"].asFloat();
+				landmarkdata[*it] = Vector2f(x, y);
+			}
+
+			return false;
+		}
+		catch (...)
+		{
+			return false;
 		}
 
+	
 	}
-	void Load(Json::Value& root)
+	bool Load(Json::Value& root)
 	{
-
-		face_token = root["face_token"].asString();
-
-		float top = root["face_rectangle"]["top"].asFloat();
-		float width = root["face_rectangle"]["width"].asFloat();
-		float left = root["face_rectangle"]["left"].asFloat();
-		float height = root["face_rectangle"]["height"].asFloat();
-
-		face_rectangle.x = top;
-		face_rectangle.y = left;
-		face_rectangle.z = width;
-		face_rectangle.w = height;
-
-		yaw_angle = root["face_pose"]["yaw_angle"].asFloat();
-		roll_angle = root["face_pose"]["roll_angle"].asFloat();
-		pitch_angle = root["face_pose"]["pitch_angle"].asFloat();
-
-		Json::Value landmarkdataValue = root["landmark"]["data"];
-		vector<string> namesvec = landmarkdataValue.getMemberNames();
-		for (vector<string>::iterator it = namesvec.begin(); it != namesvec.end(); it++)
+		try
 		{
-			float x = landmarkdataValue[*it]["x"].asFloat();
-			float y = 1024 - landmarkdataValue[*it]["y"].asFloat();
-			landmarkdata[*it] = Vector2f(x, y);
+			face_token = root["face_token"].asString();
+
+			float top = root["face_rectangle"]["top"].asFloat();
+			float width = root["face_rectangle"]["width"].asFloat();
+			float left = root["face_rectangle"]["left"].asFloat();
+			float height = root["face_rectangle"]["height"].asFloat();
+
+			face_rectangle.x = top;
+			face_rectangle.y = left;
+			face_rectangle.z = width;
+			face_rectangle.w = height;
+
+			yaw_angle = root["face_pose"]["yaw_angle"].asFloat();
+			roll_angle = root["face_pose"]["roll_angle"].asFloat();
+			pitch_angle = root["face_pose"]["pitch_angle"].asFloat();
+
+			Json::Value landmarkdataValue = root["landmark"]["data"];
+			vector<string> namesvec = landmarkdataValue.getMemberNames();
+			for (vector<string>::iterator it = namesvec.begin(); it != namesvec.end(); it++)
+			{
+				float x = landmarkdataValue[*it]["x"].asFloat();
+				float y = 1024 - landmarkdataValue[*it]["y"].asFloat();
+				landmarkdata[*it] = Vector2f(x, y);
+			}	return false;
+		}
+		catch (...)
+		{
+			return false;
 		}
 
 	}

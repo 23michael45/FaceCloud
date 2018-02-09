@@ -28,7 +28,7 @@ public:
 	~FaceCloudLib();
 	bool Init(bool offscreen = true);
 
-	void Calculate(string modelID, string photoPath, string jsonFace, string& photoPathOut, string& jsonModelOut);
+	string Calculate(string modelID, string photoPath, string jsonFace, string& photoPathOut, string& jsonModelOut);
 
 
 	void CalculateBone(string modelID, JsonFaceInfo jsonfaceinfo, string& photoPathOut, string& jsonModelOut, Vector3f& centerpos, Vector2f& uvsize, float& yOffset);
