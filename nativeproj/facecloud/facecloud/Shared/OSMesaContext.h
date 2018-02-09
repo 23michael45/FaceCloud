@@ -6,6 +6,11 @@
 #include <ctime>
 #include <sys/timeb.h>
 
+#ifndef WIN32
+#include <cstdarg>
+#endif // !WIN32
+
+
 #define LOGFILE	"facelog.log"     // all Log(); messages will be appended to this file
 
 
