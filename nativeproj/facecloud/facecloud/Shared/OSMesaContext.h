@@ -8,7 +8,7 @@
 
 #define LOGFILE	"facelog.log"     // all Log(); messages will be appended to this file
 
-void Log(std::string message);    // logs a message to LOGFILE
+void Log(char const* const message, ...);    // logs a message to LOGFILE
 
 
 

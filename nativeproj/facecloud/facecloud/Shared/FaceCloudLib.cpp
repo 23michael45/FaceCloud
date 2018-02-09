@@ -168,11 +168,11 @@ string FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace
 {
 	try
 	{
-		printf("\n\nStarting timer...");
+		Log("\n\nStarting timer...");
 		int start = getMilliCount();
 
 
-		printf("\nmodelID:%s \nphotoPath:%s \njsonFace:%s \nphotoPathOut:%s \njsonModelOut:%s \n \n",
+		Log("\nmodelID:%s \nphotoPath:%s \njsonFace:%s \nphotoPathOut:%s \njsonModelOut:%s \n \n",
 			modelID.c_str(),
 			photoPath.c_str(),
 			jsonFace.c_str(),
@@ -265,8 +265,8 @@ string FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace
 
 
 			int milliSecondsElapsed = getMilliSpan(start);
-			printf("\njsonModelOut:%s", jsonModelOut.c_str());
-			printf("\n\nElapsed time = %u milliseconds", milliSecondsElapsed);
+			Log("\njsonModelOut:%s", jsonModelOut.c_str());
+			Log("\n\nElapsed time = %u milliseconds", milliSecondsElapsed);
 
 			return "success";
 		}
@@ -281,7 +281,7 @@ string FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace
 	}
 	SAFE_DELETE(m_pCurrentSkinTexture);
 
-	printf("\ncalculate error");
+	Log("\ncalculate error");
 	return "error";
 
 

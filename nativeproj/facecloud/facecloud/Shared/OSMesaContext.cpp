@@ -7,9 +7,9 @@ using namespace std;
 
 bool LogCreated = false;
 
-void Log(std::string message)
+void Log(char const* const message,...)
 {
-	printf(message.c_str());
+	printf(message);
 	std::string file = string(RES_PATH) + string(LOGFILE);
 	const char * filepath = file.c_str();
 	FILE *pfile;
@@ -28,7 +28,7 @@ void Log(std::string message)
 	}
 	else
 	{
-		fputs(message.c_str(), pfile);
+		fputs(message, pfile);
 		fclose(pfile);
 		pfile = NULL;
 	}
