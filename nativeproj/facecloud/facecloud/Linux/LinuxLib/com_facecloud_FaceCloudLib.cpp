@@ -48,10 +48,11 @@ JNIEXPORT jboolean JNICALL Java_com_facecloud_FaceCloudLib_Init	(JNIEnv *, jobje
 JNIEXPORT jstring JNICALL Java_com_facecloud_FaceCloudLib_Calculate
 (JNIEnv * env, jobject jobj, jstring jmodelID, jstring jjsonFace, jstring jphotoPath, jstring jphotoPathOut)
 {
-	string rt;
+	string finalPathout;
+	string ret;
 	string photoPathOut = jstring2string(env, jphotoPathOut);
-	gFaceCloudLib.Calculate(jstring2string(env, jmodelID), jstring2string(env, jjsonFace), jstring2string(env, jphotoPath), photoPathOut,rt);
-	return env->NewStringUTF(rt.c_str());
+	ret = gFaceCloudLib.Calculate(jstring2string(env, jmodelID), jstring2string(env, jjsonFace), jstring2string(env, jphotoPath), photoPathOut,finalPathout);
+	return env->NewStringUTF(ret.c_str());
 }
 
 /*
