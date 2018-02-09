@@ -166,113 +166,120 @@ bool FaceCloudLib::Init(bool offscreen)
 }
 string FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, string& photoPathOut, string& jsonModelOut)
 {
-	printf("\n\nStarting timer...");
-	int start = getMilliCount();
+	try
+	{
+		printf("\n\nStarting timer...");
+		int start = getMilliCount();
 
 
-	printf("\nmodelID:%s \nphotoPath:%s \njsonFace:%s \nphotoPathOut:%s \njsonModelOut:%s \n \n",
+		printf("\nmodelID:%s \nphotoPath:%s \njsonFace:%s \nphotoPathOut:%s \njsonModelOut:%s \n \n",
 			modelID.c_str(),
 			photoPath.c_str(),
-			jsonFace.c_str(), 
+			jsonFace.c_str(),
 			photoPathOut.c_str(),
 			"");
 
-	Texture* ptexture = new Texture(GL_TEXTURE_2D);
-	
-	//File Path
-	if (!ptexture->LoadFile(photoPath)) {
-		SAFE_DELETE(ptexture);
-		return "error";
-	}
+		Texture* ptexture = new Texture(GL_TEXTURE_2D);
 
-
-
-	//Base 64 Code	
-	/*Magick::Image img;
-	Magick::Blob blob;
-	img.read(photoPath);
-	img.write(&blob, "RGBA");
-	string base64string = blob.base64();
-	if (!ptexture->LoadBase64(base64string)) {
-		return;
-	}*/
-
-	ptexture->Bind(GL_TEXTURE1);
-
-	bool isman = true;
-	if (modelID == "10001")
-	{
-		isman = true;
-	}
-	else if (modelID == "10002")
-	{
-		isman = false;
-	}
-
-	JsonFaceInfo jsonfaceinfo;
-	if (jsonfaceinfo.LoadFromString(jsonFace, true))
-	{
-		Texture* paftertex = m_BoneUtility.CalculateSkin(ptexture->GetTextureObj(), isman, m_JsonRoles.roles[modelID], jsonfaceinfo);
-		m_pCurrentSkinTexture = paftertex;
-
-		unsigned char* ptr;
-		cv::Mat mat = GLTextureToMat(m_pCurrentSkinTexture->GetTextureObj(), ptr);
-		//SaveTextureToFile(mat, GL_RGBA, "data/export/test.jpg");
-		SAFE_DELETE(ptr);
-
-		Vector3f center;
-		Vector2f uvsize;
-		float yoffset = 0;
-
-		CalculateBone(modelID, jsonfaceinfo, photoPathOut, jsonModelOut, center, uvsize, yoffset);
-
-		if (m_pSkinningRenderer)
-		{
-			m_pSkinningRenderer->SetUVSize(uvsize);
-			m_pSkinningRenderer->SetYOffset(yoffset);
-
+		//File Path
+		if (!ptexture->LoadFile(photoPath)) {
+			SAFE_DELETE(ptexture);
+			return "error";
 		}
 
 
-		if (m_bRenderToTexture)
-		{
 
-			m_pGameCamera->SetPos(Vector3f(0, 0, 0));
-			if (BeginRenterTexture())
+		//Base 64 Code	
+		/*Magick::Image img;
+		Magick::Blob blob;
+		img.read(photoPath);
+		img.write(&blob, "RGBA");
+		string base64string = blob.base64();
+		if (!ptexture->LoadBase64(base64string)) {
+		return;
+		}*/
+
+		ptexture->Bind(GL_TEXTURE1);
+
+		bool isman = true;
+		if (modelID == "10001")
+		{
+			isman = true;
+		}
+		else if (modelID == "10002")
+		{
+			isman = false;
+		}
+
+		JsonFaceInfo jsonfaceinfo;
+		if (jsonfaceinfo.LoadFromString(jsonFace, true))
+		{
+			Texture* paftertex = m_BoneUtility.CalculateSkin(ptexture->GetTextureObj(), isman, m_JsonRoles.roles[modelID], jsonfaceinfo);
+			m_pCurrentSkinTexture = paftertex;
+
+			unsigned char* ptr;
+			cv::Mat mat = GLTextureToMat(m_pCurrentSkinTexture->GetTextureObj(), ptr);
+			//SaveTextureToFile(mat, GL_RGBA, "data/export/test.jpg");
+			SAFE_DELETE(ptr);
+
+			Vector3f center;
+			Vector2f uvsize;
+			float yoffset = 0;
+
+			CalculateBone(modelID, jsonfaceinfo, photoPathOut, jsonModelOut, center, uvsize, yoffset);
+
+			if (m_pSkinningRenderer)
 			{
-				DrawOnce(modelID, center, uvsize);
-				EndRenderTexture();
+				m_pSkinningRenderer->SetUVSize(uvsize);
+				m_pSkinningRenderer->SetYOffset(yoffset);
+
 			}
+
+
+			if (m_bRenderToTexture)
+			{
+
+				m_pGameCamera->SetPos(Vector3f(0, 0, 0));
+				if (BeginRenterTexture())
+				{
+					DrawOnce(modelID, center, uvsize);
+					EndRenderTexture();
+				}
+			}
+			else
+			{
+				EndRenderTexture();
+				DrawOnce(modelID, center, uvsize);
+			}
+
+			CombineTexture(m_RenderTexture, m_ColorTextureMap[modelID], m_pMaskTexture, photoPathOut);
+
+
+
+			if (m_bRenderToTexture)
+			{
+				SAFE_DELETE(ptexture);
+				SAFE_DELETE(m_pCurrentSkinTexture);
+
+			}
+
+
+			int milliSecondsElapsed = getMilliSpan(start);
+			printf("\n\nElapsed time = %u milliseconds", milliSecondsElapsed);
+
+			return "success";
 		}
 		else
 		{
-			EndRenderTexture();
-			DrawOnce(modelID, center, uvsize);
-		}
 
-		CombineTexture(m_RenderTexture, m_ColorTextureMap[modelID], m_pMaskTexture, photoPathOut);
-
-
-
-		if (m_bRenderToTexture)
-		{
 			SAFE_DELETE(ptexture);
-			SAFE_DELETE(m_pCurrentSkinTexture);
-
 		}
-
-
-		int milliSecondsElapsed = getMilliSpan(start);
-		printf("\n\nElapsed time = %u milliseconds", milliSecondsElapsed);
-
-		return "success";
 	}
-	else
+	catch (...)
 	{
-		SAFE_DELETE(ptexture);
-		SAFE_DELETE(m_pCurrentSkinTexture);
-		return "error";
 	}
+	SAFE_DELETE(m_pCurrentSkinTexture);
+	return "error";
 
 
 }
