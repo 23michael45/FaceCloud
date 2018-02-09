@@ -280,6 +280,8 @@ string FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace
 	{
 	}
 	SAFE_DELETE(m_pCurrentSkinTexture);
+
+	printf("\ncalculate error");
 	return "error";
 
 

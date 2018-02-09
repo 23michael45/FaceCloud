@@ -209,6 +209,8 @@ public:
 
 					return Load(root);
 				}
+
+				return true;
 			}
 			catch (...)
 			{
@@ -217,7 +219,7 @@ public:
 			
 		}
 		
-		return ok;
+		return false;
 	}
 	bool LoadFromFile(string filename)
 	{
@@ -234,7 +236,7 @@ public:
 			ifs.close();
 
 			Load(root);
-			return false;
+			return true;
 		}
 		catch (...)
 		{
@@ -273,7 +275,7 @@ public:
 				landmarkdata[*it] = Vector2f(x, y);
 			}
 
-			return false;
+			return true;
 		}
 		catch (...)
 		{
@@ -309,7 +311,8 @@ public:
 				float x = landmarkdataValue[*it]["x"].asFloat();
 				float y = 1024 - landmarkdataValue[*it]["y"].asFloat();
 				landmarkdata[*it] = Vector2f(x, y);
-			}	return false;
+			}	
+			return true;
 		}
 		catch (...)
 		{
