@@ -44,6 +44,11 @@ bool Texture::LoadFile( const std::string& FileName)
         std::cout << "Error loading texture '" << m_fileName << "': " << Error.what() << std::endl;
         return false;
     }
+	catch (...)
+	{
+		std::cout << "Error loading texture other error '" << m_fileName <<  std::endl;
+		return false;
+	}
 
 	Gen(m_image);
     
