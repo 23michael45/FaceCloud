@@ -18,6 +18,7 @@
 
 #include <iostream>
 #include "ogldev_texture.h"
+#include "OSMesaContext.h"
 
 Texture::Texture(GLenum TextureTarget)
 {
@@ -35,22 +36,27 @@ Texture::~Texture()
 }
 bool Texture::LoadFile( const std::string& FileName)
 {
-	m_fileName = FileName;
-    try {
-        m_image.read(m_fileName);
-        m_image.write(&m_blob, "RGBA");
-    }
-    catch (Magick::Error& Error) {
-        std::cout << "Error loading texture '" << m_fileName << "': " << Error.what() << std::endl;
-        return false;
-    }
+	try
+	{
+
+		m_fileName = FileName;
+		try {
+			m_image.read(m_fileName);
+			m_image.write(&m_blob, "RGBA");
+		}
+		catch (Magick::Error& Error) {
+			std::cout << "Error loading texture '" << m_fileName << "': " << Error.what() << std::endl;
+			return false;
+		}
+
+		Gen(m_image);
+	}
 	catch (...)
 	{
 		std::cout << "Error loading texture other error '" << m_fileName <<  std::endl;
 		return false;
 	}
 
-	Gen(m_image);
     
     return true;
 }
@@ -69,12 +75,19 @@ bool Texture::LoadBase64(std::string& base64string)
 }
 void Texture::Gen(Magick::Image image)
 {
-	glGenTextures(1, &m_textureObj);
-	glBindTexture(m_textureTarget, m_textureObj);
-	glTexImage2D(m_textureTarget, 0, GL_RGBA, m_image.size().width(), m_image.size().height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, m_blob.data());
-	glTexParameterf(m_textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf(m_textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glBindTexture(m_textureTarget, 0);
+	try
+	{
+		glGenTextures(1, &m_textureObj);
+		glBindTexture(m_textureTarget, m_textureObj);
+		glTexImage2D(m_textureTarget, 0, GL_RGBA, m_image.size().width(), m_image.size().height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, m_blob.data());
+		glTexParameterf(m_textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameterf(m_textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glBindTexture(m_textureTarget, 0);
+	}
+	catch (...)
+	{
+		Log("Gen Texture Error");
+	}
 }
 
 void Texture::Bind(GLenum TextureUnit)
