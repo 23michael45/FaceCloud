@@ -238,19 +238,25 @@ string FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace
 
 		while (true)
 		{
-			if (pdata->finished == true)
+			if (mtx.try_lock())
 			{
-				photoPathOut = pdata->photoPathOut;
-				jsonModelOut = pdata->jsonModelOut;
-				calculateSuccess = pdata->success;
-				SAFE_DELETE(pdata);
-				break;
-			}
-			else
-			{
+				if (pdata->finished == true)
+				{
+					photoPathOut = pdata->photoPathOut;
+					jsonModelOut = pdata->jsonModelOut;
+					calculateSuccess = pdata->success;
+					SAFE_DELETE(pdata);
+					break;
+				}
+				else
+				{
 
-				this_thread::sleep_for(chrono::microseconds(1));
+					this_thread::sleep_for(chrono::microseconds(1));
+				}
+
+				mtx.unlock();
 			}
+
 		}
 	}
 	if (calculateSuccess == "success")
