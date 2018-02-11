@@ -33,7 +33,7 @@ public class Entry {
 	        fclib.SaveFile(outJsonModelOut, outjsonoffsetpath);
 
 	        //System.out.println("outJsonModelOut: " + outJsonModelOut);
-
+			fclib.Finalize();
 	        System.out.println("Finish");
 	 }
 	 
