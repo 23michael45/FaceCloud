@@ -5,6 +5,9 @@ public class FaceCloudLib {
 	//初始化人脸计算库
 	public native boolean Init();
 	
+	//销毁人脸计算库
+	public native boolean Finalize();
+	
 	//计算人脸数据
 	//modelID  角色模型ID   男10001 女10002
 	//photoPath 输入图像路径    玩家上传的照片文件存放的路径

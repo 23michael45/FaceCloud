@@ -11,7 +11,7 @@
 
 #include "Predefined.h"
 #include "OSMesaContext.h"
-
+#include <mutex>          // std::mutex
 bool WriteTGA(char *file, short int width, short int height, unsigned char *outImage)
 {
 	// To save a screen shot is just like reading in a image. All you do
@@ -83,6 +83,39 @@ bool WriteTGA(char *file, short int width, short int height, unsigned char *outI
 }
 
 
+std::mutex mtx;           // locks access to counter
+bool hasInitSuccess = false;
+bool hasInitDone = false;
+bool OpenGLThread(FaceCloudLib *psender)
+{
+	bool boffscreen = psender->m_bOffscreen;
+	hasInitSuccess = psender->InitReal(boffscreen);
+	hasInitDone = true;
+
+	while (psender->m_Running == true)
+	{
+		if (mtx.try_lock())
+		{
+			if (psender->m_RunningQueue.size() > 0)
+			{
+				CalculateData* pdata = psender->m_RunningQueue.front();
+				psender->m_RunningQueue.pop();
+				pdata->success = psender->CalculateReal(pdata->modelID, pdata->photoPath, pdata->jsonFace, pdata->photoPathOut, pdata->jsonModelOut);
+				pdata->finished = true;
+			}
+			else
+			{
+	
+			}
+
+
+			mtx.unlock();
+		}
+
+		this_thread::sleep_for(chrono::microseconds(0));
+	}
+	return true;
+}
 FaceCloudLib::FaceCloudLib()
 {
 	m_pGameCamera = NULL;
@@ -112,6 +145,28 @@ FaceCloudLib::~FaceCloudLib()
 	m_ColorTextureMap.clear();
 }
 bool FaceCloudLib::Init(bool offscreen)
+{
+	hasInitDone = false;
+	hasInitSuccess = false;
+	m_Running = true;
+	m_bOffscreen = offscreen;
+	m_OpenGLThread = thread(OpenGLThread,this);
+	m_OpenGLThread.detach();
+
+	while (hasInitDone == false)
+	{
+		this_thread::sleep_for(chrono::microseconds(1));
+	}
+
+	return hasInitSuccess;
+}
+bool FaceCloudLib::Finalize()
+{
+	m_Running = false;
+	return true;
+}
+
+bool FaceCloudLib::InitReal (bool offscreen)
 {
 	Log("\nStart Face Cloud Lib Init\n");
 	int argc = 0;
@@ -165,6 +220,44 @@ bool FaceCloudLib::Init(bool offscreen)
 	return true;
 }
 string FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, string& photoPathOut, string& jsonModelOut)
+{
+	string calculateSuccess = "";
+	if (mtx.try_lock())
+	{
+		CalculateData* pdata = new CalculateData;
+		pdata->modelID = modelID;
+		pdata->photoPath = photoPath;
+		pdata->jsonFace = jsonFace;
+		pdata->photoPathOut = photoPathOut;
+		pdata->jsonModelOut = jsonModelOut;
+		pdata->finished = false;
+		pdata->success = "";
+		m_RunningQueue.push(pdata);
+
+		mtx.unlock();
+
+		while (true)
+		{
+			if (pdata->finished == true)
+			{
+				photoPathOut = pdata->photoPathOut;
+				jsonModelOut = pdata->jsonModelOut;
+				calculateSuccess = pdata->success;
+				SAFE_DELETE(pdata);
+				break;
+			}
+			else
+			{
+
+				this_thread::sleep_for(chrono::microseconds(1));
+			}
+		}
+	}
+
+	return calculateSuccess;
+	
+}
+string FaceCloudLib::CalculateReal(string modelID, string photoPath, string jsonFace, string& photoPathOut, string& jsonModelOut)
 {
 	try
 	{

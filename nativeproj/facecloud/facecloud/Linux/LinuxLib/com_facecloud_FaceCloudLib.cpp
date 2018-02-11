@@ -39,7 +39,18 @@ JNIEXPORT jboolean JNICALL Java_com_facecloud_FaceCloudLib_Init	(JNIEnv *, jobje
 {
 	return gFaceCloudLib.Init(false);
 }
-
+/*
+ * Class:     com_facecloud_FaceCloudLib
+ * Method:    Finalize
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_facecloud_FaceCloudLib_Finalize
+  (JNIEnv *, jobject)
+{
+	
+	return gFaceCloudLib.Finalize();
+	
+}
 /*
  * Class:     com_facecloud_FaceCloudLib
  * Method:    Calculate

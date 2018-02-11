@@ -17,6 +17,14 @@ JNIEXPORT jboolean JNICALL Java_com_facecloud_FaceCloudLib_Init
 
 /*
  * Class:     com_facecloud_FaceCloudLib
+ * Method:    Finalize
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_facecloud_FaceCloudLib_Finalize
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_facecloud_FaceCloudLib
  * Method:    Calculate
  * Signature: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
  */

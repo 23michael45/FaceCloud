@@ -19,16 +19,35 @@
 #include "ogldev_glut_backend.h"
 #include "ogldev_skinned_mesh.h"
 #include "BoneUtility.h"
+#include <thread>
+#include <queue>
 
 using namespace std;
+
+struct CalculateData
+{
+	string modelID;
+	string photoPath;
+	string jsonFace;
+	string photoPathOut;
+	string jsonModelOut;
+
+	bool finished;
+	string success;
+};
+
 class FaceCloudLib{
 
 public:
 	FaceCloudLib(); 
 	~FaceCloudLib();
 	bool Init(bool offscreen = true);
+	bool InitReal(bool offscreen);
+	bool Finalize();
+
 
 	string Calculate(string modelID, string photoPath, string jsonFace, string& photoPathOut, string& jsonModelOut);
+	string CalculateReal(string modelID, string photoPath, string jsonFace, string& photoPathOut, string& jsonModelOut);
 
 
 	void CalculateBone(string modelID, JsonFaceInfo jsonfaceinfo, string& photoPathOut, string& jsonModelOut, Vector3f& centerpos, Vector2f& uvsize, float& yOffset);
@@ -101,6 +120,13 @@ private:
 	void EndRenderTexture();
 	void SaveTextureToFile(cv::Mat imag, int format, string path, bool flip = false);
 
+
+public:
+      std::thread m_OpenGLThread;
+	  bool m_bOffscreen;
+	  bool m_Running;
+
+	  queue<CalculateData*> m_RunningQueue;
 };
 
 

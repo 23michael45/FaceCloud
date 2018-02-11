@@ -154,15 +154,30 @@ int main(int argc, char** argv)
 
 	jsonfacestring = LoadJsonStringFromFile(jsonfacepath);
 
-	glutDisplayFunc(RenderSceneCB);
-	glutIdleFunc(RenderSceneCB);
-	glutSpecialFunc(SpecialKeyboardCB);
+	if (bRenderToTarget)
+	{
+		//glutSpecialFunc(SpecialKeyboardCB);
 
+	}
+	else
+	{
+		glutDisplayFunc(RenderSceneCB);
+		glutIdleFunc(RenderSceneCB);
+		glutSpecialFunc(SpecialKeyboardCB);
+
+	}
+
+	//while (true)
+	//{
+	//	printf("loop");
+	//	this_thread::sleep_for(chrono::microseconds(0));
+	//}
 
 	if (bRenderToTarget)
 	{
 		lib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath, outJsonModelOut);
 		SaveFile(outJsonModelOut, outjsonoffsetpath);
+		//glutMainLoop();
 
 		//实际服务器不生成文件，只返回STRING就可以
 		//jsonfacestring = LoadJsonStringFromFile("data/face/photojson_raw.json");
