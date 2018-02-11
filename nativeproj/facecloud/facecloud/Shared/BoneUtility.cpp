@@ -217,7 +217,7 @@ Texture* BoneUtility::CalculateSkin(GLuint texture,bool isman, JsonRole bonedef,
 	GLenum error = glGetError();
 	const GLubyte * eb = gluErrorString(error);
 	string errorstring((char*)eb);
-	cv::Mat srcimg = cv::Mat(wtex, htex, CV_8UC4, (unsigned*)output_image);
+	cv::Mat srcimg = cv::Mat(htex, wtex,  CV_8UC4, (unsigned*)output_image);
 
 	cv::Mat srcimg32;
 	srcimg.convertTo(srcimg32, CV_32FC4);

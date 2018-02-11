@@ -33,8 +33,8 @@ Tutorial 13 - Camera Space
 FaceCloudLib lib;
 string currentModelID = "10002";
 string outJsonModelOut = "";
-string jsonfacepath = "data/face/photojson_raw.json";
-string photopath = "data/face/photoface_raw.jpg";
+string jsonfacepath = "data/face/photojson_raw_server.json";
+string photopath = "data/face/photoface_raw_server.jpg";
 string jsonfacestring;
 
 string outPhotoPath = "data/export/outphoto.jpg";
