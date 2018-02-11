@@ -33,12 +33,12 @@ Tutorial 13 - Camera Space
 FaceCloudLib lib;
 string currentModelID = "10002";
 string outJsonModelOut = "";
-string jsonfacepath = "data/face/photojson_raw.json";
-string photopath = "data/face/photoface_raw.jpg";
+string jsonfacepath = "/root/jni/data/face/photojson_raw.json";
+string photopath = "/root/jni/data/face/photoface_raw.jpg";
 string jsonfacestring;
 
-string outPhotoPath = "data/export/outphoto.jpg";
-string outjsonoffsetpath = "data/export/outjson.json";
+string outPhotoPath = "/root/jni/data/export/outphoto.jpg";
+string outjsonoffsetpath = "/root/jni/data/export/outjson.json";
 
 
 
@@ -89,7 +89,7 @@ void RenderSceneCB()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		lib.GetCamera()->SetPos(Vector3f(0, 175, -50));
 
-		//Ö»¼ÆËãÒ»´Î
+		//Ö»ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
 		lib.m_bRenderToTexture = false;
 		lib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath, outJsonModelOut);
 
@@ -179,7 +179,7 @@ int main(int argc, char** argv)
 		SaveFile(outJsonModelOut, outjsonoffsetpath);
 		//glutMainLoop();
 
-		//Êµ¼Ê·þÎñÆ÷²»Éú³ÉÎÄ¼þ£¬Ö»·µ»ØSTRING¾Í¿ÉÒÔ
+		//Êµï¿½Ê·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½STRINGï¿½Í¿ï¿½ï¿½ï¿½
 		//jsonfacestring = LoadJsonStringFromFile("data/face/photojson_raw.json");
 	}
 	else
