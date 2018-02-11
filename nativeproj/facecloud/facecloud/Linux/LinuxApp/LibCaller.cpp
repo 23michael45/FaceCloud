@@ -28,8 +28,7 @@ Tutorial 13 - Camera Space
 #include "ogldev_util.h"
 #include "ogldev_pipeline.h"
 #include "FaceCloudLib.h"
-#include <ctime>
-#include <sys/timeb.h>
+#include "OSMesaContext.h"
 
 FaceCloudLib lib;
 string currentModelID = "10002";
@@ -43,19 +42,6 @@ string outjsonoffsetpath = "data/export/outjson.json";
 
 
 
-int getMilliCount() {
-	timeb tb;
-	ftime(&tb);
-	int nCount = tb.millitm + (tb.time & 0xfffff) * 1000;
-	return nCount;
-}
-
-int getMilliSpan(int nTimeStart) {
-	int nSpan = getMilliCount() - nTimeStart;
-	if (nSpan < 0)
-		nSpan += 0x100000 * 1000;
-	return nSpan;
-}
 void SaveFile(string& s,string& path)
 {
 	ofstream write;
@@ -86,28 +72,24 @@ Json::Value LoadJsonValueFromFile(string filepath)
 }
 string LoadJsonStringFromFile(string filepath)
 {
-	printf("\nLoadJSF Path:%s",filepath.c_str());
 	Json::Value root = LoadJsonValueFromFile(filepath);
 
 	Json::StreamWriterBuilder  builder;
 	builder.settings_["commentStyle"] = "All";
 	std::string s = Json::writeString(builder, root);
-
-
-	printf("\nLoadJSF:%s",s.c_str());
 	return s;
 }
 
 bool hasdone = false;
 void RenderSceneCB()
 {
-
+	
 	if (!hasdone)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		lib.GetCamera()->SetPos(Vector3f(0, 175, -50));
 
-		//脰禄录脝脣茫脪禄麓脦
+		//只计算一次
 		lib.m_bRenderToTexture = false;
 		lib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath, outJsonModelOut);
 
@@ -172,17 +154,32 @@ int main(int argc, char** argv)
 
 	jsonfacestring = LoadJsonStringFromFile(jsonfacepath);
 
-	glutDisplayFunc(RenderSceneCB);
-	glutIdleFunc(RenderSceneCB);
-	glutSpecialFunc(SpecialKeyboardCB);
+	if (bRenderToTarget)
+	{
+		//glutSpecialFunc(SpecialKeyboardCB);
 
+	}
+	else
+	{
+		glutDisplayFunc(RenderSceneCB);
+		glutIdleFunc(RenderSceneCB);
+		glutSpecialFunc(SpecialKeyboardCB);
+
+	}
+
+	//while (true)
+	//{
+	//	printf("loop");
+	//	this_thread::sleep_for(chrono::microseconds(0));
+	//}
 
 	if (bRenderToTarget)
 	{
 		lib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath, outJsonModelOut);
 		SaveFile(outJsonModelOut, outjsonoffsetpath);
+		//glutMainLoop();
 
-		//脢碌录脢路镁脦帽脝梅虏禄脡煤鲁脡脦脛录镁拢卢脰禄路碌禄脴STRING戮脥驴脡脪脭
+		//实际服务器不生成文件，只返回STRING就可以
 		//jsonfacestring = LoadJsonStringFromFile("data/face/photojson_raw.json");
 	}
 	else
@@ -191,6 +188,6 @@ int main(int argc, char** argv)
 		glutMainLoop();
 	}
 
-	
+	getchar();
 	return 0;
 }
