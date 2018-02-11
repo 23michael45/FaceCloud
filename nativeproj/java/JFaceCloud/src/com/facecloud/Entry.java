@@ -15,13 +15,13 @@ public class Entry {
 
 	        String currentModelID = "10002";
 	        String outJsonModelOut = "";
-	        String jsonfacepath = "data/face/photojson_raw.json";
-	        String photopath = "data/face/photoface_raw.jpg";
+	        String jsonfacepath = "/root/jni/data/face/photojson_raw.json";
+	        String photopath = "/root/jni/data/face/photoface_raw.jpg";
 
 	        String jsonfacestring = "";
 
-	        String outPhotoPath = "data/export/outphoto.jpg";
-	        String outjsonoffsetpath = "data/export/outjson.json";
+	        String outPhotoPath = "/root/jni/data/export/outphoto.jpg";
+	        String outjsonoffsetpath = "/root/jni/data/export/outjson.json";
 	        
 	        
 

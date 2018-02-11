@@ -253,8 +253,16 @@ string FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace
 			}
 		}
 	}
+	if (calculateSuccess == "success")
+	{
+		return jsonModelOut;
+	}
+	else
+	{
+		return calculateSuccess;
 
-	return calculateSuccess;
+	}
+
 	
 }
 string FaceCloudLib::CalculateReal(string modelID, string photoPath, string jsonFace, string& photoPathOut, string& jsonModelOut)
