@@ -41,7 +41,7 @@ public:
 
 	Vector3f UpdateRefSkin(Mat inputTexture, Vector3f ref_RGB, float value, Mat& outputTexture, Vector2f leftpoint, Vector2f rightpoint);
 
-
+	void ColorTransfer(Mat src, Mat ref, Mat& outputimg);
 	Mat FacePhotoProcess_(JsonFaceInfo& faceinfo, JsonRole bonedef, Mat src32);
 	Mat FacePhotoProcess(JsonFaceInfo& faceinfo, JsonRole bonedef, Mat src32);
 	

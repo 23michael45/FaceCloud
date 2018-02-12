@@ -190,6 +190,6 @@ int main(int argc, char** argv)
 		glutMainLoop();
 	}
 
-	getchar();
+	//getchar();
 	return 0;
 }

@@ -158,6 +158,7 @@ bool FaceCloudLib::Init(bool offscreen)
 		this_thread::sleep_for(chrono::microseconds(1));
 	}
 
+	Log("\nInit Has Done!");
 	return hasInitSuccess;
 }
 bool FaceCloudLib::Finalize()
@@ -221,6 +222,8 @@ bool FaceCloudLib::InitReal (bool offscreen)
 }
 string FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, string& photoPathOut, string& jsonModelOut)
 {
+
+	Log("\nCalculate Start!");
 	string calculateSuccess = "";
 	if (mtx.try_lock())
 	{
@@ -236,6 +239,8 @@ string FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace
 
 		mtx.unlock();
 
+
+		Log("\nPushed Queue Has Done!");
 		while (true)
 		{
 			if (mtx.try_lock())
@@ -327,7 +332,7 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 		if (jsonfaceinfo.LoadFromString(jsonFace, true))
 		{
 
-			unsigned char* ptex;
+			/*unsigned char* ptex;
 			cv::Mat premat = GLTextureToMat(ptexture->GetTextureObj(), ptex);
 			for (map<string,Vector2f>::iterator iter = jsonfaceinfo.landmarkdata.begin();iter != jsonfaceinfo.landmarkdata.end();iter++)
 			{
@@ -336,25 +341,34 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 			}
 
 			SaveTextureToFile(premat, GL_RGBA, "data/export/precircle.jpg");
-			SAFE_DELETE(ptex);
+			SAFE_DELETE(ptex);*/
+
+			unsigned char* refptr = nullptr;
+			cv::Mat refmat;
+			if (m_ColorTextureMap.find(modelID) != m_ColorTextureMap.end())
+			{
+				refmat = GLTextureToMat(m_ColorTextureMap[modelID]->GetTextureObj(), refptr);
+			}
 
 
 
 
-
-			Texture* paftertex = m_BoneUtility.CalculateSkin(ptexture->GetTextureObj(), isman, m_JsonRoles.roles[modelID], jsonfaceinfo);
+			Texture* paftertex = m_BoneUtility.CalculateSkin(ptexture->GetTextureObj(),refmat, isman, m_JsonRoles.roles[modelID], jsonfaceinfo);
 			m_pCurrentSkinTexture = paftertex;
 
-			unsigned char* ptr;
+			/*unsigned char* ptr;
 			cv::Mat mat = GLTextureToMat(m_pCurrentSkinTexture->GetTextureObj(), ptr);
 			for (map<string, Vector2f>::iterator iter = jsonfaceinfo.landmarkdata.begin(); iter != jsonfaceinfo.landmarkdata.end(); iter++)
 			{
 				Vector2f pos = iter->second;
 				cv::circle(mat, cv::Point(pos.x, 1024 - pos.y), 10, cv::Scalar(255, 0, 0, 255));
+				cv::putText(mat, iter->first, cv::Point(pos.x, 1024 - pos.y),  CV_FONT_HERSHEY_PLAIN, 0.4,cv::Scalar(0, 0, 255, 255));
 			}
 			SaveTextureToFile(mat, GL_RGBA, "data/export/test.jpg");
-			SAFE_DELETE(ptr);
+			SAFE_DELETE(ptr);*/
 
+
+			SAFE_DELETE(refptr);
 			Vector3f center;
 			Vector2f uvsize;
 			float yoffset = 0;

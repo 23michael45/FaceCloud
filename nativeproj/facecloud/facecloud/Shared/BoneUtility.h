@@ -452,7 +452,7 @@ public:
 	void Init();
 	int ReadJsonFromFile(const char* filename);
 
-	Texture* CalculateSkin(GLuint texture,bool isman, JsonRole bonedef, JsonFaceInfo& faceinfo);
+	Texture* CalculateSkin(GLuint texture,cv::Mat& refmat,bool isman, JsonRole bonedef, JsonFaceInfo& faceinfo);
 	void CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonfdef, JsonFaceInfo faceinfo, string& outOffsetJson, Vector3f& centerpos, Vector2f& uvsize,float& yOffset);
 
 	void ResetBone();

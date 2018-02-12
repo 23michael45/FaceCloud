@@ -108,6 +108,80 @@ vector<Rect> ImageOptimizedUtility::detectFace(Mat src)
 	return faces;
 }
 
+void ImageOptimizedUtility::ColorTransfer(Mat src, Mat ref, Mat& outputimg)
+{
+
+	Mat srcimg2;
+	cv::cvtColor(src, srcimg2, CV_RGB2Lab);
+
+	Mat dstimg2;
+	cv::resize(ref, dstimg2, cv::Size(src.cols, src.rows));
+	cv::cvtColor(dstimg2, dstimg2, CV_RGB2Lab);
+
+	int i, j;
+	double var1[3], var2[3];
+
+	for (i = 0; i < 3; i++)
+	{
+		var1[i] = 0;
+		var2[i] = 0;
+	}
+
+	Scalar mean1 = cv::mean(srcimg2);
+	Scalar mean2= cv::mean(dstimg2);
+
+	Vec3f s;
+
+
+	for (i = 0; i < srcimg2.rows; i++)
+	{
+		for (j = 0; j < srcimg2.cols; j++)
+		{
+			s = srcimg2.at<Vec3b>(i, j);
+			var1[0] = var1[0] + (s.val[0] - mean1[0])*(s.val[0] - mean1[0]);
+			var1[1] = var1[1] + (s.val[1] - mean1[1])*(s.val[1] - mean1[1]);
+			var1[2] = var1[2] + (s.val[2] - mean1[2])*(s.val[2] - mean1[2]);
+		}
+	}
+
+	for (i = 0; i < 3; i++)
+	{
+		var1[i] = sqrt(var1[i] / ((srcimg2.cols)*(srcimg2.rows)));
+		//cout<<var1[i]<<endl;  
+	}
+
+	for (i = 0; i < dstimg2.rows; i++)
+	{
+		for (j = 0; j < dstimg2.cols; j++)
+		{
+			s = dstimg2.at<Vec3b>(i, j);
+			var2[0] = var2[0] + (s.val[0] - mean2[0])*(s.val[0] - mean2[0]);
+			var2[1] = var2[1] + (s.val[1] - mean2[1])*(s.val[1] - mean2[1]);
+			var2[2] = var2[2] + (s.val[2] - mean2[2])*(s.val[2] - mean2[2]);
+		}
+	}
+
+	for (i = 0; i < 3; i++)
+	{
+		var2[i] = sqrt(var2[i] / ((dstimg2.cols)*(dstimg2.rows)));
+		//cout<<var2[i]<<endl;  
+	}
+
+	float blend = 0.49;
+	for (i = 0; i < srcimg2.rows; i++)
+	{
+		for (j = 0; j < srcimg2.cols; j++)
+		{
+			s = srcimg2.at<Vec3b>(i, j);
+			s.val[0] = (s.val[0] - mean1[0])*(var2[0] / var1[0]) * blend * 2 + mean2[0] * (1 - blend) * 2;
+			s.val[1] = (s.val[1] - mean1[1])*(var2[1] / var1[1]) * blend * 2 + mean2[1] * (1 - blend) * 2;
+			s.val[2] = (s.val[2] - mean1[2])*(var2[2] / var1[2]) * blend * 2 + mean2[2] * (1 - blend) * 2;
+			srcimg2.at<Vec3b>(i, j) = s;
+		}
+	}
+	cv::cvtColor(srcimg2, outputimg, CV_Lab2RGB);
+}
+
 void ImageOptimizedUtility::UpdateRef_RGB(Mat img, Vector3f refcolor, float value, Mat& outputimg, Vector2f leftpoint, Vector2f rightpoint)
 {
 
@@ -172,8 +246,12 @@ void ImageOptimizedUtility::UpdateRef_RGB(Mat img, Vector3f refcolor, float valu
 	//Point right_2(right2_x, right_1.y);
 
 	//lt
-	Point left_2(left2_x, right_1.y);
-	Point right_2(right2_x, left_1.y);
+	//Point left_2(left2_x, right_1.y);
+	//Point right_2(right2_x, left_1.y);
+
+	//both
+	Point left_2(left2_x, min(left_1.y,right_1.y));
+	Point right_2(right2_x, max(left_1.y, right_1.y));
 
 	// Debug.Log(left_2 + "................" + right_2);
 
@@ -498,8 +576,6 @@ void ImageOptimizedUtility::UpdateRef_RGB(Mat img, Vector3f refcolor, float valu
 		}
 
 	}
-
-
 
 
 

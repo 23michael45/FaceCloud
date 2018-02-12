@@ -194,7 +194,7 @@ int BoneUtility::ReadJsonFromFile(const char* filename)
 
 	return 0;
 }
-Texture* BoneUtility::CalculateSkin(GLuint texture,bool isman, JsonRole bonedef, JsonFaceInfo& faceinfo)
+Texture* BoneUtility::CalculateSkin(GLuint texture,cv::Mat& refmat,bool isman, JsonRole bonedef, JsonFaceInfo& faceinfo)
 {
 	glBindTexture(GL_TEXTURE_2D,texture);
 
@@ -233,7 +233,6 @@ Texture* BoneUtility::CalculateSkin(GLuint texture,bool isman, JsonRole bonedef,
 	Mat rgbimg;
 	cv::cvtColor(img, rgbimg, CV_RGBA2RGB);
 
-	Mat rtmat;
 
 	Vector3f ref_color;
 
@@ -252,11 +251,20 @@ Texture* BoneUtility::CalculateSkin(GLuint texture,bool isman, JsonRole bonedef,
 
 
 	//org left top (opencv)
-	Vector2f leftpoint(350, 684);
-	Vector2f rightpoint(475, 604);
+	/*Vector2f leftpoint(350, 684);
+	Vector2f rightpoint(475, 604);*/
 
+	Vector2f leftpoint = (faceinfo.landmarkdata["contour_left9"] + faceinfo.landmarkdata["nose_left_contour2"]) * 0.5;
+	Vector2f rightpoint = (faceinfo.landmarkdata["contour_right3"] + faceinfo.landmarkdata["nose_right_contour2"])* 0.5;
+
+	Mat rtmat;
+
+
+	//
+	iou.ColorTransfer(rgbimg, refmat, rgbimg);
 	Vector3f rgb = iou.UpdateRefSkin(rgbimg, ref_color, 1.0f, rtmat, leftpoint, rightpoint);
-	
+
+
 
 	Texture *ptexture = new Texture();
 	ptexture->FromCVMat(GL_TEXTURE_2D,rtmat);
