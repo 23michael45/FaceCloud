@@ -21,7 +21,7 @@ std::string format(const char *fmt, ...)
 }
 void Log(std::string message)
 {
-	return;
+	//return;
 	printf(message.c_str());
 	std::string file = string(RES_PATH) + string(LOGFILE);
 	const char * filepath = file.c_str();

@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <iostream>
+#include "OSMesaContext.h"
 
 void ImageOptimizedUtility::Init()
 {
@@ -146,6 +147,8 @@ void ImageOptimizedUtility::ColorTransfer(Mat src, Mat ref, Mat& outputimg,JsonF
 
 	contours.push_back(contour);
 
+
+
 	int count = 0;
 	Scalar meanSrc(0, 0, 0);
 	for (int j = 0; j < srcimg2.rows; j++)
@@ -172,6 +175,7 @@ void ImageOptimizedUtility::ColorTransfer(Mat src, Mat ref, Mat& outputimg,JsonF
 	Scalar mean1 = meanSrc;// cv::mean(subsrcimg2);
 	Scalar mean2= cv::mean(subrefimg2);
 
+	Log("\nTransColor Mean");
 	Vec3f s;
 
 

@@ -226,6 +226,7 @@ Texture* BoneUtility::CalculateSkin(GLuint texture, cv::Mat& refmat, bool isman,
 
 	ImageOptimizedUtility iou;
 
+	Log("\nStart FacePhotoProcess");
 	//do photo pre process
 	cv::Mat img = iou.FacePhotoProcess(faceinfo, bonedef, srcimg32);
 
@@ -263,6 +264,7 @@ Texture* BoneUtility::CalculateSkin(GLuint texture, cv::Mat& refmat, bool isman,
 	
 
 
+	Log("\nStart ColorTransfer");
 	//
 	iou.ColorTransfer(rgbimg, refmat, rtmat, faceinfo);
 	//iou.UpdateRef_RGB(faceinfo,rgbimg,ref_color, 1.0f, rtmat, leftpoint, rightpoint);
@@ -273,7 +275,6 @@ Texture* BoneUtility::CalculateSkin(GLuint texture, cv::Mat& refmat, bool isman,
 	ptexture->FromCVMat(GL_TEXTURE_2D, rtmat);
 
 	SAFE_DELETE(output_image);
-
 	return ptexture;
 }
 

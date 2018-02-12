@@ -298,6 +298,7 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 		//File Path
 		if (!ptexture->LoadFile(photoPath)) {
 			SAFE_DELETE(ptexture);
+			Log("\nLoad Src Texture Error");
 			return "error";
 		}
 
@@ -350,6 +351,7 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 
 
 
+			Log("\nStart CalculateSkin");
 			Texture* paftertex = m_BoneUtility.CalculateSkin(ptexture->GetTextureObj(),refmat, isman, m_JsonRoles.roles[modelID], jsonfaceinfo);
 			m_pCurrentSkinTexture = paftertex;
 
@@ -370,6 +372,7 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 			Vector2f uvsize;
 			float yoffset = 0;
 
+			Log("\nStart CalculateBone");
 			CalculateBone(modelID, jsonfaceinfo, photoPathOut, jsonModelOut, center, uvsize, yoffset);
 
 			if (m_pSkinningRenderer)
@@ -380,6 +383,7 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 			}
 
 
+			Log("\nStart DrawOnce");
 			if (m_bRenderToTexture)
 			{
 
@@ -396,6 +400,7 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 				DrawOnce(modelID, center, uvsize);
 			}
 
+			Log("\nStart CombineTexture");
 			CombineTexture(m_RenderTexture, m_ColorTextureMap[modelID], m_pMaskTexture, photoPathOut);
 
 
