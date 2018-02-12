@@ -15,6 +15,7 @@
 
 #include <GL/glew.h>
 #include "Predefined.h"
+#include "OSMesaContext.h"
 
 void JsonModelFormat::LoadFromFile(string filename)
 {
