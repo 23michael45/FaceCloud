@@ -108,15 +108,15 @@ vector<Rect> ImageOptimizedUtility::detectFace(Mat src)
 	return faces;
 }
 
-void ImageOptimizedUtility::ColorTransfer(Mat src, Mat ref, Mat& outputimg)
+void ImageOptimizedUtility::ColorTransfer(Mat src, Mat ref, Mat& outputimg,JsonFaceInfo &faceinfo)
 {
 
 	Mat srcimg2;
 	cv::cvtColor(src, srcimg2, CV_RGB2Lab);
 
-	Mat dstimg2;
-	cv::resize(ref, dstimg2, cv::Size(src.cols, src.rows));
-	cv::cvtColor(dstimg2, dstimg2, CV_RGB2Lab);
+	Mat refimg2;
+	cv::resize(ref, refimg2, cv::Size(src.cols, src.rows));
+	cv::cvtColor(refimg2, refimg2, CV_RGB2Lab);
 
 	int i, j;
 	double var1[3], var2[3];
@@ -127,8 +127,50 @@ void ImageOptimizedUtility::ColorTransfer(Mat src, Mat ref, Mat& outputimg)
 		var2[i] = 0;
 	}
 
-	Scalar mean1 = cv::mean(srcimg2);
-	Scalar mean2= cv::mean(dstimg2);
+	
+
+	Mat subsrcimg2 = srcimg2(Range(faceinfo.face_rectangle.y, faceinfo.face_rectangle.y + faceinfo.face_rectangle.w),
+		Range(faceinfo.face_rectangle.x, faceinfo.face_rectangle.x + faceinfo.face_rectangle.z));
+
+
+
+	vector<vector<Point> > contours;
+	vector<Point> contour;
+
+	Vector2f contour_left8 = faceinfo.landmarkdata["contour_left8"];
+	Vector2f nose_left_contour3 = faceinfo.landmarkdata["nose_left_contour3"];
+	Vector2f left_eye_bottom = faceinfo.landmarkdata["left_eye_bottom"];
+	contour.push_back(Point(contour_left8.x, contour_left8.y));
+	contour.push_back(Point(nose_left_contour3.x, nose_left_contour3.y));
+	contour.push_back(Point(left_eye_bottom.x, left_eye_bottom.y));
+
+	contours.push_back(contour);
+
+	int count = 0;
+	Scalar meanSrc(0, 0, 0);
+	for (int j = 0; j < srcimg2.rows; j++)
+	{
+		for (int i = 0; i < srcimg2.cols; i++)
+		{
+			float dist = pointPolygonTest(contours[0], Point2f(i, j), true);
+			if (dist > 0)
+			{
+				Vec3b color = srcimg2.at<Vec3b>(i,j);
+				meanSrc[0] += color[0];
+				meanSrc[1] += color[1];
+				meanSrc[2] += color[2];
+				count++;
+			}
+		}
+	}
+	meanSrc = meanSrc / count;
+
+
+
+	Mat subrefimg2 = refimg2(cv::Range(270 / 2, 1070 / 2), cv::Range(624 / 2, 1424 / 2));
+
+	Scalar mean1 = meanSrc;// cv::mean(subsrcimg2);
+	Scalar mean2= cv::mean(subrefimg2);
 
 	Vec3f s;
 
@@ -150,11 +192,11 @@ void ImageOptimizedUtility::ColorTransfer(Mat src, Mat ref, Mat& outputimg)
 		//cout<<var1[i]<<endl;  
 	}
 
-	for (i = 0; i < dstimg2.rows; i++)
+	for (i = 0; i < refimg2.rows; i++)
 	{
-		for (j = 0; j < dstimg2.cols; j++)
+		for (j = 0; j < refimg2.cols; j++)
 		{
-			s = dstimg2.at<Vec3b>(i, j);
+			s = refimg2.at<Vec3b>(i, j);
 			var2[0] = var2[0] + (s.val[0] - mean2[0])*(s.val[0] - mean2[0]);
 			var2[1] = var2[1] + (s.val[1] - mean2[1])*(s.val[1] - mean2[1]);
 			var2[2] = var2[2] + (s.val[2] - mean2[2])*(s.val[2] - mean2[2]);
@@ -163,11 +205,11 @@ void ImageOptimizedUtility::ColorTransfer(Mat src, Mat ref, Mat& outputimg)
 
 	for (i = 0; i < 3; i++)
 	{
-		var2[i] = sqrt(var2[i] / ((dstimg2.cols)*(dstimg2.rows)));
+		var2[i] = sqrt(var2[i] / ((refimg2.cols)*(refimg2.rows)));
 		//cout<<var2[i]<<endl;  
 	}
 
-	float blend = 0.49;
+	float blend = 0.5;
 	for (i = 0; i < srcimg2.rows; i++)
 	{
 		for (j = 0; j < srcimg2.cols; j++)
@@ -182,8 +224,9 @@ void ImageOptimizedUtility::ColorTransfer(Mat src, Mat ref, Mat& outputimg)
 	cv::cvtColor(srcimg2, outputimg, CV_Lab2RGB);
 }
 
-void ImageOptimizedUtility::UpdateRef_RGB(Mat img, Vector3f refcolor, float value, Mat& outputimg, Vector2f leftpoint, Vector2f rightpoint)
+void ImageOptimizedUtility::UpdateRef_RGB(JsonFaceInfo& faceinfo,Mat img, Vector3f refcolor, float value, Mat& outputimg, Vector2f leftpoint, Vector2f rightpoint)
 {
+
 
 
 	//���������
@@ -654,13 +697,6 @@ void ImageOptimizedUtility::UpdateRef_RGB(Mat img, Vector3f refcolor, float valu
 	outputimg = img;
 
 }
-Vector3f ImageOptimizedUtility::UpdateRefSkin(Mat inputTexture, Vector3f ref_RGB, float value, Mat& outputTexture, Vector2f leftpoint, Vector2f rightpoint)
-{
-
-	Vector3f rgb(ref_RGB.x / 255, ref_RGB.y / 255, ref_RGB.z / 255);
-	UpdateRef_RGB(inputTexture, ref_RGB, value, outputTexture, leftpoint, rightpoint);
-	return rgb;
-}
 
 
 Mat ImageOptimizedUtility::FacePhotoProcess(JsonFaceInfo& faceinfo, JsonRole bonedef, Mat src32)
@@ -738,7 +774,15 @@ Mat ImageOptimizedUtility::FacePhotoProcess(JsonFaceInfo& faceinfo, JsonRole bon
 
 		iter->second = Vector2f(pt.x, 1024 - pt.y);
 	}
+	Point2f rectlt(faceinfo.face_rectangle.x, faceinfo.face_rectangle.y);
+	Point2f rectrb(faceinfo.face_rectangle.x + faceinfo.face_rectangle.z, faceinfo.face_rectangle.y + faceinfo.face_rectangle.w);
+	rectlt = ApplyAffineMat(affine, rectlt);
+	rectrb = ApplyAffineMat(affine, rectrb);
 
-	
+	faceinfo.face_rectangle.x = rectlt.x;
+	faceinfo.face_rectangle.y = rectlt.y;
+	faceinfo.face_rectangle.z = rectrb.x - rectlt.x;
+	faceinfo.face_rectangle.w = rectrb.y - rectlt.y;
+
 	return rt8;
 }

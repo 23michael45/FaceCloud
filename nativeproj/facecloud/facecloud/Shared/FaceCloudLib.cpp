@@ -411,7 +411,7 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 			int milliSecondsElapsed = getMilliSpan(start);
 			Log(format("\njsonModelOut:%s", jsonModelOut.c_str()));
 			Log(format("\n\nElapsed time = %u milliseconds", milliSecondsElapsed));
-
+			printf("\n\nElapsed time = %u milliseconds", milliSecondsElapsed);
 			return "success";
 		}
 		else
