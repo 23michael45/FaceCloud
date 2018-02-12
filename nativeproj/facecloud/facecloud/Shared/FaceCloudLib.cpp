@@ -225,45 +225,42 @@ string FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace
 
 	Log("\nCalculate Start!");
 	string calculateSuccess = "";
-	if (mtx.try_lock())
+	while (!mtx.try_lock())
 	{
-		CalculateData* pdata = new CalculateData;
-		pdata->modelID = modelID;
-		pdata->photoPath = photoPath;
-		pdata->jsonFace = jsonFace;
-		pdata->photoPathOut = photoPathOut;
-		pdata->jsonModelOut = jsonModelOut;
-		pdata->finished = false;
-		pdata->success = "";
-		m_RunningQueue.push(pdata);
-
-		mtx.unlock();
-
-
-		Log("\nPushed Queue Has Done!");
-		while (true)
-		{
-			if (mtx.try_lock())
-			{
-				if (pdata->finished == true)
-				{
-					photoPathOut = pdata->photoPathOut;
-					jsonModelOut = pdata->jsonModelOut;
-					calculateSuccess = pdata->success;
-					SAFE_DELETE(pdata);
-					break;
-				}
-				else
-				{
-
-					this_thread::sleep_for(chrono::microseconds(1));
-				}
-
-				mtx.unlock();
-			}
-
-		}
+		this_thread::sleep_for(chrono::microseconds(1));
 	}
+
+	CalculateData* pdata = new CalculateData;
+	pdata->modelID = modelID;
+	pdata->photoPath = photoPath;
+	pdata->jsonFace = jsonFace;
+	pdata->photoPathOut = photoPathOut;
+	pdata->jsonModelOut = jsonModelOut;
+	pdata->finished = false;
+	pdata->success = "";
+	m_RunningQueue.push(pdata);
+
+	mtx.unlock();
+
+
+	Log("\nPushed Queue Has Done!");
+
+	while (pdata->finished == false)
+	{
+		this_thread::sleep_for(chrono::microseconds(1));
+	}
+
+	while (!mtx.try_lock())
+	{
+		this_thread::sleep_for(chrono::microseconds(1));
+	}
+	photoPathOut = pdata->photoPathOut;
+	jsonModelOut = pdata->jsonModelOut;
+	calculateSuccess = pdata->success;
+	SAFE_DELETE(pdata);
+
+	mtx.unlock();
+
 	if (calculateSuccess == "success")
 	{
 		return jsonModelOut;
@@ -274,7 +271,7 @@ string FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace
 
 	}
 
-	
+
 }
 string FaceCloudLib::CalculateReal(string modelID, string photoPath, string jsonFace, string& photoPathOut, string& jsonModelOut)
 {

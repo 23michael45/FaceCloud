@@ -190,6 +190,11 @@ int main(int argc, char** argv)
 		glutMainLoop();
 	}
 
-	//getchar();
+	while (true)
+	{
+		getchar();
+		lib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath, outJsonModelOut);
+	
+	}
 	return 0;
 }

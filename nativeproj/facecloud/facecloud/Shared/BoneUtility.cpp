@@ -261,8 +261,8 @@ Texture* BoneUtility::CalculateSkin(GLuint texture,cv::Mat& refmat,bool isman, J
 
 
 	//
-	iou.ColorTransfer(rgbimg, refmat, rgbimg);
-	Vector3f rgb = iou.UpdateRefSkin(rgbimg, ref_color, 1.0f, rtmat, leftpoint, rightpoint);
+	iou.ColorTransfer(rgbimg, refmat, rtmat);
+	//Vector3f rgb = iou.UpdateRefSkin(rgbimg, ref_color, 1.0f, rtmat, leftpoint, rightpoint);
 
 
 
@@ -1035,21 +1035,6 @@ void BoneUtility::MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo fac
 
 	aiMatrix4x4 aicurrentMat = pmesh->m_BoneNodeMap[bonename]->mTransformation;
 	currentlocalMat = Matrix4f(aicurrentMat);
-
-
-	
-	if (bonename == "face_mouthLip_Rt_joint6")
-	{
-		printf("");
-	}
-	if (bonename == "face_nosewing_Rt_joint003")
-	{
-		printf("");
-	}
-	if (bonename == "face_eyeLidsdown_Lf_joint3")
-	{
-		printf("");
-	}
 
 	Vector3f trspos, trsscl;
 	Matrix4f trsrot;
