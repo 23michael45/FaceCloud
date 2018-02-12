@@ -130,49 +130,58 @@ void ImageOptimizedUtility::ColorTransfer(Mat src, Mat ref, Mat& outputimg,JsonF
 
 	
 
-	Mat subsrcimg2 = srcimg2(Range(faceinfo.face_rectangle.y, faceinfo.face_rectangle.y + faceinfo.face_rectangle.w),
-		Range(faceinfo.face_rectangle.x, faceinfo.face_rectangle.x + faceinfo.face_rectangle.z));
+	
 
-
-
+	Scalar mean1;
 	vector<vector<Point> > contours;
 	vector<Point> contour;
 
-	Vector2f contour_left8 = faceinfo.landmarkdata["contour_left8"];
-	Vector2f nose_left_contour3 = faceinfo.landmarkdata["nose_left_contour3"];
-	Vector2f left_eye_bottom = faceinfo.landmarkdata["left_eye_bottom"];
-	contour.push_back(Point(contour_left8.x, contour_left8.y));
-	contour.push_back(Point(nose_left_contour3.x, nose_left_contour3.y));
-	contour.push_back(Point(left_eye_bottom.x, left_eye_bottom.y));
-
-	contours.push_back(contour);
-
-
-
-	int count = 0;
-	Scalar meanSrc(0, 0, 0);
-	for (int j = 0; j < srcimg2.rows; j++)
+	if (faceinfo.landmarkdata.size() <= 0)
 	{
-		for (int i = 0; i < srcimg2.cols; i++)
+		Mat subsrcimg2 = srcimg2(Range(faceinfo.face_rectangle.y, faceinfo.face_rectangle.y + faceinfo.face_rectangle.w),
+			Range(faceinfo.face_rectangle.x, faceinfo.face_rectangle.x + faceinfo.face_rectangle.z));
+
+		mean1 = cv::mean(subsrcimg2);
+	}
+	else
+	{
+		Vector2f contour_left8 = faceinfo.landmarkdata["contour_left8"];
+		Vector2f nose_left_contour3 = faceinfo.landmarkdata["nose_left_contour3"];
+		Vector2f left_eye_bottom = faceinfo.landmarkdata["left_eye_bottom"];
+		contour.push_back(Point(contour_left8.x, contour_left8.y));
+		contour.push_back(Point(nose_left_contour3.x, nose_left_contour3.y));
+		contour.push_back(Point(left_eye_bottom.x, left_eye_bottom.y));
+
+		contours.push_back(contour);
+
+
+
+		int count = 0;
+		Scalar meanSrc(0, 0, 0);
+		for (int j = 0; j < srcimg2.rows; j++)
 		{
-			float dist = pointPolygonTest(contours[0], Point2f(i, j), true);
-			if (dist > 0)
+			for (int i = 0; i < srcimg2.cols; i++)
 			{
-				Vec3b color = srcimg2.at<Vec3b>(i,j);
-				meanSrc[0] += color[0];
-				meanSrc[1] += color[1];
-				meanSrc[2] += color[2];
-				count++;
+				float dist = pointPolygonTest(contours[0], Point2f(i, j), true);
+				if (dist > 0)
+				{
+					Vec3b color = srcimg2.at<Vec3b>(i, j);
+					meanSrc[0] += color[0];
+					meanSrc[1] += color[1];
+					meanSrc[2] += color[2];
+					count++;
+				}
 			}
 		}
-	}
-	meanSrc = meanSrc / count;
 
+		meanSrc = meanSrc / count;
+		mean1 = meanSrc;
+	}
 
 
 	Mat subrefimg2 = refimg2(cv::Range(270 / 2, 1070 / 2), cv::Range(624 / 2, 1424 / 2));
 
-	Scalar mean1 = meanSrc;// cv::mean(subsrcimg2);
+
 	Scalar mean2= cv::mean(subrefimg2);
 
 	Log("\nTransColor Mean");
@@ -711,8 +720,7 @@ Mat ImageOptimizedUtility::FacePhotoProcess(JsonFaceInfo& faceinfo, JsonRole bon
 	int resultWidth = 1024;
 	int resultHeight = 1024;
 
-
-
+	
 	Vector2f leftp = faceinfo.landmarkdata["left_eye_right_corner"];
 	//leftp.y = srcHeight - leftp.y;
 
