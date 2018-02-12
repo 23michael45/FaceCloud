@@ -300,7 +300,7 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 		}
 
 
-
+		
 		//Base 64 Code	
 		/*Magick::Image img;
 		Magick::Blob blob;
@@ -326,12 +326,33 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 		JsonFaceInfo jsonfaceinfo;
 		if (jsonfaceinfo.LoadFromString(jsonFace, true))
 		{
+
+			unsigned char* ptex;
+			cv::Mat premat = GLTextureToMat(ptexture->GetTextureObj(), ptex);
+			for (map<string,Vector2f>::iterator iter = jsonfaceinfo.landmarkdata.begin();iter != jsonfaceinfo.landmarkdata.end();iter++)
+			{
+				Vector2f pos = iter->second;
+				cv::circle(premat, cv::Point(pos.x,pos.y), 10, cv::Scalar(255, 0, 0, 255));
+			}
+
+			SaveTextureToFile(premat, GL_RGBA, "data/export/precircle.jpg");
+			SAFE_DELETE(ptex);
+
+
+
+
+
 			Texture* paftertex = m_BoneUtility.CalculateSkin(ptexture->GetTextureObj(), isman, m_JsonRoles.roles[modelID], jsonfaceinfo);
 			m_pCurrentSkinTexture = paftertex;
 
 			unsigned char* ptr;
 			cv::Mat mat = GLTextureToMat(m_pCurrentSkinTexture->GetTextureObj(), ptr);
-			//SaveTextureToFile(mat, GL_RGBA, "data/export/test.jpg");
+			for (map<string, Vector2f>::iterator iter = jsonfaceinfo.landmarkdata.begin(); iter != jsonfaceinfo.landmarkdata.end(); iter++)
+			{
+				Vector2f pos = iter->second;
+				cv::circle(mat, cv::Point(pos.x, 1024 - pos.y), 10, cv::Scalar(255, 0, 0, 255));
+			}
+			SaveTextureToFile(mat, GL_RGBA, "data/export/test.jpg");
 			SAFE_DELETE(ptr);
 
 			Vector3f center;
@@ -715,11 +736,11 @@ cv::Mat FaceCloudLib::GLTextureToMat(GLuint texture, unsigned char*& outimagptr)
 
 	if (comp == GL_RGB)
 	{
-		img = cv::Mat(wtex, htex, CV_8UC3, (unsigned*)outimagptr);
+		img = cv::Mat(htex, wtex, CV_8UC3, (unsigned*)outimagptr);
 	}
 	else if (comp == GL_RGBA)
 	{
-		img = cv::Mat(wtex, htex, CV_8UC4, (unsigned*)outimagptr);
+		img = cv::Mat(htex, wtex, CV_8UC4, (unsigned*)outimagptr);
 	}
 
 

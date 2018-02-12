@@ -91,7 +91,7 @@ void RenderSceneCB()
 
 		//只计算一次
 		lib.m_bRenderToTexture = false;
-		lib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath, outJsonModelOut);
+		lib.CalculateReal(currentModelID, photopath, jsonfacestring, outPhotoPath, outJsonModelOut);
 
 		hasdone = true;
 		glutSwapBuffers();
@@ -126,7 +126,7 @@ static void SpecialKeyboardCB(int Key, int x, int y)
 		printf("\n\nStarting timer...");
 		start = getMilliCount();
 
-		lib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath, outJsonModelOut);
+		lib.CalculateReal(currentModelID, photopath, jsonfacestring, outPhotoPath, outJsonModelOut);
 		SaveFile(outJsonModelOut, outjsonoffsetpath);
 
 
@@ -144,23 +144,25 @@ int main(int argc, char** argv)
 {
 	bool bRenderToTarget = true;
 
-	if (!lib.Init(false))
-	{
-		printf("Face Cloud Lib Init Failed");
-		return -1;
-	}
-
-
 
 	jsonfacestring = LoadJsonStringFromFile(jsonfacepath);
 
 	if (bRenderToTarget)
 	{
+		if (!lib.Init(false))
+		{
+			printf("Face Cloud Lib Init Failed");
+			return -1;
+		}
 		//glutSpecialFunc(SpecialKeyboardCB);
-
 	}
 	else
 	{
+		if (!lib.InitReal(false))
+		{
+			printf("Face Cloud Lib Init Failed");
+			return -1;
+		}
 		glutDisplayFunc(RenderSceneCB);
 		glutIdleFunc(RenderSceneCB);
 		glutSpecialFunc(SpecialKeyboardCB);

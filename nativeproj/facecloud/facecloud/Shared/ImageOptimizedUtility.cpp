@@ -138,7 +138,7 @@ void ImageOptimizedUtility::UpdateRef_RGB(Mat img, Vector3f refcolor, float valu
 	//lb
 	//Rect roi1(left_1.x, left_1.y, right_1.x - left_1.x, right_1.y - left_1.y);
 	//lt
-	Rect roi1(left_1.x, right_1.y, right_1.x - left_1.x, -right_1.y + left_1.y);
+	Rect roi1(min(left_1.x,right_1.x), min(left_1.y,right_1.y), abs(right_1.x - left_1.x), abs(right_1.y - left_1.y));
 
 	Mat subimg_1(img,roi1);// = img.(new Range((int)left_1.y, (int)right_1.y), new Range((int)left_1.x, (int)right_1.x));
 	Mat subimgcopy_1;
@@ -183,7 +183,7 @@ void ImageOptimizedUtility::UpdateRef_RGB(Mat img, Vector3f refcolor, float valu
 	//lb
 	//Rect roi2(left_2.x, left_2.y, left_2.x - right_2.x, right_2.y - left_2.y);
 	//lt
-	Rect roi2(left_2.x, left_2.y, left_2.x - right_2.x, right_2.y - left_2.y);
+	Rect roi2(min(left_2.x,right_2.x), min(left_2.y,right_2.y), abs(left_2.x - right_2.x), abs(right_2.y - left_2.y));
 
 
 	Mat subimg_2(img, roi2);// img.submat(new Range((int)left_2.y, (int)right_2.y), new Range((int)right_2.x, (int)left_2.x));
