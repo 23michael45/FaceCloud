@@ -179,6 +179,32 @@ int main(int argc, char** argv)
 	{
 		lib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath, outJsonModelOut);
 		SaveFile(outJsonModelOut, outjsonoffsetpath);
+
+		int i = 0;
+
+		string basepath = "/tmp/outPhotoPath";
+		string baseoffsetpath = "/tmp/outJsonPath";
+
+
+
+
+		while (true)
+		{
+			stringstream s1;
+			s1 << basepath << i << ".jpg";
+			outPhotoPath = s1.str();
+
+			stringstream s2;
+			s2 << baseoffsetpath << i << ".json";
+			baseoffsetpath = s2.str();
+			outJsonModelOut = s2.str();
+
+			lib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath, outJsonModelOut);
+			SaveFile(outJsonModelOut, outjsonoffsetpath);
+			i++;
+		}
+
+
 		//glutMainLoop();
 
 		//实际服务器不生成文件，只返回STRING就可以

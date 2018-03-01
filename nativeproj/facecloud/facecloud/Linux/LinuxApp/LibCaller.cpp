@@ -175,8 +175,26 @@ int main(int argc, char** argv)
 
 	if (bRenderToTarget)
 	{
-		lib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath, outJsonModelOut);
-		SaveFile(outJsonModelOut, outjsonoffsetpath);
+		int i = 0;
+
+		string basepath = "/tmp/outPhotoPath%d.jpg";
+		string baseoffsetpath = "/tmp/outJsonPath%d.json";
+		while (true)
+		{
+			stringstream s1;
+			s1 << basepath << i << ".jpg";
+			outPhotoPath = s1.str();
+
+			stringstream s2;
+			s2 << baseoffsetpath << i << ".json";
+			baseoffsetpath = s2.str();
+			outJsonModelOut = s2.str();
+
+			lib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath, outJsonModelOut);
+			SaveFile(outJsonModelOut, outjsonoffsetpath);
+			i++;
+		}
+		
 		//glutMainLoop();
 
 		//ʵ�ʷ������������ļ���ֻ����STRING�Ϳ���
