@@ -15,6 +15,7 @@
 
 #include <GL/glew.h>
 #include "Predefined.h"
+#include "OSMesaContext.h"
 
 void JsonModelFormat::LoadFromFile(string filename)
 {
@@ -194,9 +195,9 @@ int BoneUtility::ReadJsonFromFile(const char* filename)
 
 	return 0;
 }
-Texture* BoneUtility::CalculateSkin(GLuint texture,cv::Mat& refmat,bool isman, JsonRole bonedef, JsonFaceInfo& faceinfo)
+Texture* BoneUtility::CalculateSkin(GLuint texture, cv::Mat& refmat, bool isman, JsonRole bonedef, JsonFaceInfo& faceinfo)
 {
-	glBindTexture(GL_TEXTURE_2D,texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
 
 	GLint wtex, htex, comp, rs, gs, bs, as;
 	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &wtex);
@@ -217,7 +218,7 @@ Texture* BoneUtility::CalculateSkin(GLuint texture,cv::Mat& refmat,bool isman, J
 	GLenum error = glGetError();
 	const GLubyte * eb = gluErrorString(error);
 	string errorstring((char*)eb);
-	cv::Mat srcimg = cv::Mat(htex, wtex,  CV_8UC4, (unsigned*)output_image);
+	cv::Mat srcimg = cv::Mat(htex, wtex, CV_8UC4, (unsigned*)output_image);
 
 	cv::Mat srcimg32;
 	srcimg.convertTo(srcimg32, CV_32FC4);
@@ -226,6 +227,7 @@ Texture* BoneUtility::CalculateSkin(GLuint texture,cv::Mat& refmat,bool isman, J
 
 	ImageOptimizedUtility iou;
 
+	Log("\nStart FacePhotoProcess");
 	//do photo pre process
 	cv::Mat img = iou.FacePhotoProcess(faceinfo, bonedef, srcimg32);
 
@@ -254,23 +256,26 @@ Texture* BoneUtility::CalculateSkin(GLuint texture,cv::Mat& refmat,bool isman, J
 	/*Vector2f leftpoint(350, 684);
 	Vector2f rightpoint(475, 604);*/
 
-	Vector2f leftpoint = (faceinfo.landmarkdata["contour_left9"] + faceinfo.landmarkdata["nose_left_contour2"]) * 0.5;
-	Vector2f rightpoint = (faceinfo.landmarkdata["contour_right3"] + faceinfo.landmarkdata["nose_right_contour2"])* 0.5;
+	/*Vector2f leftpoint = (faceinfo.landmarkdata["contour_left9"] + faceinfo.landmarkdata["nose_left_contour2"]) * 0.5;
+	Vector2f rightpoint = (faceinfo.landmarkdata["contour_right3"] + faceinfo.landmarkdata["nose_right_contour2"])* 0.5;*/
 
 	Mat rtmat;
 
 
+	
+
+
+	Log("\nStart ColorTransfer");
 	//
-	iou.ColorTransfer(rgbimg, refmat, rgbimg);
-	Vector3f rgb = iou.UpdateRefSkin(rgbimg, ref_color, 1.0f, rtmat, leftpoint, rightpoint);
+	iou.ColorTransfer(rgbimg, refmat, rtmat, faceinfo);
+	//iou.UpdateRef_RGB(faceinfo,rgbimg,ref_color, 1.0f, rtmat, leftpoint, rightpoint);
 
 
 
 	Texture *ptexture = new Texture();
-	ptexture->FromCVMat(GL_TEXTURE_2D,rtmat);
-	
-	SAFE_DELETE(output_image);
+	ptexture->FromCVMat(GL_TEXTURE_2D, rtmat);
 
+	SAFE_DELETE(output_image);
 	return ptexture;
 }
 
@@ -1035,21 +1040,6 @@ void BoneUtility::MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo fac
 
 	aiMatrix4x4 aicurrentMat = pmesh->m_BoneNodeMap[bonename]->mTransformation;
 	currentlocalMat = Matrix4f(aicurrentMat);
-
-
-	
-	if (bonename == "face_mouthLip_Rt_joint6")
-	{
-		printf("");
-	}
-	if (bonename == "face_nosewing_Rt_joint003")
-	{
-		printf("");
-	}
-	if (bonename == "face_eyeLidsdown_Lf_joint3")
-	{
-		printf("");
-	}
 
 	Vector3f trspos, trsscl;
 	Matrix4f trsrot;

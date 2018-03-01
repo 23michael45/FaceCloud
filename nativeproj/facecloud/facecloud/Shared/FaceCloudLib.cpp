@@ -225,45 +225,42 @@ string FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace
 
 	Log("\nCalculate Start!");
 	string calculateSuccess = "";
-	if (mtx.try_lock())
+	while (!mtx.try_lock())
 	{
-		CalculateData* pdata = new CalculateData;
-		pdata->modelID = modelID;
-		pdata->photoPath = photoPath;
-		pdata->jsonFace = jsonFace;
-		pdata->photoPathOut = photoPathOut;
-		pdata->jsonModelOut = jsonModelOut;
-		pdata->finished = false;
-		pdata->success = "";
-		m_RunningQueue.push(pdata);
-
-		mtx.unlock();
-
-
-		Log("\nPushed Queue Has Done!");
-		while (true)
-		{
-			if (mtx.try_lock())
-			{
-				if (pdata->finished == true)
-				{
-					photoPathOut = pdata->photoPathOut;
-					jsonModelOut = pdata->jsonModelOut;
-					calculateSuccess = pdata->success;
-					SAFE_DELETE(pdata);
-					break;
-				}
-				else
-				{
-
-					this_thread::sleep_for(chrono::microseconds(1));
-				}
-
-				mtx.unlock();
-			}
-
-		}
+		this_thread::sleep_for(chrono::microseconds(1));
 	}
+
+	CalculateData* pdata = new CalculateData;
+	pdata->modelID = modelID;
+	pdata->photoPath = photoPath;
+	pdata->jsonFace = jsonFace;
+	pdata->photoPathOut = photoPathOut;
+	pdata->jsonModelOut = jsonModelOut;
+	pdata->finished = false;
+	pdata->success = "";
+	m_RunningQueue.push(pdata);
+
+	mtx.unlock();
+
+
+	Log("\nPushed Queue Has Done!");
+
+	while (pdata->finished == false)
+	{
+		this_thread::sleep_for(chrono::microseconds(1));
+	}
+
+	while (!mtx.try_lock())
+	{
+		this_thread::sleep_for(chrono::microseconds(1));
+	}
+	photoPathOut = pdata->photoPathOut;
+	jsonModelOut = pdata->jsonModelOut;
+	calculateSuccess = pdata->success;
+	SAFE_DELETE(pdata);
+
+	mtx.unlock();
+
 	if (calculateSuccess == "success")
 	{
 		return jsonModelOut;
@@ -274,7 +271,7 @@ string FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace
 
 	}
 
-	
+
 }
 string FaceCloudLib::CalculateReal(string modelID, string photoPath, string jsonFace, string& photoPathOut, string& jsonModelOut)
 {
@@ -301,6 +298,7 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 		//File Path
 		if (!ptexture->LoadFile(photoPath)) {
 			SAFE_DELETE(ptexture);
+			Log("\nLoad Src Texture Error");
 			return "error";
 		}
 
@@ -353,6 +351,7 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 
 
 
+			Log("\nStart CalculateSkin");
 			Texture* paftertex = m_BoneUtility.CalculateSkin(ptexture->GetTextureObj(),refmat, isman, m_JsonRoles.roles[modelID], jsonfaceinfo);
 			m_pCurrentSkinTexture = paftertex;
 
@@ -373,6 +372,7 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 			Vector2f uvsize;
 			float yoffset = 0;
 
+			Log("\nStart CalculateBone");
 			CalculateBone(modelID, jsonfaceinfo, photoPathOut, jsonModelOut, center, uvsize, yoffset);
 
 			if (m_pSkinningRenderer)
@@ -383,6 +383,7 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 			}
 
 
+			Log("\nStart DrawOnce");
 			if (m_bRenderToTexture)
 			{
 
@@ -399,6 +400,7 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 				DrawOnce(modelID, center, uvsize);
 			}
 
+			Log("\nStart CombineTexture");
 			CombineTexture(m_RenderTexture, m_ColorTextureMap[modelID], m_pMaskTexture, photoPathOut);
 
 
@@ -414,7 +416,7 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 			int milliSecondsElapsed = getMilliSpan(start);
 			Log(format("\njsonModelOut:%s", jsonModelOut.c_str()));
 			Log(format("\n\nElapsed time = %u milliseconds", milliSecondsElapsed));
-
+			printf("\n\nElapsed time = %u milliseconds", milliSecondsElapsed);
 			return "success";
 		}
 		else
