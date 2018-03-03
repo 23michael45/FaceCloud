@@ -34,9 +34,9 @@ public class Entry {
 			while (true)
 			{
 				outPhotoPath = basepath + Integer.toString(i) + ".jpg";
-				outJsonModelOut = = baseoffsetpath + Integer.toString(i) + ".json";
+				outJsonModelOut = baseoffsetpath + Integer.toString(i) + ".json";
 
-				fclib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath, outJsonModelOut);
+				outJsonModelOut = fclib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath);
 				fclib.SaveFile(outJsonModelOut, outjsonoffsetpath);
 				i++;
 			}
