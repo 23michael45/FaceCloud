@@ -30,8 +30,8 @@ public class Entry {
 
 
 			int i = 0;
-
-			while (true)
+			boolean b = true;
+			while (b)
 			{
 				outPhotoPath = basepath + Integer.toString(i) + ".jpg";
 				outJsonModelOut = baseoffsetpath + Integer.toString(i) + ".json";
