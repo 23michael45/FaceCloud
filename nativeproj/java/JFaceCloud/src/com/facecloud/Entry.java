@@ -23,14 +23,28 @@ public class Entry {
 	        String outPhotoPath = "/root/jni/data/export/outphoto.jpg";
 	        String outjsonoffsetpath = "/root/jni/data/export/outjson.json";
 	        
-	        
-
 	        jsonfacestring = fclib.LoadJsonStringFromFile(jsonfacepath);
+			
+	        String basepath = "/tmp/outPhotoPath";
+			String baseoffsetpath = "/tmp/outJsonPath";
+
+
+			int i = 0;
+
+			while (true)
+			{
+				outPhotoPath = basepath + i.toString() + ".jpg";
+				outJsonModelOut = = baseoffsetpath + i.toString() + ".json";
+
+				fclib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath, outJsonModelOut);
+				fclib.SaveFile(outJsonModelOut, outjsonoffsetpath);
+				i++;
+			}
+
 
 	        //System.out.println("jsonfacestring     :      " + jsonfacestring);
-	        outJsonModelOut = fclib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath);
-	    
-	        fclib.SaveFile(outJsonModelOut, outjsonoffsetpath);
+	        //outJsonModelOut = fclib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath);
+	        //fclib.SaveFile(outJsonModelOut, outjsonoffsetpath);
 
 	        //System.out.println("outJsonModelOut: " + outJsonModelOut);
 			fclib.Finalize();
