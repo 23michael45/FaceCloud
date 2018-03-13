@@ -20,39 +20,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 
 
-#include "UnlitSkinningTechnique.h"
+#include "MaskSkinningTechnique.h"
 #include "ogldev_util.h"
 #include "Predefined.h"
 using namespace std;
 
-UnlitSkinningTechnique::UnlitSkinningTechnique()
+MaskSkinningTechnique::MaskSkinningTechnique()
 {
 }
 
 
-bool UnlitSkinningTechnique::Init()
+bool MaskSkinningTechnique::Init()
 {
 	if (!Technique::Init()) {
 
-		printf("\nUnlitSkinningTechnique Init Failed");
+		printf("\nMaskSkinningTechnique Init Failed");
 		return false;
 	}
 
 	if (!AddShader(GL_VERTEX_SHADER, (RES_PATH + string("shader/skinningunlit.vs")).c_str())) {
 
-		printf("\nUnlitSkinningTechnique vs Init Failed");
+		printf("\nMaskSkinningTechnique vs Init Failed");
 		return false;
 	}
 
-	if (!AddShader(GL_FRAGMENT_SHADER, (RES_PATH + string("shader/skinningunlit.fs")).c_str())) {
+	if (!AddShader(GL_FRAGMENT_SHADER, (RES_PATH + string("shader/skinningmask.fs")).c_str())) {
 
-		printf("\nUnlitSkinningTechnique fs Init Failed");
+		printf("\nMaskSkinningTechnique fs Init Failed");
 		return false;
 	}
 
 	if (!Finalize()) {
 
-		printf("\nUnlitSkinningTechnique vs Finalize Failed");
+		printf("\nMaskSkinningTechnique vs Finalize Failed");
 		return false;
 	}
 
@@ -81,36 +81,36 @@ bool UnlitSkinningTechnique::Init()
 	return true;
 }
 
-void UnlitSkinningTechnique::SetWVP(const Matrix4f& WVP)
+void MaskSkinningTechnique::SetWVP(const Matrix4f& WVP)
 {
 	glUniformMatrix4fv(m_WVPLocation, 1, GL_TRUE, (const GLfloat*)WVP);
 }
 
 
-void UnlitSkinningTechnique::SetColorTextureUnit(unsigned int TextureUnit)
+void MaskSkinningTechnique::SetColorTextureUnit(unsigned int TextureUnit)
 {
 	glUniform1i(m_colorTextureLocation, TextureUnit);
 }
-void UnlitSkinningTechnique::SetDetailTextureUnit(unsigned int TextureUnit)
+void MaskSkinningTechnique::SetDetailTextureUnit(unsigned int TextureUnit)
 {
 	glUniform1i(m_detailTextureLocation, TextureUnit);
 }
-void UnlitSkinningTechnique::SetMaskTextureUnit(unsigned int TextureUnit)
+void MaskSkinningTechnique::SetMaskTextureUnit(unsigned int TextureUnit)
 {
 	glUniform1i(m_maskTextureLocation, TextureUnit);
 }
-void UnlitSkinningTechnique::SetUVSize(Vector2f& uvsize)
+void MaskSkinningTechnique::SetUVSize(Vector2f& uvsize)
 {
 	glUniform2fv(m_UVSizeLocation, 1,(const GLfloat*)&uvsize);
 }
-void UnlitSkinningTechnique::SetYOffset(float yoffset)
+void MaskSkinningTechnique::SetYOffset(float yoffset)
 {
 
 	glUniform1f(m_YOffsetLocation, yoffset);
 }
 
 
-void UnlitSkinningTechnique::SetBoneTransform(uint Index, const Matrix4f& Transform)
+void MaskSkinningTechnique::SetBoneTransform(uint Index, const Matrix4f& Transform)
 {
 	assert(Index < MAX_BONES);
 	//Transform.Print();

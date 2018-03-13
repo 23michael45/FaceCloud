@@ -86,7 +86,7 @@ void Texture::Gen(Magick::Image image)
 	}
 	catch (...)
 	{
-		Log("Gen Texture Error");
+		OSMesa::Log("Gen Texture Error");
 	}
 }
 
@@ -137,4 +137,80 @@ void Texture::FromCVMat(GLenum TextureTarget, cv::Mat& image)
 		glTexParameterf(m_textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glBindTexture(m_textureTarget, 0);
 	}
+}
+
+
+void Texture::CloneFromTexture(GLuint tex)
+{
+	glBindTexture(GL_TEXTURE_2D, tex);
+	GLint wtex, htex, comp, rs, gs, bs, as;
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &wtex);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &htex);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &comp);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_RED_SIZE, &rs);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_GREEN_SIZE, &gs);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_BLUE_SIZE, &bs);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_ALPHA_SIZE, &as);
+	long size = 0;
+	if (comp == GL_RGB)
+	{
+
+		size = wtex * htex * 3;
+	}
+	else if (comp == GL_RGBA)
+	{
+		size = wtex * htex * 4;
+	}
+
+	unsigned char * data = new unsigned char[size];
+	glGetTexImage(GL_TEXTURE_2D, 0, comp, GL_UNSIGNED_BYTE, data);
+
+	m_textureTarget = GL_TEXTURE_2D;
+	glGenTextures(1, &m_textureObj);
+
+
+	glBindTexture(m_textureTarget, m_textureObj);
+	//glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, wtex, htex, comp, GL_UNSIGNED_BYTE, data);
+
+	glTexImage2D(GL_TEXTURE_2D,         // Type of texture
+		0,                   // Pyramid level (for mip-mapping) - 0 is the top level
+		comp,              // Internal colour format to convert to
+		wtex,          // Image width  i.e. 640 for Kinect in standard mode
+		htex,          // Image height i.e. 480 for Kinect in standard mode
+		0,                   // Border width in pixels (can either be 1 or 0)
+		comp,              // Input image format (i.e. GL_RGB, GL_RGBA, GL_BGR etc.)
+		GL_UNSIGNED_BYTE,    // Image data type
+		data);        // The actual image data itself
+
+
+	glTexParameterf(m_textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameterf(m_textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glBindTexture(m_textureTarget, 0);
+
+
+}
+void Texture::CloneFromFBOTexture(GLuint tex)
+{
+	glBindTexture(GL_TEXTURE_2D, tex);
+	GLint wtex, htex;
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &wtex);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &htex);
+
+
+	GLuint fbo;
+	glGenFramebuffers(1, &fbo);
+	/// bind the FBO
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+	/// attach the source texture to the fbo
+	glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+		GL_TEXTURE_2D, tex, 0);
+
+
+	/// bind the destination texture
+	glBindTexture(GL_TEXTURE_2D, m_textureObj);
+	/// copy from framebuffer (here, the FBO!) to the bound texture
+	glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, wtex, htex);
+	/// unbind the FBO
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }

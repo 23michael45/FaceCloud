@@ -12,6 +12,10 @@
 #include "Predefined.h"
 #include "OSMesaContext.h"
 #include <mutex>          // std::mutex
+
+#include "ImageOptimizedUtility.h"
+
+
 bool WriteTGA(char *file, short int width, short int height, unsigned char *outImage)
 {
 	// To save a screen shot is just like reading in a image. All you do
@@ -120,6 +124,7 @@ FaceCloudLib::FaceCloudLib()
 {
 	m_pGameCamera = NULL;
 	m_pSkinningRenderer = NULL;
+	m_pSkinningMaskRenderer = NULL;
 	m_FramebufferName = 0;
 
 	m_Width = 2048;
@@ -130,6 +135,7 @@ FaceCloudLib::~FaceCloudLib()
 
 	SAFE_DELETE(m_pGameCamera);
 	SAFE_DELETE(m_pSkinningRenderer);
+	SAFE_DELETE(m_pSkinningMaskRenderer);
 	SAFE_DELETE(m_pCommonRenderer);
 
 	for (map<string,SkinnedMesh*>::iterator iter = m_MeshMap.begin();iter != m_MeshMap.end();iter++)
@@ -158,7 +164,7 @@ bool FaceCloudLib::Init(bool offscreen)
 		this_thread::sleep_for(chrono::microseconds(1));
 	}
 
-	Log("\nInit Has Done!");
+	OSMesa::Log("\nInit Has Done!");
 	return hasInitSuccess;
 }
 bool FaceCloudLib::Finalize()
@@ -169,7 +175,7 @@ bool FaceCloudLib::Finalize()
 
 bool FaceCloudLib::InitReal (bool offscreen)
 {
-	Log("\nStart Face Cloud Lib Init\n");
+	OSMesa::Log("\nStart Face Cloud Lib Init\n");
 	int argc = 0;
 	char** argv = 0;
 	GLUTBackendInit(argc, argv, true, false);
@@ -179,7 +185,7 @@ bool FaceCloudLib::InitReal (bool offscreen)
 		if (!GLUTBackendCreateContext(m_Width, m_Height)) {
 
 			glutHideWindow();
-			Log("\nGLUTBackendCreateContext Failed");
+			OSMesa::Log("\nGLUTBackendCreateContext Failed");
 			return false;
 		}
 	}
@@ -187,7 +193,7 @@ bool FaceCloudLib::InitReal (bool offscreen)
 	{
 		if (!GLUTBackendCreateWindow(m_Width, m_Height, false, "FaceCloudLib")) {
 
-			Log("\nGLUTBackendCreateWindow Failed");
+			OSMesa::Log("\nGLUTBackendCreateWindow Failed");
 			return false;
 		}
 	
@@ -195,18 +201,18 @@ bool FaceCloudLib::InitReal (bool offscreen)
 	bool rt = InitCamera();
 	if (rt == false)
 	{
-		Log("\nInitCamera Failed");
+		OSMesa::Log("\nInitCamera Failed");
 		return false;
 	}
 	rt = InitMesh();
 	if (rt == false)
 	{
-		Log("\nInitMesh Failed");
+		OSMesa::Log("\nInitMesh Failed");
 		return false;
 	}
 	if (!InitJson())
 	{
-		Log("\nInitJson Failed");
+		OSMesa::Log("\nInitJson Failed");
 		return false;
 	}
 	
@@ -223,7 +229,7 @@ bool FaceCloudLib::InitReal (bool offscreen)
 string FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace, string& photoPathOut, string& jsonModelOut)
 {
 
-	Log("\nCalculate Start!");
+	OSMesa::Log("\nCalculate Start!");
 	string calculateSuccess = "";
 	while (!mtx.try_lock())
 	{
@@ -243,7 +249,7 @@ string FaceCloudLib::Calculate(string modelID, string photoPath, string jsonFace
 	mtx.unlock();
 
 
-	Log("\nPushed Queue Has Done!");
+	OSMesa::Log("\nPushed Queue Has Done!");
 
 	while (pdata->finished == false)
 	{
@@ -277,8 +283,8 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 {
 	try
 	{
-		Log("\n\nStarting timer...");
-		int start = getMilliCount();
+		OSMesa::Log("\n\nStarting timer...");
+		int start = OSMesa::getMilliCount();
 
 		/*string s = format("\nmodelID:%s \nphotoPath:%s \njsonFace:%s \nphotoPathOut:%s \njsonModelOut:%s \n \n",
 			modelID.c_str(),
@@ -286,7 +292,7 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 			jsonFace.c_str(),
 			photoPathOut.c_str(),
 			"");*/
-		Log(format("\nmodelID:%s \nphotoPath:%s \njsonFace:%s \nphotoPathOut:%s \njsonModelOut:%s \n \n",
+		OSMesa::Log(OSMesa::format("\nmodelID:%s \nphotoPath:%s \njsonFace:%s \nphotoPathOut:%s \njsonModelOut:%s \n \n",
 			modelID.c_str(),
 			photoPath.c_str(),
 			jsonFace.c_str(),
@@ -298,7 +304,7 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 		//File Path
 		if (!ptexture->LoadFile(photoPath)) {
 			SAFE_DELETE(ptexture);
-			Log("\nLoad Src Texture Error");
+			OSMesa::Log("\nLoad Src Texture Error");
 			return "error";
 		}
 
@@ -351,20 +357,40 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 
 
 
-			Log("\nStart CalculateSkin");
+			OSMesa::Log("\nStart CalculateSkin");
 			Texture* paftertex = m_BoneUtility.CalculateSkin(ptexture->GetTextureObj(),refmat, isman, m_JsonRoles.roles[modelID], jsonfaceinfo);
 			m_pCurrentSkinTexture = paftertex;
 
-			/*unsigned char* ptr;
+
+			//////////////////////////////print after texture for testing
+			unsigned char* ptr;
 			cv::Mat mat = GLTextureToMat(m_pCurrentSkinTexture->GetTextureObj(), ptr);
-			for (map<string, Vector2f>::iterator iter = jsonfaceinfo.landmarkdata.begin(); iter != jsonfaceinfo.landmarkdata.end(); iter++)
-			{
-				Vector2f pos = iter->second;
-				cv::circle(mat, cv::Point(pos.x, 1024 - pos.y), 10, cv::Scalar(255, 0, 0, 255));
-				cv::putText(mat, iter->first, cv::Point(pos.x, 1024 - pos.y),  CV_FONT_HERSHEY_PLAIN, 0.4,cv::Scalar(0, 0, 255, 255));
-			}
-			SaveTextureToFile(mat, GL_RGBA, "data/export/test.jpg");
-			SAFE_DELETE(ptr);*/
+
+			//for (map<string, Vector2f>::iterator iter = jsonfaceinfo.landmarkdata.begin(); iter != jsonfaceinfo.landmarkdata.end(); iter++)
+			//{
+			//	string name = iter->first;
+			//	Vector2f pos = iter->second;
+			//	cv::circle(mat, cv::Point(pos.x, 1024 - pos.y), 15, cv::Scalar(255, 0, 0, 255));
+
+			//	/*if (name.find("contour_left") == std::string::npos && name.find("contour_right") == std::string::npos)
+			//	{
+
+			//		cv::putText(mat, iter->first, cv::Point(pos.x, 1024 - pos.y), CV_FONT_HERSHEY_PLAIN, 0.8, cv::Scalar(0, 0, 255, 255));
+			//	}*/
+
+
+			//	/*if (name.find("contour") != std::string::npos)
+			//	{
+			//		contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+
+			//	}*/
+			//}
+		
+
+			SaveTextureToFile(mat, GL_RGBA, "data/export/afterskin.jpg");
+			SAFE_DELETE(ptr);
+			//////////////////////////////print after texture for testing
+
 
 
 			SAFE_DELETE(refptr);
@@ -372,25 +398,44 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 			Vector2f uvsize;
 			float yoffset = 0;
 
-			Log("\nStart CalculateBone");
+			OSMesa::Log("\nStart CalculateBone");
 			CalculateBone(modelID, jsonfaceinfo, photoPathOut, jsonModelOut, center, uvsize, yoffset);
 
 			if (m_pSkinningRenderer)
 			{
+				m_pSkinningRenderer->Enable();
 				m_pSkinningRenderer->SetUVSize(uvsize);
 				m_pSkinningRenderer->SetYOffset(yoffset);
 
 			}
+			if (m_pSkinningMaskRenderer)
+			{
+				m_pSkinningMaskRenderer->Enable();
+				m_pSkinningMaskRenderer->SetUVSize(uvsize);
+				m_pSkinningMaskRenderer->SetYOffset(yoffset);
+
+			}
 
 
-			Log("\nStart DrawOnce");
+			Texture automasktex;
+			Texture rendertex;
+			OSMesa::Log("\nStart DrawOnce");
 			if (m_bRenderToTexture)
 			{
 
 				m_pGameCamera->SetPos(Vector3f(0, 0, 0));
 				if (BeginRenterTexture())
 				{
+					DrawMaskOnce(modelID, center, uvsize);
+					automasktex.CloneFromTexture(m_RenderTexture);
+
 					DrawOnce(modelID, center, uvsize);
+					rendertex.CloneFromTexture(m_RenderTexture);
+
+				
+
+
+
 					EndRenderTexture();
 				}
 			}
@@ -399,9 +444,25 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 				EndRenderTexture();
 				DrawOnce(modelID, center, uvsize);
 			}
+			//////////////////////////////print render texture for testing
+			unsigned char* rtptr;
+			cv::Mat autortmat = GLTextureToMat(rendertex.GetTextureObj(), rtptr);
+			SaveTextureToFile(autortmat, GL_RGBA, "data/export/autorttest.jpg");
+			SAFE_DELETE(rtptr);
+			//////////////////////////////print render texture for testing
+		
+			//////////////////////////////print mask texture for testing
+			unsigned char* maskptr;
+			cv::Mat automaskmat = GLTextureToMat(automasktex.GetTextureObj(), maskptr);
+			SaveTextureToFile(automaskmat, GL_RGBA, "data/export/automasktest.jpg");
+			SAFE_DELETE(maskptr);
+			//////////////////////////////print mask texture for testing
 
-			Log("\nStart CombineTexture");
-			CombineTexture(m_RenderTexture, m_ColorTextureMap[modelID], m_pMaskTexture, photoPathOut);
+
+
+			OSMesa::Log("\nStart CombineTexture");
+			CombineTexture(m_RenderTexture, m_ColorTextureMap[modelID], &automasktex, photoPathOut);
+			//CombineTexture(m_RenderTexture, m_ColorTextureMap[modelID], m_pMaskTexture, photoPathOut);
 
 
 
@@ -413,9 +474,9 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 			}
 
 
-			int milliSecondsElapsed = getMilliSpan(start);
-			Log(format("\njsonModelOut:%s", jsonModelOut.c_str()));
-			Log(format("\n\nElapsed time = %u milliseconds", milliSecondsElapsed));
+			int milliSecondsElapsed = OSMesa::getMilliSpan(start);
+			OSMesa::Log(OSMesa::format("\njsonModelOut:%s", jsonModelOut.c_str()));
+			OSMesa::Log(OSMesa::format("\n\nElapsed time = %u milliseconds", milliSecondsElapsed));
 			printf("\n\nElapsed time = %u milliseconds", milliSecondsElapsed);
 			return "success";
 		}
@@ -430,54 +491,261 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 	}
 	SAFE_DELETE(m_pCurrentSkinTexture);
 
-	Log("\ncalculate error");
+	OSMesa::Log("\ncalculate error");
 	return "error";
 
 
 }
 
+cv::Mat FaceCloudLib::AutoMask(cv::Mat srcMask)
+{
+
+	//make alpha mask
+	vector<vector<cv::Point>> contours;
+	vector<cv::Vec4i> hierarchy;
+
+
+	cv::Mat graymask;
+
+	cvtColor(srcMask, graymask, CV_RGB2GRAY);
+	graymask.convertTo(graymask, CV_8UC1);
+
+	int largestindex = 0;
+	int t = graymask.type();
+	try
+	{
+		//findContours(graymask, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, cv::Point());
+		findContours(graymask, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
+
+		float maxArea = 0;
+		for (int i = 0; i < contours.size(); i++)
+		{
+			float area = contourArea(contours[i]);
+
+			if (maxArea < area)
+			{
+				maxArea = area;
+				largestindex = i;
+			}
+		}
+
+
+
+	}
+	catch (...)
+	{
+	}
+
+	cv::Mat outputContourMat(srcMask.size(),CV_16UC3,cv::Scalar(0,0,0));
+	drawContours(outputContourMat, contours, largestindex, cv::Scalar(255, 255, 255), 5, 8);
+
+	cv::imwrite("data/export/contours.jpg", outputContourMat);
+	return outputContourMat;
+	//cv::Rect box = cv::boundingRect(contours[largestindex]);
+	//int boardwidth = 20;
+
+	////计算顶点到轮廓的距离
+	//cv::Mat raw_dist(srcMask.size(), CV_32FC1, cv::Scalar(9999, 9999, 9999));
+
+	//for (int j = box.tl().y - boardwidth / 2; j < box.br().y + boardwidth / 2; j++)
+	//{
+	//	for (int i = box.tl().x - boardwidth / 2; i < box.br().x + boardwidth / 2; i++)
+	//	{
+	//		raw_dist.at<float>(j, i) = pointPolygonTest(contours[largestindex], cv::Point2f(i, j), true);
+	//	}
+	//}
+
+	//double minVal; double maxVal;
+	//minMaxLoc(raw_dist, &minVal, &maxVal, 0, 0, cv::Mat());
+	//minVal = abs(minVal); maxVal = abs(maxVal);
+
+	////用户型化的方式显示距离
+	//cv::Mat drawing = cv::Mat::zeros(srcMask.size(), CV_8UC4);
+
+	//for (int j = 0; j < srcMask.rows; j++)
+	//{
+	//	for (int i = 0; i < srcMask.cols; i++)
+	//	{
+	//		float dist = raw_dist.at<float>(j, i);
+	//		//在外部
+	//		if (dist < 0)
+	//		{
+	//			drawing.at<cv::Vec3b>(j, i)[0] = 255 / 2 - (int)pow(abs(dist), 4);
+	//			drawing.at<cv::Vec3b>(j, i)[1] = 255 / 2 - (int)pow(abs(dist), 4);
+	//			drawing.at<cv::Vec3b>(j, i)[2] = 255 / 2 - (int)pow(abs(dist), 4);
+	//			drawing.at<cv::Vec3b>(j, i)[3] = 255 / 2 - (int)pow(abs(dist), 4);
+	//		}
+	//		//在内部
+	//		else if (dist > 0)
+	//		{
+	//			drawing.at<cv::Vec3b>(j, i)[0] = 255 / 2 + (int)pow(abs(dist), 4);
+	//			drawing.at<cv::Vec3b>(j, i)[1] = 255 / 2 + (int)pow(abs(dist), 4);
+	//			drawing.at<cv::Vec3b>(j, i)[2] = 255 / 2 + (int)pow(abs(dist), 4);
+	//			drawing.at<cv::Vec3b>(j, i)[3] = 255 / 2 + (int)pow(abs(dist), 4);
+	//		}
+	//		else
+	//			// 在边上
+	//		{
+	//			drawing.at<cv::Vec3b>(j, i)[0] = 255 / 2;
+	//			drawing.at<cv::Vec3b>(j, i)[1] = 255 / 2;
+	//			drawing.at<cv::Vec3b>(j, i)[2] = 255 / 2;
+	//			drawing.at<cv::Vec3b>(j, i)[3] = 255 / 2;
+	//		}
+	//	}
+	//}
+	//return drawing;
+
+}
+
+
+/*
+FaceTexure 脸部展平渲染图
+pWhole 美术做好的颜色贴图
+pMask  自动生成的MASK图(脸部轮廓)
+photoPathOut 输出文件路径
+*/
 void FaceCloudLib::CombineTexture(GLuint FaceTexure, Texture* pWhole, Texture* pMask,string& photoPathOut)
 {
 	unsigned char* faceptr;
 	unsigned char* maskptr;
 	unsigned char* colorptr;
 
+
+	//分别取MAT
 	cv::Mat facemat = GLTextureToMat(FaceTexure, faceptr);
 	cv::Mat maskmat = GLTextureToMat(pMask->GetTextureObj(), maskptr);
 	cv::Mat colormat = GLTextureToMat(pWhole->GetTextureObj(), colorptr);
 
 
-
+	//统一尺寸
 	cv::Mat maskmat2;
 	cv::resize(maskmat, maskmat2, cv::Size(m_Width, m_Height));
 	cv::Mat colormat2;
 	cv::resize(colormat, colormat2, cv::Size(m_Width, m_Height));
 
 
-
+	//统一格式类型
 	cv::Mat facemat2;
 
 	facemat.convertTo(facemat2, CV_16UC3);
 	maskmat2.convertTo(maskmat2, CV_16UC3);
 	colormat2.convertTo(colormat2, CV_16UC3);
 
-	cv::flip(maskmat2, maskmat2, 0);
-	cv::flip(colormat2, colormat2, 0);
 
+	//MASK与FACE 渲染时是头向下的，所以FLIP一次
+	cv::flip(maskmat2, maskmat2, 0);
+	cv::flip(facemat2, facemat2, 0);
+	//cv::flip(colormat2, colormat2, 0);
+
+
+
+	//取小块脸部区域
+	cv::Range startRg(270, 1070);
+	cv::Range endRg(624, 1424);
+
+
+	facemat2 = facemat2(startRg, endRg);
+	maskmat2 = maskmat2(startRg, endRg);
+	colormat2 = colormat2(startRg, endRg);
+
+	//自动生成一个线条轮廓MASK
+	cv::Mat contourEdge = AutoMask(maskmat2);
+
+	
+	//美白一次
+	ImageOptimizedUtility iou;
+	facemat2 = iou.UpdateDermabrasion(facemat2, 4);
+	facemat2.convertTo(facemat2, CV_16UC3);
+
+
+	//形态学，把MASK 先膨胀(去掉眼鼻的漏洞） 再腐蚀(变小一些防止融合边缘有黑缝） 再Blur一下生成边缘渐变
+	cv::Mat graymask;
+	cvtColor(maskmat2, graymask, CV_RGB2GRAY);
+	graymask.convertTo(graymask, CV_8UC1);
+
+	cv::Mat dilateStruct = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(30, 30));
+	cv::dilate(graymask, graymask, dilateStruct);
+	cv::Mat erodeStruct = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(45, 45));
+	cv::erode(graymask, graymask, erodeStruct);	
+
+	cv::Mat erodeStruct2 = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(40, 40));
+	cv::erode(graymask, graymask, erodeStruct2);
+	/*cv::erode(graymask, graymask, erodeStruct2);
+	cv::erode(graymask, graymask, erodeStruct2);
+	cv::erode(graymask, graymask, erodeStruct2);*/
+
+	//cvSmooth(graymask, graymask, CV_BLUR, 11, 11);
+	cv::blur(graymask, graymask, cv::Size(40, 40));
+	//cv::GaussianBlur(graymask, graymask, cv::Size(100, 100),0,0);
+	
+
+	//blur后统一类型
+	cv::Mat maskblur;
+	cvtColor(graymask, maskblur, CV_GRAY2RGB);
+	maskblur.convertTo(maskblur, CV_16UC3);
+
+
+	//变成RGB统一通道数
 	cv::cvtColor(maskmat2, maskmat2, CV_RGBA2RGB);
 	cv::cvtColor(colormat2, colormat2, CV_RGBA2RGB);
 
 
-	int type = facemat2.type();
-	type = maskmat2.type();
-	type = colormat2.type();
-	facemat2 = 1.0f / 255 * ((facemat2.mul(cv::Scalar(255, 255, 255) - maskmat2)) +colormat2.mul( maskmat2));
 
-	cv::flip(facemat2, facemat2, 0);
-	facemat2 = facemat2(cv::Range(270, 1070), cv::Range(624 , 1424 ));
+	////////////////////////////////////////////////////////用之前预定义的MASK，已经弃用
+	//face area mask is black
+	//facemat2 = 1.0f / 255 * ((facemat2.mul(cv::Scalar(255, 255, 255) - maskmat2)) +colormat2.mul( maskmat2));
 
+
+
+
+	//测试用，生成中间图片
+	/*imwrite("data/export/f.jpg", facemat2);
+	imwrite("data/export/m.jpg", maskmat2);
+	imwrite("data/export/c.jpg", colormat2);
+	imwrite("data/export/ce.jpg", contourEdge);
+	imwrite("data/export/mb.jpg", maskblur);*/
+
+
+	//计算每一下像素值
+	for (int j = 0; j < facemat2.rows; j++)
+	{
+		for (int i = 0; i < facemat2.cols; i++)
+		{
+			cv::Vec3s f = facemat2.at<cv::Vec3s>(j, i);
+			cv::Vec3s m = maskmat2.at<cv::Vec3s>(j, i);
+			cv::Vec3s c = colormat2.at<cv::Vec3s>(j, i);
+			cv::Vec3s e = contourEdge.at<cv::Vec3s>(j, i);
+			cv::Vec3s mb = maskblur.at<cv::Vec3s>(j, i);
+			
+			//原始MASK(没有形态学和BLUR处理前的) 黑色像素的位置填美术颜色贴图的值
+			if (m[0] + m[1] + m[2] == 0)
+			{
+
+				facemat2.at<cv::Vec3s>(j, i)[0] = c[0];
+				facemat2.at<cv::Vec3s>(j, i)[1] = c[1];
+				facemat2.at<cv::Vec3s>(j, i)[2] = c[2];
+			}
+			//融合
+			else
+			{
+				facemat2.at<cv::Vec3s>(j, i)[0] = 1.0f / 255 * (f[0] * mb[0] + c[0] * (255 - mb[0]));// +e[0];
+				facemat2.at<cv::Vec3s>(j, i)[1] = 1.0f / 255 * (f[1] * mb[1] + c[1] * (255 - mb[1]));// +e[1];
+				facemat2.at<cv::Vec3s>(j, i)[2] = 1.0f / 255 * (f[2] * mb[2] + c[2] * (255 - mb[2]));// +e[2];
+			}
+
+		}
+	}
+
+
+
+
+	//cv::blur(facemat2, facemat2, cv::Size(10, 10));
+	//cv::flip(facemat2, facemat2, 0);
+
+	//保存成文件
 	SaveTextureToFile(facemat2,GL_RGBA, photoPathOut, false);
 
+	//清理内存
 	SAFE_DELETE(faceptr);
 	SAFE_DELETE(maskptr);
 	SAFE_DELETE(colorptr);
@@ -520,6 +788,19 @@ bool FaceCloudLib::InitCamera()
 	m_pSkinningRenderer->SetColorTextureUnit(COLOR_TEXTURE_UNIT_INDEX);
 	m_pSkinningRenderer->SetDetailTextureUnit(COLOR_TEXTURE_UNIT_INDEX + 1);
 	m_pSkinningRenderer->SetMaskTextureUnit(COLOR_TEXTURE_UNIT_INDEX + 2);
+
+
+	m_pSkinningMaskRenderer = new MaskSkinningTechnique();
+	if (!m_pSkinningMaskRenderer->Init()) {
+		printf("Error initializing the UnlitSkinningTechnique\n");
+		return false;
+	}
+	m_pSkinningMaskRenderer->Enable();
+	m_pSkinningMaskRenderer->SetColorTextureUnit(COLOR_TEXTURE_UNIT_INDEX);
+	m_pSkinningMaskRenderer->SetDetailTextureUnit(COLOR_TEXTURE_UNIT_INDEX + 1);
+	m_pSkinningMaskRenderer->SetMaskTextureUnit(COLOR_TEXTURE_UNIT_INDEX + 2);
+
+
 
 
 	printf("\nStart CommonTechnique init\n");
@@ -640,6 +921,8 @@ void FaceCloudLib::CalculateBone(string modelID, JsonFaceInfo jsonfaceinfo, stri
 }
 bool FaceCloudLib::DrawOnce(string modelID,Vector3f& center,Vector2f& uvsize)
 {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	m_Lastcenter = center;
 	m_Lastuvsize = uvsize;
 
@@ -677,6 +960,82 @@ bool FaceCloudLib::DrawOnce(string modelID,Vector3f& center,Vector2f& uvsize)
 	}
 
 
+	/*m_pCommonRenderer->Enable();
+	m_pCommonRenderer->SetWVP(p.GetWVPTrans());*/
+	if (m_MeshMap.find(modelID) != m_MeshMap.end())
+	{
+		if (m_ColorTextureMap.find(modelID) != m_ColorTextureMap.end())
+		{
+			m_ColorTextureMap[modelID]->Bind(GL_TEXTURE0);
+			//m_ColorTextureMap[modelID]->Bind(GL_TEXTURE1);
+			if (m_pCurrentSkinTexture != NULL)
+			{
+				m_pCurrentSkinTexture->Bind(GL_TEXTURE1);
+			}
+			if (m_pMaskTexture != NULL)
+			{
+				m_pMaskTexture->Bind(GL_TEXTURE2);
+			}
+
+			SkinnedMesh* pmesh = m_MeshMap[modelID];
+			vector<Matrix4f> Transforms;
+			pmesh->BoneTransform(0, Transforms);
+			for (uint i = 0; i < Transforms.size(); i++) {
+
+				if (m_pSkinningRenderer)
+				{
+					m_pSkinningRenderer->SetBoneTransform(i, Transforms[i]);
+				}
+			}
+			pmesh->Render();
+		}
+	}
+
+	return true;
+
+}
+
+
+
+bool FaceCloudLib::DrawMaskOnce(string modelID, Vector3f& center, Vector2f& uvsize)
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	m_Lastcenter = center;
+	m_Lastuvsize = uvsize;
+
+	m_pGameCamera->OnRender();
+	// Always check that our framebuffer is ok
+
+	Pipeline p;
+	p.WorldPos(0.0f, 0, 0.0f);
+	p.Rotate(0.0f, 180.0f, 0.0f);
+	p.Scale(1, 1, 1);
+	p.SetCamera(m_pGameCamera->GetPos(), m_pGameCamera->GetTarget(), m_pGameCamera->GetUp());
+
+	m_orthoProjInfo.b = -uvsize.x / 2;
+	m_orthoProjInfo.t = uvsize.x / 2;
+	m_orthoProjInfo.l = -uvsize.y / 2;
+	m_orthoProjInfo.r = uvsize.y / 2;
+
+	p.SetOrthographicProj(m_orthoProjInfo);
+	p.SetPerspectiveProj(m_persProjInfo);
+
+
+	if (m_pSkinningMaskRenderer)
+	{
+		m_pSkinningMaskRenderer->Enable();
+
+		if (m_pSkinningMaskRenderer)
+		{
+			m_pSkinningMaskRenderer->SetWVP(p.GetWVOrthoPTrans());
+		}
+		else
+		{
+			m_pSkinningMaskRenderer->SetWVP(p.GetWVPTrans());
+
+		}
+	}
 
 
 	/*m_pCommonRenderer->Enable();
@@ -842,54 +1201,53 @@ void FaceCloudLib::DisplayGrid()
 
 }
 void FaceCloudLib::SaveFile(string& s, string& path)
+{
+	ofstream write;
+
+	write.open(path.c_str(), ios::out | ios::binary);
+	write.write(s.c_str(), s.length());
+	write.close();
+}
+void FaceCloudLib::SaveJsonFile(Json::Value jvalue, string& path)
+{
+	Json::StreamWriterBuilder  builder;
+	builder.settings_["commentStyle"] = "All";
+	std::string s = Json::writeString(builder, jvalue);
+
+	SaveFile(s, path);
+}
+Json::Value FaceCloudLib::LoadJsonValueFromFile(string filepath)
+{
+	Json::CharReaderBuilder rbuilder;
+	rbuilder["collectComments"] = false;
+	std::string errs;
+	Json::Value root;
+	std::ifstream ifs;
+	ifs.open(filepath);
+	bool ok = Json::parseFromStream(rbuilder, ifs, &root, &errs);
+	if (ok)
 	{
-		ofstream write;
-
-		write.open(path.c_str(), ios::out | ios::binary);
-		write.write(s.c_str(), s.length());
-		write.close();
+		printf("\nLoadJsonValueFromFile Ok :  %s", filepath.c_str());
 	}
-	void FaceCloudLib::SaveJsonFile(Json::Value jvalue, string& path)
+	else
 	{
-		Json::StreamWriterBuilder  builder;
-		builder.settings_["commentStyle"] = "All";
-		std::string s = Json::writeString(builder, jvalue);
 
-		SaveFile(s, path);
+		printf("\nLoadJsonValueFromFile Failed  : %s", filepath.c_str());
 	}
-	Json::Value FaceCloudLib::LoadJsonValueFromFile(string filepath)
-	{
-		Json::CharReaderBuilder rbuilder;
-		rbuilder["collectComments"] = false;
-		std::string errs;
-		Json::Value root;
-		std::ifstream ifs;
-		ifs.open(filepath);
-		bool ok = Json::parseFromStream(rbuilder, ifs, &root, &errs);
-		if(ok)
-		{
-			printf("\nLoadJsonValueFromFile Ok :  %s" ,filepath.c_str());
-		}
-		else
-		{
+	ifs.close();
+	return root;
+}
+string FaceCloudLib::LoadJsonStringFromFile(string filepath)
+{
+	//printf("\nLoadJSF Path:%s",filepath.c_str());
+	string path = filepath;
+	Json::Value root = LoadJsonValueFromFile(path);
 
-			printf("\nLoadJsonValueFromFile Failed  : %s" ,filepath.c_str());
-		}
-		ifs.close();
-		return root;
-	}
-	string FaceCloudLib::LoadJsonStringFromFile(string filepath)
-	{
-		//printf("\nLoadJSF Path:%s",filepath.c_str());
-		string path = filepath;
-		Json::Value root = LoadJsonValueFromFile(path);
-
-		Json::StreamWriterBuilder  builder;
-		builder.settings_["commentStyle"] = "All";
-		std::string s = Json::writeString(builder, root);
+	Json::StreamWriterBuilder  builder;
+	builder.settings_["commentStyle"] = "All";
+	std::string s = Json::writeString(builder, root);
 
 
-		//printf("\nLoadJSF:%s",s.c_str());
-		return s;
-	}
-	
+	//printf("\nLoadJSF:%s",s.c_str());
+	return s;
+}

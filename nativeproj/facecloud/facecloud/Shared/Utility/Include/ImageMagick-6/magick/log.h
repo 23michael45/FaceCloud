@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  MagickCore log methods.
+  MagickCore OSMesa::Log methods.
 */
 #ifndef _MAGICKCORE_LOG_H
 #define _MAGICKCORE_LOG_H
@@ -29,7 +29,7 @@ extern "C" {
 # define GetMagickModule()  __FILE__,__func__,(unsigned long) __LINE__
 #endif
 
-#define MagickLogFilename  "log.xml"
+#define MagickLogFilename  "OSMesa::Log.xml"
 
 typedef enum
 {

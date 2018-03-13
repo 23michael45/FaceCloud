@@ -15,6 +15,7 @@
 #include "CommonTechnique.h"
 #include "SkinningTechnique.h"
 #include "UnlitSkinningTechnique.h"
+#include "MaskSkinningTechnique.h"
 #include "RenderTextureTechnique.h"
 #include "ogldev_glut_backend.h"
 #include "ogldev_skinned_mesh.h"
@@ -52,6 +53,8 @@ public:
 
 	void CalculateBone(string modelID, JsonFaceInfo jsonfaceinfo, string& photoPathOut, string& jsonModelOut, Vector3f& centerpos, Vector2f& uvsize, float& yOffset);
 	bool DrawOnce(string modelID, Vector3f& center, Vector2f& uvsize);
+
+	bool DrawMaskOnce(string modelID, Vector3f& center, Vector2f& uvsize);
 
 	void CombineTexture(GLuint FaceTexture, Texture* pWhole, Texture* pMask, string& photoPathOut);
 	cv::Mat GLTextureToMat(GLuint texture, unsigned char*& outimagptr);
@@ -93,6 +96,9 @@ private:
 	PersProjInfo m_persProjInfo;
 	OrthoProjInfo m_orthoProjInfo;
 	UnlitSkinningTechnique * m_pSkinningRenderer;
+
+	MaskSkinningTechnique * m_pSkinningMaskRenderer;
+
 	CommonTechnique * m_pCommonRenderer;
 
 
@@ -119,6 +125,8 @@ private:
 	bool BeginRenterTexture();
 	void EndRenderTexture();
 	void SaveTextureToFile(cv::Mat imag, int format, string path, bool flip = false);
+
+	cv::Mat AutoMask(cv::Mat srcMask);
 
 
 public:

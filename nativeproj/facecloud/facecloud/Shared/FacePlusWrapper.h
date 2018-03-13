@@ -352,7 +352,7 @@ class FacePlusWrapper
 	void OnResponse()
 	{
 		if (mResponseCode == 200)
-			Debug.Log("UploadImage succeed!");
+			Debug.OSMesa::Log("UploadImage succeed!");
 
 
 		if (this.resultCallBack != null)

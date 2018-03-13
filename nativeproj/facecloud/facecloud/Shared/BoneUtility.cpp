@@ -195,6 +195,15 @@ int BoneUtility::ReadJsonFromFile(const char* filename)
 
 	return 0;
 }
+Vector2f Bezier2(Vector2f p0, Vector2f p1, Vector2f p2 ,float t)
+{
+	Vector2f p;
+	p.x = (1 - t) * (1 - t) * p0.x + 2 * t * (1 - t) * p1.x + t * t * p2.x;
+	p.y = (1 - t) * (1 - t) * p0.y + 2 * t * (1 - t) * p1.y + t * t * p2.y;
+	return p;
+}
+
+
 Texture* BoneUtility::CalculateSkin(GLuint texture, cv::Mat& refmat, bool isman, JsonRole bonedef, JsonFaceInfo& faceinfo)
 {
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -227,7 +236,7 @@ Texture* BoneUtility::CalculateSkin(GLuint texture, cv::Mat& refmat, bool isman,
 
 	ImageOptimizedUtility iou;
 
-	Log("\nStart FacePhotoProcess");
+	OSMesa::Log("\nStart FacePhotoProcess");
 	//do photo pre process
 	cv::Mat img = iou.FacePhotoProcess(faceinfo, bonedef, srcimg32);
 
@@ -262,16 +271,97 @@ Texture* BoneUtility::CalculateSkin(GLuint texture, cv::Mat& refmat, bool isman,
 	Mat rtmat;
 
 
-	
-
-
-	Log("\nStart ColorTransfer");
+	OSMesa::Log("\nStart ColorTransfer");
 	//
 	iou.ColorTransfer(rgbimg, refmat, rtmat, faceinfo);
 	//iou.UpdateRef_RGB(faceinfo,rgbimg,ref_color, 1.0f, rtmat, leftpoint, rightpoint);
 
 
+	//Mask By Contour from key point
 
+	vector<vector<cv::Point> > contours;
+	vector<cv::Point> contour;
+
+	Vector2f leftpos1 = faceinfo.landmarkdata["contour_left1"];
+	Vector2f rightpos1 = faceinfo.landmarkdata["contour_right1"];
+	Vector2f chinpos = faceinfo.landmarkdata["contour_chin"];
+
+	Vector2f centerpos = (leftpos1 + rightpos1) * 0.5;
+	centerpos.y = centerpos.y + (centerpos.y - chinpos.y)*0.5;
+	contour.push_back(cv::Point(centerpos.x, 1024 - centerpos.y));
+
+
+	Vector2f pleftcontrol(leftpos1.x, centerpos.y);
+	
+	int interLen = 20;
+	for (int i = 1 ; i<interLen ;i++)
+	{
+		Vector2f p = Bezier2(centerpos, pleftcontrol, leftpos1, (float)i / interLen);
+		contour.push_back(cv::Point(p.x, 1024 - p.y));
+
+	}
+
+
+	Vector2f pos;
+	pos = faceinfo.landmarkdata["contour_left1"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left2"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left3"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left4"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left5"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left6"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left7"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left8"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left9"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left10"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left11"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left12"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left13"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left14"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left15"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left16"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_chin"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right16"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right15"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right14"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right13"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right12"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right11"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right10"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right9"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right8"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right7"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right6"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right5"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right4"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right3"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right2"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right1"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+
+
+
+	Vector2f prightcontrol(rightpos1.x, centerpos.y);
+	for (int i = 1; i < interLen; i++)
+	{
+		Vector2f p = Bezier2(rightpos1, prightcontrol, centerpos, (float)i / interLen);
+		contour.push_back(cv::Point(p.x, 1024 - p.y));
+
+	}
+
+	contours.push_back(contour);
+
+
+
+	cv::Mat contourmask(1024, 1024, CV_8UC3, cv::Scalar(0, 0, 0));
+	cv::Scalar colorwhite = cv::Scalar(1, 1, 1);
+	drawContours(contourmask, contours, -1, colorwhite, CV_FILLED);
+
+
+	cv::multiply(rtmat, contourmask, rtmat);
+
+
+
+
+	//convert to opengl texture
 	Texture *ptexture = new Texture();
 	ptexture->FromCVMat(GL_TEXTURE_2D, rtmat);
 
@@ -334,7 +424,7 @@ void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFa
 	Vector3f fixmouthlipdistance03 = pmesh->GetBoneNode("face_mouthLip_dn_joint2").ExtractTranslation() - pmesh->GetBoneNode("face_mouthLip_up_joint2").ExtractTranslation();
 
 
-	//  Debug.Log("Eye_Rt_dis" + Eye_Rt_dis+ "Eye_LF_dis"+ Eye_LF_dis);
+	//  Debug.OSMesa::Log("Eye_Rt_dis" + Eye_Rt_dis+ "Eye_LF_dis"+ Eye_LF_dis);
 
 	Vector3f fixnose_lf1 = pmesh->GetBoneNode("face_nosewing_Lf_joint1").ExtractTranslation();
 	Vector3f fixnose_RT1 = pmesh->GetBoneNode("face_nosewing_Rt_joint1").ExtractTranslation();
@@ -424,9 +514,9 @@ void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFa
 
 
 
-	// Debug.Log("Eye_Rt_dis2" + Eye_Rt_dis2 + "Eye_LF_dis2" + Eye_LF_dis2);
+	// Debug.OSMesa::Log("Eye_Rt_dis2" + Eye_Rt_dis2 + "Eye_LF_dis2" + Eye_LF_dis2);
 	// float eyescal = ((Eye_Rt_dis2 / Eye_Rt_dis) + (Eye_LF_dis2 / Eye_LF_dis)) / 2 ;
-	// Debug.Log("eyescal" + eyescal);
+	// Debug.OSMesa::Log("eyescal" + eyescal);
 
 	///////////////////////////////////////////////       
 
@@ -673,7 +763,7 @@ void BoneUtility::MoveBonePYR(SkinnedMesh* pmesh,string bonename, JsonFaceInfo f
 
 
 	Vector3f zero(zero_px, zero_py, trspos.z);
-	//Debug.Log(pmesh->GetBoneInfo("chin_joint1"].position);
+	//Debug.OSMesa::Log(pmesh->GetBoneInfo("chin_joint1"].position);
 
 	Vector3f OriPosition = trspos;
 

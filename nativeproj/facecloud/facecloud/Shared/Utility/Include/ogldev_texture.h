@@ -41,6 +41,10 @@ public:
 	GLuint GetTextureObj();
 
 	void FromCVMat(GLenum TextureTarget, cv::Mat& image);
+
+
+	void CloneFromTexture(GLuint tex);
+	void CloneFromFBOTexture(GLuint tex);
 private:
     std::string m_fileName;
     GLenum m_textureTarget;
@@ -49,6 +53,8 @@ private:
     Magick::Blob m_blob;
 
 	void Gen(Magick::Image image);
+
+
 };
 
 

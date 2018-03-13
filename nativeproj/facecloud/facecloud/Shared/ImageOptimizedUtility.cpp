@@ -184,7 +184,7 @@ void ImageOptimizedUtility::ColorTransfer(Mat src, Mat ref, Mat& outputimg,JsonF
 
 	Scalar mean2= cv::mean(subrefimg2);
 
-	Log("\nTransColor Mean");
+	OSMesa::Log("\nTransColor Mean");
 	Vec3f s;
 
 
@@ -309,7 +309,7 @@ void ImageOptimizedUtility::UpdateRef_RGB(JsonFaceInfo& faceinfo,Mat img, Vector
 	Point left_2(left2_x, min(left_1.y,right_1.y));
 	Point right_2(right2_x, max(left_1.y, right_1.y));
 
-	// Debug.Log(left_2 + "................" + right_2);
+	// Debug.OSMesa::Log(left_2 + "................" + right_2);
 
 	//��1�ε�ɫ 
 
@@ -350,8 +350,8 @@ void ImageOptimizedUtility::UpdateRef_RGB(JsonFaceInfo& faceinfo,Mat img, Vector
 
 
 
-	//Debug.Log(r_avg_LF+"....."+ g_avg_LF+"....."+ b_avg_LF);
-	// Debug.Log(r_avg_RT+"....."+ g_avg_RT+ "....." + b_avg_RT);
+	//Debug.OSMesa::Log(r_avg_LF+"....."+ g_avg_LF+"....."+ b_avg_LF);
+	// Debug.OSMesa::Log(r_avg_RT+"....."+ g_avg_RT+ "....." + b_avg_RT);
 
 
 

@@ -11,19 +11,24 @@
 #endif // !WIN32
 
 
-#define LOGFILE	"facelog.log"     // all Log(); messages will be appended to this file
+#define LOGFILE	"facelog.OSMesa::Log"     // all OSMesa::Log(); messages will be appended to this file
 
 
-void Log(std::string message);    // logs a message to LOGFILE
+namespace OSMesa
+{
+	void Log(std::string message);    // logs a message to LOGFILE
 
-std::string format(const char *fmt, ...);
+	std::string format(const char *fmt, ...);
 
-bool MesaCreateContext(unsigned int Width, unsigned int Height);
-bool MesaDestroyContext();
-GLuint MesaCreateShader();
-GLuint MesaCreateProgram();
+	bool MesaCreateContext(unsigned int Width, unsigned int Height);
+	bool MesaDestroyContext();
+	GLuint MesaCreateShader();
+	GLuint MesaCreateProgram();
 
-int getMilliCount();
+	int getMilliCount();
 
-int getMilliSpan(int nTimeStart);
+	int getMilliSpan(int nTimeStart);
+}
+
+
 #endif	/* OSMESACONTEXT_H */

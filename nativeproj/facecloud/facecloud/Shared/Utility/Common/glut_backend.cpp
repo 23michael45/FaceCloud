@@ -221,7 +221,7 @@ bool GLUTBackendCreateWindow(unsigned int Width, unsigned int Height, bool isFul
 bool GLUTBackendCreateContext(unsigned int Width, unsigned int Height)
 {
 
-	bool ok = MesaCreateContext(Width, Height);
+	bool ok = OSMesa::MesaCreateContext(Width, Height);
 
 	// Must be done after glut is initialized!
 	GLenum res = glewInit();
