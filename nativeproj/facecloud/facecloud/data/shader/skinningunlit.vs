@@ -32,7 +32,15 @@ void main()
     gl_Position  = gWVP * PosL;
     TexCoord0    = TexCoord;
 	
-	vec2 C2 = vec2(-PosL.x / gUVSize.x - 0.5,-PosL.y / gUVSize.y - gYOffset);
+	vec2 C2 = vec2(0,0);
+	if(Position.z > 0)
+	{
+		C2 = vec2(-PosL.x / gUVSize.x - 0.5,-PosL.y / gUVSize.y - gYOffset);
+	}
+	else
+	{
+	}
+	
 	
     TexCoord1    = C2;
     vec4 NormalL = BoneTransform * vec4(Normal, 0.0);

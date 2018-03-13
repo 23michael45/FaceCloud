@@ -28,16 +28,34 @@ void main()
                                           
                                                                                                 
                                                                                      
-    vec4 color = texture(gColorMap, In.TexCoord.xy);                               
+    vec4 color = texture(gColorMap, In.TexCoord.xy);                           
     vec4 mask = texture(gMaskMap, In.TexCoord.xy);
-	vec4 detail = texture(gDetailMap, In.TexCoord_C2.xy);
-			
-    float colormask = (color.x + color.y + color.z)/3;	
+	vec4 detail = texture(gDetailMap, In.TexCoord_C2.xy);     
+	
+	
+	
+	
+	
+    float colormask = (detail.x + detail.y + detail.z)/3;	
 	if(colormask == 0)
 	{
-		detail = vec4(0,0,0,0);
+		
+		FragColor = vec4(0,0,0,0);
+		
 	}
-    //FragColor = (color * blend + detail * (1 - blend));
-	FragColor = detail;
-    //FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+	else{
+		float dist = sqrt((In.TexCoord.x - 0.5) * (In.TexCoord.x - 0.5) + (In.TexCoord.y - 0.25) * (In.TexCoord.y - 0.25));
+	
+		if(dist < 0.2)
+		{
+			
+			FragColor = vec4(1,1,1,1);
+			
+		}
+		else
+		{
+			
+			FragColor = vec4(0,0,0,0);
+		}
+	}
 }
