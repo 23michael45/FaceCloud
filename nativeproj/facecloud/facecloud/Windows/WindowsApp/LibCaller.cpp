@@ -124,14 +124,14 @@ static void SpecialKeyboardCB(int Key, int x, int y)
 		
 
 		printf("\n\nStarting timer...");
-		start = getMilliCount();
+		start = OSMesa::getMilliCount();
 
 		lib.CalculateReal(currentModelID, photopath, jsonfacestring, outPhotoPath, outJsonModelOut);
 		SaveFile(outJsonModelOut, outjsonoffsetpath);
 
 
 
-		milliSecondsElapsed = getMilliSpan(start);
+		milliSecondsElapsed = OSMesa::getMilliSpan(start);
 		printf("\n\nElapsed time = %u milliseconds", milliSecondsElapsed);
 
 		break;

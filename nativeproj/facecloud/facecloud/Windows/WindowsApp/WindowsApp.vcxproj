@@ -172,6 +172,7 @@
     <ClInclude Include="..\..\Shared\JsonCpp\include\json\version.h" />
     <ClInclude Include="..\..\Shared\JsonCpp\include\json\writer.h" />
     <ClInclude Include="..\..\Shared\JsonCpp\src\json_tool.h" />
+    <ClInclude Include="..\..\Shared\MaskSkinningTechnique.h" />
     <ClInclude Include="..\..\Shared\MeshBase.h" />
     <ClInclude Include="..\..\Shared\OSMesaContext.h" />
     <ClInclude Include="..\..\Shared\Predefined.h" />
@@ -210,6 +211,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Linux\LinuxApp\OffScreenCaller.cpp" />
     <ClCompile Include="..\..\Shared\BoneUtility.cpp" />
     <ClCompile Include="..\..\Shared\CommonTechnique.cpp" />
     <ClCompile Include="..\..\Shared\FaceCloudLib.cpp" />
@@ -221,6 +223,7 @@
     <ClCompile Include="..\..\Shared\JsonCpp\src\json_reader.cpp" />
     <ClCompile Include="..\..\Shared\JsonCpp\src\json_value.cpp" />
     <ClCompile Include="..\..\Shared\JsonCpp\src\json_writer.cpp" />
+    <ClCompile Include="..\..\Shared\MaskSkinningTechnique.cpp" />
     <ClCompile Include="..\..\Shared\MeshBase.cpp" />
     <ClCompile Include="..\..\Shared\OSMesaContext.cpp" />
     <ClCompile Include="..\..\Shared\RenderTextureTechnique.cpp" />
