@@ -126,7 +126,7 @@ private:
 	void EndRenderTexture();
 	void SaveTextureToFile(cv::Mat imag, int format, string path, bool flip = false);
 
-	cv::Mat AutoMask(cv::Mat srcMask);
+	cv::Mat AutoMask(cv::Mat srcMask,cv::Point& center);
 
 
 public:

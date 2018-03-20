@@ -14,7 +14,7 @@
 #include <mutex>          // std::mutex
 
 #include "ImageOptimizedUtility.h"
-
+#include <opencv2/photo.hpp>
 
 bool WriteTGA(char *file, short int width, short int height, unsigned char *outImage)
 {
@@ -363,8 +363,8 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 
 
 			//////////////////////////////print after texture for testing
-			unsigned char* ptr;
-			cv::Mat mat = GLTextureToMat(m_pCurrentSkinTexture->GetTextureObj(), ptr);
+			//unsigned char* ptr;
+			//cv::Mat mat = GLTextureToMat(m_pCurrentSkinTexture->GetTextureObj(), ptr);
 
 			//for (map<string, Vector2f>::iterator iter = jsonfaceinfo.landmarkdata.begin(); iter != jsonfaceinfo.landmarkdata.end(); iter++)
 			//{
@@ -374,11 +374,15 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 
 			//	/*if (name.find("contour_left") == std::string::npos && name.find("contour_right") == std::string::npos)
 			//	{
-
 			//		cv::putText(mat, iter->first, cv::Point(pos.x, 1024 - pos.y), CV_FONT_HERSHEY_PLAIN, 0.8, cv::Scalar(0, 0, 255, 255));
+
 			//	}*/
+			//	/*if (name.find("eye") != std::string::npos)
+			//	{
+			//		cv::putText(mat, iter->first, cv::Point(pos.x, 1024 - pos.y), CV_FONT_HERSHEY_PLAIN, 0.8, cv::Scalar(0, 0, 255, 255));
 
-
+			//	}*/
+			//	
 			//	/*if (name.find("contour") != std::string::npos)
 			//	{
 			//		contour.push_back(cv::Point(pos.x, 1024 - pos.y));
@@ -387,8 +391,8 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 			//}
 		
 
-			SaveTextureToFile(mat, GL_RGBA, "data/export/afterskin.jpg");
-			SAFE_DELETE(ptr);
+			//SaveTextureToFile(mat, GL_RGBA, "data/export/afterskin.jpg");
+			//SAFE_DELETE(ptr);
 			//////////////////////////////print after texture for testing
 
 
@@ -445,17 +449,17 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 				DrawOnce(modelID, center, uvsize);
 			}
 			//////////////////////////////print render texture for testing
-			unsigned char* rtptr;
-			cv::Mat autortmat = GLTextureToMat(rendertex.GetTextureObj(), rtptr);
-			SaveTextureToFile(autortmat, GL_RGBA, "data/export/autorttest.jpg");
-			SAFE_DELETE(rtptr);
-			//////////////////////////////print render texture for testing
+			//unsigned char* rtptr;
+			//cv::Mat autortmat = GLTextureToMat(rendertex.GetTextureObj(), rtptr);
+			//SaveTextureToFile(autortmat, GL_RGBA, "data/export/autorttest.jpg");
+			//SAFE_DELETE(rtptr);
+			////////////////////////////////print render texture for testing
 		
-			//////////////////////////////print mask texture for testing
-			unsigned char* maskptr;
-			cv::Mat automaskmat = GLTextureToMat(automasktex.GetTextureObj(), maskptr);
-			SaveTextureToFile(automaskmat, GL_RGBA, "data/export/automasktest.jpg");
-			SAFE_DELETE(maskptr);
+			////////////////////////////////print mask texture for testing
+			//unsigned char* maskptr;
+			//cv::Mat automaskmat = GLTextureToMat(automasktex.GetTextureObj(), maskptr);
+			//SaveTextureToFile(automaskmat, GL_RGBA, "data/export/automasktest.jpg");
+			//SAFE_DELETE(maskptr);
 			//////////////////////////////print mask texture for testing
 
 
@@ -497,7 +501,7 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 
 }
 
-cv::Mat FaceCloudLib::AutoMask(cv::Mat srcMask)
+cv::Mat FaceCloudLib::AutoMask(cv::Mat srcMask,cv::Point& center)
 {
 
 	//make alpha mask
@@ -535,6 +539,14 @@ cv::Mat FaceCloudLib::AutoMask(cv::Mat srcMask)
 	catch (...)
 	{
 	}
+	cv::Rect br = boundingRect(contours[largestindex]);
+	center.x = br.x + br.width / 2;
+	center.y = br.y + br.height / 2;
+
+	/*cv::Moments  m = moments(contours[largestindex]);
+	center.x = m.m10 / m.m00;
+	center.y = m.m01 / m.m00;*/
+	
 
 	cv::Mat outputContourMat(srcMask.size(),CV_16UC3,cv::Scalar(0,0,0));
 	drawContours(outputContourMat, contours, largestindex, cv::Scalar(255, 255, 255), 5, 8);
@@ -598,6 +610,51 @@ cv::Mat FaceCloudLib::AutoMask(cv::Mat srcMask)
 }
 
 
+void SeamlessT()
+{
+	// Read images : src image will be cloned into dst
+	Mat src = imread("data/export/outphoto_predefmask.jpg");
+	Mat dst = imread("data/export/color.jpg");
+	Mat src_mask = imread("data/export/m.jpg");
+	// Create a rough mask around the airplane.
+	//Mat src_mask = Mat::zeros(src.rows, src.cols, src.depth());
+
+	//// Define the mask as a closed polygon
+	//Point poly[1][7];
+	//poly[0][0] = Point(4, 80);
+	//poly[0][1] = Point(30, 54);
+	//poly[0][2] = Point(151, 63);
+	//poly[0][3] = Point(254, 37);
+	//poly[0][4] = Point(298, 90);
+	//poly[0][5] = Point(272, 134);
+	//poly[0][6] = Point(43, 122);
+
+	//const Point* polygons[1] = { poly[0] };
+	//int num_points[] = { 7 };
+
+	//// Create mask by filling the polygon
+
+	//fillPoly(src_mask, polygons, num_points, 1, Scalar(255, 255, 255));
+
+	// The location of the center of the src in the dst
+	Point center(400, 400);
+
+
+	//imwrite("data/export/opencv-seamless-cloning-maskexample.jpg", src_mask);
+
+
+
+
+	// Seamlessly clone src into dst and put the results in output
+	Mat output;
+	seamlessClone(src, dst, src_mask, center, output, NORMAL_CLONE);
+
+	// Save result
+	imwrite("data/export/opencv-seamless-cloning-example.jpg", output);
+
+
+}
+
 /*
 FaceTexure 脸部展平渲染图
 pWhole 美术做好的颜色贴图
@@ -649,13 +706,14 @@ void FaceCloudLib::CombineTexture(GLuint FaceTexure, Texture* pWhole, Texture* p
 	colormat2 = colormat2(startRg, endRg);
 
 	//自动生成一个线条轮廓MASK
-	cv::Mat contourEdge = AutoMask(maskmat2);
+	cv::Point maskcenter;
+	cv::Mat contourEdge = AutoMask(maskmat2, maskcenter);
 
 	
 	//美白一次
-	ImageOptimizedUtility iou;
+	/*ImageOptimizedUtility iou;
 	facemat2 = iou.UpdateDermabrasion(facemat2, 4);
-	facemat2.convertTo(facemat2, CV_16UC3);
+	facemat2.convertTo(facemat2, CV_16UC3);*/
 
 
 	//形态学，把MASK 先膨胀(去掉眼鼻的漏洞） 再腐蚀(变小一些防止融合边缘有黑缝） 再Blur一下生成边缘渐变
@@ -707,6 +765,91 @@ void FaceCloudLib::CombineTexture(GLuint FaceTexure, Texture* pWhole, Texture* p
 
 
 	//计算每一下像素值
+	
+	//for (int j = 0; j < facemat2.rows; j++)
+	//{
+	//	for (int i = 0; i < facemat2.cols; i++)
+	//	{
+	//		cv::Vec3s f = facemat2.at<cv::Vec3s>(j, i);
+	//		cv::Vec3s m = maskmat2.at<cv::Vec3s>(j, i);
+	//		cv::Vec3s c = colormat2.at<cv::Vec3s>(j, i);
+	//		cv::Vec3s e = contourEdge.at<cv::Vec3s>(j, i);
+	//		cv::Vec3s mb = maskblur.at<cv::Vec3s>(j, i);
+	//		
+	//		//原始MASK(没有形态学和BLUR处理前的) 黑色像素的位置填美术颜色贴图的值
+	//		if (m[0] + m[1] + m[2] == 0)
+	//		{
+
+	//			/*facemat2.at<cv::Vec3s>(j, i)[0] = c[0];
+	//			facemat2.at<cv::Vec3s>(j, i)[1] = c[1];
+	//			facemat2.at<cv::Vec3s>(j, i)[2] = c[2];*/
+
+	//			facemat2.at<cv::Vec3s>(j, i)[0] = 0;
+	//			facemat2.at<cv::Vec3s>(j, i)[1] = 0;
+	//			facemat2.at<cv::Vec3s>(j, i)[2] = 0;
+	//		}
+	//		//融合
+	//		else
+	//		{
+	//			//facemat2.at<cv::Vec3s>(j, i)[0] = 1.0f / 255 * (f[0] * mb[0] + c[0] * (255 - mb[0]));// +e[0];
+	//			//facemat2.at<cv::Vec3s>(j, i)[1] = 1.0f / 255 * (f[1] * mb[1] + c[1] * (255 - mb[1]));// +e[1];
+	//			//facemat2.at<cv::Vec3s>(j, i)[2] = 1.0f / 255 * (f[2] * mb[2] + c[2] * (255 - mb[2]));// +e[2];
+
+	//			facemat2.at<cv::Vec3s>(j, i)[0] = 1.0f / 255 * f[0] * m[0];
+	//			facemat2.at<cv::Vec3s>(j, i)[1] = 1.0f / 255 * f[1] * m[1];
+	//			facemat2.at<cv::Vec3s>(j, i)[2] = 1.0f / 255 * f[2] * m[2];
+	//		}
+
+	//	}
+	//}
+	
+
+
+
+	//Seamless Cloning 
+	facemat2.convertTo(facemat2, CV_8UC3);
+	maskmat2.convertTo(maskmat2, CV_8UC3);
+	colormat2.convertTo(colormat2, CV_8UC3);
+
+
+	Point center(facemat2.cols/2, facemat2.rows /2);
+	center = maskcenter;
+	Mat dst;
+
+
+	//Mat testsrc= imread("data/export/airplane.jpg");
+	//Mat testm = Mat::zeros(testsrc.rows, testsrc.cols, testsrc.depth());
+
+	//// Define the mask as a closed polygon
+	//Point poly[1][7];
+	//poly[0][0] = Point(4, 80);
+	//poly[0][1] = Point(30, 54);
+	//poly[0][2] = Point(151, 63);
+	//poly[0][3] = Point(254, 37);
+	//poly[0][4] = Point(298, 90);
+	//poly[0][5] = Point(272, 134);
+	//poly[0][6] = Point(43, 122);
+
+	//const Point* polygons[1] = { poly[0] };
+	//int num_points[] = { 7 };
+
+	//// Create mask by filling the polygon
+
+	//fillPoly(testm, polygons, num_points, 1, Scalar(255, 255, 255));
+	//imwrite("data/export/testmask.jpg", testm);
+
+	/*Mat test, testm;
+	test = imread("data/export/apple.jpg");
+	testm = imread("data/export/applemask.jpg");
+	Mat whitemask(colormat2.cols, colormat2.rows,CV_8UC3,cv::Scalar(255,255,255));*/
+	cv::seamlessClone(facemat2, colormat2, maskmat2, center, dst, cv::NORMAL_CLONE);
+	
+	facemat2.convertTo(facemat2, CV_16UC3);
+	maskmat2.convertTo(maskmat2, CV_16UC3);
+	colormat2.convertTo(colormat2, CV_16UC3);
+	dst.convertTo(dst, CV_16UC3);
+	//计算每一下像素值
+
 	for (int j = 0; j < facemat2.rows; j++)
 	{
 		for (int i = 0; i < facemat2.cols; i++)
@@ -716,6 +859,7 @@ void FaceCloudLib::CombineTexture(GLuint FaceTexure, Texture* pWhole, Texture* p
 			cv::Vec3s c = colormat2.at<cv::Vec3s>(j, i);
 			cv::Vec3s e = contourEdge.at<cv::Vec3s>(j, i);
 			cv::Vec3s mb = maskblur.at<cv::Vec3s>(j, i);
+			cv::Vec3s clone = dst.at<cv::Vec3s>(j, i);
 			
 			//原始MASK(没有形态学和BLUR处理前的) 黑色像素的位置填美术颜色贴图的值
 			if (m[0] + m[1] + m[2] == 0)
@@ -724,19 +868,27 @@ void FaceCloudLib::CombineTexture(GLuint FaceTexure, Texture* pWhole, Texture* p
 				facemat2.at<cv::Vec3s>(j, i)[0] = c[0];
 				facemat2.at<cv::Vec3s>(j, i)[1] = c[1];
 				facemat2.at<cv::Vec3s>(j, i)[2] = c[2];
+
+				/*facemat2.at<cv::Vec3s>(j, i)[0] = 0;
+				facemat2.at<cv::Vec3s>(j, i)[1] = 0;
+				facemat2.at<cv::Vec3s>(j, i)[2] = 0;*/
 			}
 			//融合
 			else
 			{
-				facemat2.at<cv::Vec3s>(j, i)[0] = 1.0f / 255 * (f[0] * mb[0] + c[0] * (255 - mb[0]));// +e[0];
-				facemat2.at<cv::Vec3s>(j, i)[1] = 1.0f / 255 * (f[1] * mb[1] + c[1] * (255 - mb[1]));// +e[1];
-				facemat2.at<cv::Vec3s>(j, i)[2] = 1.0f / 255 * (f[2] * mb[2] + c[2] * (255 - mb[2]));// +e[2];
+				float darker = 0.75f;
+
+				facemat2.at<cv::Vec3s>(j, i)[0] = 1.0f / 255 * (clone[0] * mb[0] * darker + c[0] * (255 - mb[0]));// +e[0];
+				facemat2.at<cv::Vec3s>(j, i)[1] = 1.0f / 255 * (clone[1] * mb[1] * darker + c[1] * (255 - mb[1]));// +e[1];
+				facemat2.at<cv::Vec3s>(j, i)[2] = 1.0f / 255 * (clone[2] * mb[2] * darker + c[2] * (255 - mb[2]));// +e[2];
+
+				/*facemat2.at<cv::Vec3s>(j, i)[0] = 1.0f / 255 * f[0] * m[0];
+				facemat2.at<cv::Vec3s>(j, i)[1] = 1.0f / 255 * f[1] * m[1];
+				facemat2.at<cv::Vec3s>(j, i)[2] = 1.0f / 255 * f[2] * m[2];*/
 			}
 
 		}
 	}
-
-
 
 
 	//cv::blur(facemat2, facemat2, cv::Size(10, 10));

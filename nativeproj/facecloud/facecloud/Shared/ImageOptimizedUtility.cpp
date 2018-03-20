@@ -798,3 +798,143 @@ Mat ImageOptimizedUtility::FacePhotoProcess(JsonFaceInfo& faceinfo, JsonRole bon
 
 	return rt8;
 }
+
+
+
+
+void ImageOptimizedUtility::DetectSkinStatus(Mat src, vector<Point> contours, JsonFaceInfo faceinfo)
+{
+	Mat src16;
+	src.convertTo(src16, CV_16UC3);
+
+	Vector2f pos;
+	vector<Point> noseContour;
+	pos = faceinfo.landmarkdata["nose_bridge1"]; noseContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["nose_left_contour3"]; noseContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["nose_right_contour3"]; noseContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+
+	vector<Point> leftfaceContour;
+	pos = faceinfo.landmarkdata["contour_left5"]; leftfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left10"]; leftfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["nose_left_contour3"]; leftfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["left_eye_bottom"]; leftfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+
+	vector<Point> rightfaceContour;
+	pos = faceinfo.landmarkdata["contour_right5"]; rightfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right10"]; rightfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["nose_right_contour3"]; rightfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["right_eye_bottom"]; rightfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+
+
+	vector<Point> lefteyeUnder;
+	pos = faceinfo.landmarkdata["left_eye_bottom"]; lefteyeUnder.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["left_eye_right_corner"]; lefteyeUnder.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["left_eye_top"]; lefteyeUnder.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["left_eye_left_corner"]; lefteyeUnder.push_back(cv::Point(pos.x, 1024 - pos.y));
+
+	lefteyeUnder[1] = lefteyeUnder[1] * 2 - lefteyeUnder[0];
+	lefteyeUnder[2] = lefteyeUnder[2] * 2 - lefteyeUnder[0];
+	lefteyeUnder[3] = lefteyeUnder[3] * 2 - lefteyeUnder[0];
+
+
+	vector<Point> righteyeUnder;
+	pos = faceinfo.landmarkdata["right_eye_bottom"]; righteyeUnder.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["right_eye_left_corner"]; righteyeUnder.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["right_eye_top"]; righteyeUnder.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["right_eye_right_corner"]; righteyeUnder.push_back(cv::Point(pos.x, 1024 - pos.y));
+
+	righteyeUnder[1] = righteyeUnder[1] * 2 - righteyeUnder[0];
+	righteyeUnder[2] = righteyeUnder[2] * 2 - righteyeUnder[0];
+	righteyeUnder[3] = righteyeUnder[3] * 2 - righteyeUnder[0];
+
+
+	Rect box = boundingRect(contours);
+	int count = 0;
+	Vec3f meanColor;
+
+	int eyeunderCount = 0;
+	Vec3f meanEyeUnderColor;
+	for (int j = box.tl().y; j < +box.br().y; j++)
+	{
+		for (int i = box.tl().x; i < +box.br().x; i++)
+		{
+
+			cv::Vec3s c = src16.at<cv::Vec3s>(j, i);
+
+
+
+			float dist1 = pointPolygonTest(noseContour, cv::Point2f(i, j), true);
+			float dist2 = pointPolygonTest(leftfaceContour, cv::Point2f(i, j), true);
+			float dist3 = pointPolygonTest(rightfaceContour, cv::Point2f(i, j), true);
+
+			if (dist1 > 0 || dist2 > 0 || dist3 > 0)
+			{
+				count++;
+
+				meanColor[0] += c[0];
+				meanColor[1] += c[1];
+				meanColor[2] += c[2];
+			}
+
+
+
+			float eyeldist = pointPolygonTest(lefteyeUnder, cv::Point2f(i, j), true);
+			float eyerdist = pointPolygonTest(righteyeUnder, cv::Point2f(i, j), true);
+
+			if (eyeldist > 0 || eyerdist > 0)
+			{
+				eyeunderCount++;
+
+				meanEyeUnderColor[0] += c[0];
+				meanEyeUnderColor[1] += c[1];
+				meanEyeUnderColor[2] += c[2];
+			}
+
+		}
+	}
+	meanColor = meanColor / count;
+
+	Vec3f HSVMean;
+
+	cvtColor(meanColor, HSVMean, CV_RGB2HSV);
+
+	map<SKINCOLORTYPE, Vec3f> RGBMap;
+	RGBMap[SCT_WHITE] = Vec3f(250, 230, 217);
+	RGBMap[SCT_BLOND] = Vec3f(244, 213, 196);
+	RGBMap[SCT_NATURE] = Vec3f(238, 197, 167);
+	RGBMap[SCT_WHEAT] = Vec3f(193, 155, 136);
+	RGBMap[SCT_DARK] = Vec3f(153, 113, 93);
+	RGBMap[SCT_BLACK] = Vec3f(105, 73, 65);
+
+	map<SKINCOLORTYPE, Vec3f> HSVMap;
+	for (int i = 0 ; i < SCT_MAX;i++)
+	{
+		HSVMap[(SKINCOLORTYPE)i] = Vec3b();
+		cvtColor(RGBMap[(SKINCOLORTYPE)i], HSVMap[(SKINCOLORTYPE)i], CV_RGB2HSV);
+	}
+
+	int minIndex = 0;//皮肤最接近的颜色
+	double minDist = 9999;
+	for (int i = 0; i < SCT_MAX; i++)
+	{
+		double hsvDist = norm(HSVMean, HSVMap[(SKINCOLORTYPE)i]);
+
+		if (hsvDist < minDist)
+		{
+			minDist = hsvDist;
+			minIndex = i;
+		}
+	}
+
+
+
+	Vec3f HSVEyeUnderMean;
+	cvtColor(meanEyeUnderColor, HSVEyeUnderMean, CV_RGB2HSV);
+	double hsvEyeDist = 0;//眼袋部分颜色与平均肤色的距离值
+	hsvEyeDist = norm(HSVMean, meanEyeUnderColor);
+
+
+
+
+
+}

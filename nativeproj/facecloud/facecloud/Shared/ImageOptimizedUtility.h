@@ -25,6 +25,16 @@ using namespace cv;
 #define MATH_PI  3.14159265358979323846264338327950288419716939937510
 class Matrix2f;
 
+enum SKINCOLORTYPE {
+	SCT_WHITE = 0,
+	SCT_BLOND,
+	SCT_NATURE,
+	SCT_WHEAT,
+	SCT_DARK,
+	SCT_BLACK,
+	SCT_MAX,
+};
+
 class ImageOptimizedUtility
 {
 
@@ -44,6 +54,9 @@ public:
 	Mat FacePhotoProcess_(JsonFaceInfo& faceinfo, JsonRole bonedef, Mat src32);
 	Mat FacePhotoProcess(JsonFaceInfo& faceinfo, JsonRole bonedef, Mat src32);
 	
+
+	void DetectSkinStatus(Mat src,vector<Point> contours, JsonFaceInfo faceinfo);
+
 
 	void SaveTextureToFile(cv::Mat imag, int format, string path, bool flip = false)
 	{

@@ -271,14 +271,22 @@ Texture* BoneUtility::CalculateSkin(GLuint texture, cv::Mat& refmat, bool isman,
 	Mat rtmat;
 
 
+	/////////////////////////////////////////////////////////肤色处理
 	OSMesa::Log("\nStart ColorTransfer");
-	//
-	iou.ColorTransfer(rgbimg, refmat, rtmat, faceinfo);
+	
+	//使用肤色处理
+	//iou.ColorTransfer(rgbimg, refmat, rtmat, faceinfo);
+
+	//不用肤色处理
+	rgbimg.copyTo(rtmat);
+
 	//iou.UpdateRef_RGB(faceinfo,rgbimg,ref_color, 1.0f, rtmat, leftpoint, rightpoint);
+	/////////////////////////////////////////////////////////肤色处理
 
 
-	//Mask By Contour from key point
 
+
+	/////////////////////////////////////////////////////////按特征点画轮廓
 	vector<vector<cv::Point> > contours;
 	vector<cv::Point> contour;
 
@@ -356,8 +364,12 @@ Texture* BoneUtility::CalculateSkin(GLuint texture, cv::Mat& refmat, bool isman,
 	drawContours(contourmask, contours, -1, colorwhite, CV_FILLED);
 
 
+
+
 	cv::multiply(rtmat, contourmask, rtmat);
 
+	//iou.DetectSkinStatus(rtmat, contours[0], faceinfo);
+	/////////////////////////////////////////////////////////按特征点画轮廓
 
 
 
