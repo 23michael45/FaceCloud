@@ -934,7 +934,7 @@ void ImageOptimizedUtility::DetectSkinStatus(Mat src, JsonFaceInfo faceinfo,Json
 	pos = faceinfo.landmarkdata["contour_right1"]; contour.push_back(cv::Point(pos.x, pos.y));
 
 	contours.push_back(contour);
-	cv::Mat contourmask(1024, 1024, CV_8UC3, cv::Scalar(0, 0, 0));
+	cv::Mat contourmask(src.rows, src.cols, CV_8UC3, cv::Scalar(0, 0, 0));
 	cv::Scalar colorwhite = cv::Scalar(1, 1, 1);
 	drawContours(contourmask, contours, -1, colorwhite, CV_FILLED);
 	cv::Mat faceimg;
