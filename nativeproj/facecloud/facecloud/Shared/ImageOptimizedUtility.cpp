@@ -851,28 +851,28 @@ void ImageOptimizedUtility::DetectSkinStatus(Mat src, JsonFaceInfo faceinfo,Json
 
 	Vector2f pos;
 	vector<Point> noseContour;
-	pos = faceinfo.landmarkdata["nose_bridge1"]; noseContour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["nose_left_contour3"]; noseContour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["nose_right_contour3"]; noseContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["nose_bridge1"]; noseContour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["nose_left_contour3"]; noseContour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["nose_right_contour3"]; noseContour.push_back(cv::Point(pos.x, pos.y));
 
 	vector<Point> leftfaceContour;
-	pos = faceinfo.landmarkdata["contour_left5"]; leftfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_left10"]; leftfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["nose_left_contour3"]; leftfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["left_eye_bottom"]; leftfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left5"]; leftfaceContour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_left10"]; leftfaceContour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["nose_left_contour3"]; leftfaceContour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["left_eye_bottom"]; leftfaceContour.push_back(cv::Point(pos.x, pos.y));
 
 	vector<Point> rightfaceContour;
-	pos = faceinfo.landmarkdata["contour_right5"]; rightfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_right10"]; rightfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["nose_right_contour3"]; rightfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["right_eye_bottom"]; rightfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right5"]; rightfaceContour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_right10"]; rightfaceContour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["nose_right_contour3"]; rightfaceContour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["right_eye_bottom"]; rightfaceContour.push_back(cv::Point(pos.x, pos.y));
 
 
 	vector<Point> lefteyeUnder;
-	pos = faceinfo.landmarkdata["left_eye_bottom"]; lefteyeUnder.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["left_eye_right_corner"]; lefteyeUnder.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["left_eye_top"]; lefteyeUnder.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["left_eye_left_corner"]; lefteyeUnder.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["left_eye_bottom"]; lefteyeUnder.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["left_eye_right_corner"]; lefteyeUnder.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["left_eye_top"]; lefteyeUnder.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["left_eye_left_corner"]; lefteyeUnder.push_back(cv::Point(pos.x, pos.y));
 
 	lefteyeUnder[1] = lefteyeUnder[1] * 2 - lefteyeUnder[0];
 	lefteyeUnder[2] = lefteyeUnder[2] * 2 - lefteyeUnder[0];
@@ -880,10 +880,10 @@ void ImageOptimizedUtility::DetectSkinStatus(Mat src, JsonFaceInfo faceinfo,Json
 
 
 	vector<Point> righteyeUnder;
-	pos = faceinfo.landmarkdata["right_eye_bottom"]; righteyeUnder.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["right_eye_left_corner"]; righteyeUnder.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["right_eye_top"]; righteyeUnder.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["right_eye_right_corner"]; righteyeUnder.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["right_eye_bottom"]; righteyeUnder.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["right_eye_left_corner"]; righteyeUnder.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["right_eye_top"]; righteyeUnder.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["right_eye_right_corner"]; righteyeUnder.push_back(cv::Point(pos.x, pos.y));
 
 	righteyeUnder[1] = righteyeUnder[1] * 2 - righteyeUnder[0];
 	righteyeUnder[2] = righteyeUnder[2] * 2 - righteyeUnder[0];
@@ -899,39 +899,39 @@ void ImageOptimizedUtility::DetectSkinStatus(Mat src, JsonFaceInfo faceinfo,Json
 	vector<cv::Point> contour;
 	
 	pos;
-	pos = faceinfo.landmarkdata["contour_left1"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_left2"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_left3"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_left4"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_left5"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_left6"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_left7"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_left8"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_left9"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_left10"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_left11"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_left12"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_left13"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_left14"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_left15"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_left16"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_chin"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_right16"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_right15"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_right14"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_right13"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_right12"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_right11"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_right10"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_right9"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_right8"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_right7"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_right6"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_right5"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_right4"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_right3"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_right2"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["contour_right1"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left1"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_left2"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_left3"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_left4"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_left5"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_left6"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_left7"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_left8"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_left9"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_left10"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_left11"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_left12"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_left13"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_left14"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_left15"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_left16"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_chin"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_right16"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_right15"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_right14"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_right13"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_right12"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_right11"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_right10"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_right9"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_right8"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_right7"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_right6"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_right5"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_right4"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_right3"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_right2"]; contour.push_back(cv::Point(pos.x, pos.y));
+	pos = faceinfo.landmarkdata["contour_right1"]; contour.push_back(cv::Point(pos.x, pos.y));
 
 	contours.push_back(contour);
 	cv::Mat contourmask(1024, 1024, CV_8UC3, cv::Scalar(0, 0, 0));
@@ -939,6 +939,12 @@ void ImageOptimizedUtility::DetectSkinStatus(Mat src, JsonFaceInfo faceinfo,Json
 	drawContours(contourmask, contours, -1, colorwhite, CV_FILLED);
 	cv::Mat faceimg;
 	cv::multiply(src, contourmask, faceimg);
+
+	cv::Mat tmp;
+	faceimg.convertTo(tmp, CV_RGB2BGR);
+	imwrite("data/export/skindetecttmp.jpg",tmp);
+
+
 
 	Rect box = boundingRect(contour);
 	int count = 0;
@@ -954,12 +960,13 @@ void ImageOptimizedUtility::DetectSkinStatus(Mat src, JsonFaceInfo faceinfo,Json
 			cv::Vec3s c = src16.at<cv::Vec3s>(j, i);
 
 
-
+			//鼻子有高光不计算
 			float dist1 = pointPolygonTest(noseContour, cv::Point2f(i, j), true);
+
 			float dist2 = pointPolygonTest(leftfaceContour, cv::Point2f(i, j), true);
 			float dist3 = pointPolygonTest(rightfaceContour, cv::Point2f(i, j), true);
 
-			if (dist1 > 0 || dist2 > 0 || dist3 > 0)
+			if (dist1 > 0 ||  dist2 > 0 || dist3 > 0)
 			{
 				count++;
 
@@ -994,12 +1001,12 @@ void ImageOptimizedUtility::DetectSkinStatus(Mat src, JsonFaceInfo faceinfo,Json
 	Vec3f HSVMean = hsvMeanMat.at<Vec3f>(0, 0);
 
 	map<SKINCOLORTYPE, Vec3f> RGBMap;
-	RGBMap[SCT_WHITE] = Vec3f(250, 230, 217);
-	RGBMap[SCT_BLOND] = Vec3f(244, 213, 196);
-	RGBMap[SCT_NATURE] = Vec3f(238, 197, 167);
-	RGBMap[SCT_WHEAT] = Vec3f(193, 155, 136);
-	RGBMap[SCT_DARK] = Vec3f(153, 113, 93);
-	RGBMap[SCT_BLACK] = Vec3f(105, 73, 65);
+	RGBMap[SCT_WHITE] = Vec3f(231, 222, 225);
+	RGBMap[SCT_BLOND] = Vec3f(215, 180, 190);
+	RGBMap[SCT_NATURE] = Vec3f(205, 168, 150);
+	RGBMap[SCT_WHEAT] = Vec3f(176, 139, 121);
+	RGBMap[SCT_DARK] = Vec3f(117, 88, 78);
+	RGBMap[SCT_BLACK] = Vec3f(96, 73, 65);
 
 	map<SKINCOLORTYPE, Vec3f> HSVMap;
 	for (int i = 0; i < SCT_MAX; i++)
@@ -1016,7 +1023,10 @@ void ImageOptimizedUtility::DetectSkinStatus(Mat src, JsonFaceInfo faceinfo,Json
 	double minDist = 9999;
 	for (int i = 0; i < SCT_MAX; i++)
 	{
-		double hsvDist = norm(HSVMean, HSVMap[(SKINCOLORTYPE)i]);
+		//double hsvDist = norm(HSVMean, HSVMap[(SKINCOLORTYPE)i]);
+		//double hsvDist = norm(meanColor, RGBMap[(SKINCOLORTYPE)i]);
+
+		double hsvDist = abs(HSVMean[2] - HSVMap[(SKINCOLORTYPE)i][2]);
 
 		if (hsvDist < minDist)
 		{
@@ -1025,6 +1035,8 @@ void ImageOptimizedUtility::DetectSkinStatus(Mat src, JsonFaceInfo faceinfo,Json
 		}
 	}
 
+	//设置输出肤色索引
+	skinjson.skincolor = (SKINCOLORTYPE)minIndex;
 
 
 	Vec3f HSVEyeUnderMean;
@@ -1036,8 +1048,14 @@ void ImageOptimizedUtility::DetectSkinStatus(Mat src, JsonFaceInfo faceinfo,Json
 	double hsvEyeDist = 0;//眼袋部分颜色与平均肤色的距离值
 	hsvEyeDist = norm(HSVMean, HSVEyeUnderMean);
 
+	//设置输出黑色程度值 【0，100】
+	float blackhead = 0;
+	skinjson.blackhead = blackhead;
 
-	findPimples(faceimg);
+
+
+
+	//findPimples(faceimg);
 }
 
 
