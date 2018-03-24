@@ -31,6 +31,9 @@ Tutorial 13 - Camera Space
 #include "OSMesaContext.h"
 #include "glContext.hpp"
 
+#define OUTPUT_DEBUG_JPG 1
+
+
 FaceCloudLib lib;
 string currentModelID = "10002";
 string outJsonModelOut = "";

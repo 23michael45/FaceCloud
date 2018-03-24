@@ -268,17 +268,18 @@ Texture* BoneUtility::CalculateSkin(GLuint texture, cv::Mat& refmat, bool isman,
 	/*Vector2f leftpoint = (faceinfo.landmarkdata["contour_left9"] + faceinfo.landmarkdata["nose_left_contour2"]) * 0.5;
 	Vector2f rightpoint = (faceinfo.landmarkdata["contour_right3"] + faceinfo.landmarkdata["nose_right_contour2"])* 0.5;*/
 
-	Mat rtmat;
+	Mat rtrefmat;
 
 
 	/////////////////////////////////////////////////////////肤色处理
 	OSMesa::Log("\nStart ColorTransfer");
 	
 	//使用肤色处理
-	//iou.ColorTransfer(rgbimg, refmat, rtmat, faceinfo);
+	iou.ColorTransfer(rgbimg, refmat, rtrefmat, faceinfo);
+	rtrefmat.copyTo(refmat);
 
 	//不用肤色处理
-	rgbimg.copyTo(rtmat);
+	//rgbimg.copyTo(rtmat);
 
 	//iou.UpdateRef_RGB(faceinfo,rgbimg,ref_color, 1.0f, rtmat, leftpoint, rightpoint);
 	/////////////////////////////////////////////////////////肤色处理
@@ -366,16 +367,15 @@ Texture* BoneUtility::CalculateSkin(GLuint texture, cv::Mat& refmat, bool isman,
 
 
 
-	cv::multiply(rtmat, contourmask, rtmat);
+	cv::multiply(rgbimg, contourmask, rgbimg);
 
-	//iou.DetectSkinStatus(rtmat, contours[0], faceinfo);
 	/////////////////////////////////////////////////////////按特征点画轮廓
 
 
 
 	//convert to opengl texture
 	Texture *ptexture = new Texture();
-	ptexture->FromCVMat(GL_TEXTURE_2D, rtmat);
+	ptexture->FromCVMat(GL_TEXTURE_2D, rgbimg);
 
 	SAFE_DELETE(output_image);
 	return ptexture;

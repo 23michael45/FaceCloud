@@ -109,132 +109,174 @@ vector<Rect> ImageOptimizedUtility::detectFace(Mat src)
 	return faces;
 }
 
-void ImageOptimizedUtility::ColorTransfer(Mat src, Mat ref, Mat& outputimg,JsonFaceInfo &faceinfo)
+
+
+//计算图片轮廓内平均色
+Scalar GetMeanColorInContour(Mat src, vector<Point> contour)
+{
+	int count = 0;
+	Scalar meanSrc(0, 0, 0);
+	for (int j = 0; j < src.rows; j++)
+	{
+		for (int i = 0; i < src.cols; i++)
+		{
+			float dist = pointPolygonTest(contour, Point2f(i, j), true);
+			if (dist > 0)
+			{
+				Vec3b color = src.at<Vec3b>(i, j);
+				meanSrc[0] += color[0];
+				meanSrc[1] += color[1];
+				meanSrc[2] += color[2];
+				count++;
+			}
+		}
+	}
+
+	meanSrc = meanSrc / count;
+	return meanSrc;
+}
+
+//计算色调转换算法的中间SCALAR
+Scalar GetColorTransScalar(Mat src, Scalar mean)
+{
+	Scalar rt(0,0,0);
+	for (int i = 0; i < src.rows; i++)
+	{
+		for (int j = 0; j < src.cols; j++)
+		{
+			Vec3f s;
+			s = src.at<Vec3b>(i, j);
+			rt[0] = rt[0] + (s.val[0] - mean[0])*(s.val[0] - mean[0]);
+			rt[1] = rt[1] + (s.val[1] - mean[1])*(s.val[1] - mean[1]);
+			rt[2] = rt[2] + (s.val[2] - mean[2])*(s.val[2] - mean[2]);
+		}
+	}
+
+	for (int i = 0; i < 3; i++)
+	{
+		rt[i] = sqrt(rt[i] / ((src.cols)*(src.rows)));
+	}
+	return rt;
+}
+
+//两图按给定平均色转色调
+Mat ColorTransferBlend(Mat src, Mat ref, Scalar srcmean, Scalar refmean)
+{
+	Mat rt; 
+	src.copyTo(rt);
+	//算法计算，两张图输出两个颜色值 var1 var2
+	Scalar var1 = GetColorTransScalar(rt, srcmean);
+	Scalar var2 = GetColorTransScalar(ref, refmean);
+
+	//根据计算var1 var2融合
+	float blend = 0.5;
+	for (int i = 0; i < rt.rows; i++)
+	{
+		for (int j = 0; j < rt.cols; j++)
+		{
+			Vec3f s;
+			s = rt.at<Vec3b>(i, j);
+			s.val[0] = (s.val[0] - srcmean[0])*(var2[0] / var1[0]) * blend * 2 + refmean[0] * (1 - blend) * 2;
+			s.val[1] = (s.val[1] - srcmean[1])*(var2[1] / var1[1]) * blend * 2 + refmean[1] * (1 - blend) * 2;
+			s.val[2] = (s.val[2] - srcmean[2])*(var2[2] / var1[2]) * blend * 2 + refmean[2] * (1 - blend) * 2;
+			rt.at<Vec3b>(i, j) = s;
+		}
+	}
+	return rt;
+}
+
+
+void ImageOptimizedUtility::ColorTransfer(Mat src, Mat ref, Mat& outputimg, JsonFaceInfo &faceinfo)
 {
 
+	//原始图变LAB空间
 	Mat srcimg2;
 	cv::cvtColor(src, srcimg2, CV_RGB2Lab);
 
+	//参与图变LAB空间
 	Mat refimg2;
 	cv::resize(ref, refimg2, cv::Size(src.cols, src.rows));
 	cv::cvtColor(refimg2, refimg2, CV_RGB2Lab);
 
 	int i, j;
-	double var1[3], var2[3];
 
-	for (i = 0; i < 3; i++)
-	{
-		var1[i] = 0;
-		var2[i] = 0;
-	}
-
-	
-
-	
-
-	Scalar mean1;
-	vector<vector<Point> > contours;
+	//取照片中，脸部区域，计算平均色
+	Scalar meanleft;
+	Scalar meanright;
 	vector<Point> contour;
+	Vector2f pos;
+	vector<Point> leftfaceContour;
+	pos = faceinfo.landmarkdata["contour_left5"]; leftfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left10"]; leftfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["mouth_left_corner"]; leftfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["nose_left_contour3"]; leftfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["nose_bridge2"]; leftfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["left_eye_bottom"]; leftfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	meanleft = GetMeanColorInContour(srcimg2, leftfaceContour);
 
-	if (faceinfo.landmarkdata.size() <= 0)
+	vector<Point> rightfaceContour;
+	pos = faceinfo.landmarkdata["contour_right5"]; rightfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right10"]; rightfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["mouth_right_corner"]; leftfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["nose_right_contour3"]; rightfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["nose_bridge2"]; leftfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["right_eye_bottom"]; rightfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	meanright = GetMeanColorInContour(srcimg2, rightfaceContour);
+
+	int lx = 270 / 2;
+	int rx = 1070 / 2;
+	int ty = 624 / 2;
+	int by = 1424 / 2;
+
+	//取小块脸区域，再向内取Edge，取这一小块的平均色
+	int edge = 60;
+	Mat subrefimg = refimg2(cv::Range( lx + edge,rx- edge), cv::Range(ty + edge, by - edge));
+	Scalar mean2 = cv::mean(subrefimg);
+
+
+	//调前景色方案
+	//Mat leftmat = ColorTransferBlend(srcimg2, refimg2, meanleft, mean2);
+	//Mat rightmat = ColorTransferBlend(srcimg2, refimg2, meanright, mean2);
+	Mat subrefimg2 = refimg2(cv::Range(lx , rx ), cv::Range(ty , by ));
+	//调背景色方案
+	Mat leftbgmat = ColorTransferBlend(subrefimg2, srcimg2, mean2, meanleft);
+	Mat rightbgmat = ColorTransferBlend(subrefimg2, srcimg2, mean2, meanright);
+
+
+	Mat leftbgtmp;
+	cv::cvtColor(leftbgmat, leftbgtmp, CV_Lab2BGR);
+	imwrite("data/export/leftbg.jpg", leftbgtmp);
+
+
+	Mat rightbgtmp;
+	cv::cvtColor(rightbgmat, rightbgtmp, CV_Lab2BGR);
+	imwrite("data/export/rightbg.jpg", rightbgtmp);
+
+	subrefimg2.copyTo(outputimg);
+	for (int i = 0; i < outputimg.rows; i++)
 	{
-		Mat subsrcimg2 = srcimg2(Range(faceinfo.face_rectangle.y, faceinfo.face_rectangle.y + faceinfo.face_rectangle.w),
-			Range(faceinfo.face_rectangle.x, faceinfo.face_rectangle.x + faceinfo.face_rectangle.z));
-
-		mean1 = cv::mean(subsrcimg2);
-	}
-	else
-	{
-		Vector2f contour_left8 = faceinfo.landmarkdata["contour_left8"];
-		Vector2f nose_left_contour3 = faceinfo.landmarkdata["nose_left_contour3"];
-		Vector2f left_eye_bottom = faceinfo.landmarkdata["left_eye_bottom"];
-		contour.push_back(Point(contour_left8.x, contour_left8.y));
-		contour.push_back(Point(nose_left_contour3.x, nose_left_contour3.y));
-		contour.push_back(Point(left_eye_bottom.x, left_eye_bottom.y));
-
-		contours.push_back(contour);
-
-
-
-		int count = 0;
-		Scalar meanSrc(0, 0, 0);
-		for (int j = 0; j < srcimg2.rows; j++)
+		for (int j = 0; j < outputimg.cols; j++)
 		{
-			for (int i = 0; i < srcimg2.cols; i++)
-			{
-				float dist = pointPolygonTest(contours[0], Point2f(i, j), true);
-				if (dist > 0)
-				{
-					Vec3b color = srcimg2.at<Vec3b>(i, j);
-					meanSrc[0] += color[0];
-					meanSrc[1] += color[1];
-					meanSrc[2] += color[2];
-					count++;
-				}
-			}
-		}
+			;
+			Vec3b l = leftbgmat.at<Vec3b>(i, j);
+			Vec3b r = rightbgmat.at<Vec3b>(i, j);
+			Vec3b s;
 
-		meanSrc = meanSrc / count;
-		mean1 = meanSrc;
-	}
+			float blend = (float)(j) / outputimg.cols;
 
+			s.val[0] = l.val[0] * (1 - blend) + r.val[0] * blend;
+			s.val[1] = l.val[1] * (1 - blend) + r.val[1] * blend;
+			s.val[2] = l.val[2] * (1 - blend) + r.val[2] * blend;
 
-	Mat subrefimg2 = refimg2(cv::Range(270 / 2, 1070 / 2), cv::Range(624 / 2, 1424 / 2));
-
-
-	Scalar mean2= cv::mean(subrefimg2);
-
-	OSMesa::Log("\nTransColor Mean");
-	Vec3f s;
-
-
-	for (i = 0; i < srcimg2.rows; i++)
-	{
-		for (j = 0; j < srcimg2.cols; j++)
-		{
-			s = srcimg2.at<Vec3b>(i, j);
-			var1[0] = var1[0] + (s.val[0] - mean1[0])*(s.val[0] - mean1[0]);
-			var1[1] = var1[1] + (s.val[1] - mean1[1])*(s.val[1] - mean1[1]);
-			var1[2] = var1[2] + (s.val[2] - mean1[2])*(s.val[2] - mean1[2]);
-		}
-	}
-
-	for (i = 0; i < 3; i++)
-	{
-		var1[i] = sqrt(var1[i] / ((srcimg2.cols)*(srcimg2.rows)));
-		//cout<<var1[i]<<endl;  
-	}
-
-	for (i = 0; i < refimg2.rows; i++)
-	{
-		for (j = 0; j < refimg2.cols; j++)
-		{
-			s = refimg2.at<Vec3b>(i, j);
-			var2[0] = var2[0] + (s.val[0] - mean2[0])*(s.val[0] - mean2[0]);
-			var2[1] = var2[1] + (s.val[1] - mean2[1])*(s.val[1] - mean2[1]);
-			var2[2] = var2[2] + (s.val[2] - mean2[2])*(s.val[2] - mean2[2]);
+			outputimg.at<Vec3b>(i, j) = s;
 		}
 	}
 
-	for (i = 0; i < 3; i++)
-	{
-		var2[i] = sqrt(var2[i] / ((refimg2.cols)*(refimg2.rows)));
-		//cout<<var2[i]<<endl;  
-	}
+	cv::cvtColor(outputimg, outputimg, CV_Lab2RGB);
 
-	float blend = 0.5;
-	for (i = 0; i < srcimg2.rows; i++)
-	{
-		for (j = 0; j < srcimg2.cols; j++)
-		{
-			s = srcimg2.at<Vec3b>(i, j);
-			s.val[0] = (s.val[0] - mean1[0])*(var2[0] / var1[0]) * blend * 2 + mean2[0] * (1 - blend) * 2;
-			s.val[1] = (s.val[1] - mean1[1])*(var2[1] / var1[1]) * blend * 2 + mean2[1] * (1 - blend) * 2;
-			s.val[2] = (s.val[2] - mean1[2])*(var2[2] / var1[2]) * blend * 2 + mean2[2] * (1 - blend) * 2;
-			srcimg2.at<Vec3b>(i, j) = s;
-		}
-	}
-	cv::cvtColor(srcimg2, outputimg, CV_Lab2RGB);
+	Mat  outtmp;
+	cv::cvtColor(outputimg, outtmp, CV_RGB2BGR);
+	imwrite("data/export/blendbg.jpg", outtmp);
 }
 
 void ImageOptimizedUtility::UpdateRef_RGB(JsonFaceInfo& faceinfo,Mat img, Vector3f refcolor, float value, Mat& outputimg, Vector2f leftpoint, Vector2f rightpoint)
@@ -802,7 +844,7 @@ Mat ImageOptimizedUtility::FacePhotoProcess(JsonFaceInfo& faceinfo, JsonRole bon
 
 
 
-void ImageOptimizedUtility::DetectSkinStatus(Mat src, vector<Point> contours, JsonFaceInfo faceinfo)
+void ImageOptimizedUtility::DetectSkinStatus(Mat src, JsonFaceInfo faceinfo,JsonSkinStatus& skinjson)
 {
 	Mat src16;
 	src.convertTo(src16, CV_16UC3);
@@ -848,7 +890,57 @@ void ImageOptimizedUtility::DetectSkinStatus(Mat src, vector<Point> contours, Js
 	righteyeUnder[3] = righteyeUnder[3] * 2 - righteyeUnder[0];
 
 
-	Rect box = boundingRect(contours);
+
+
+
+
+	/////////////////////////////////////////////////////////按特征点画轮廓 无额头和头发	
+	vector<vector<cv::Point> > contours;
+	vector<cv::Point> contour;
+	
+	pos;
+	pos = faceinfo.landmarkdata["contour_left1"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left2"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left3"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left4"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left5"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left6"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left7"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left8"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left9"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left10"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left11"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left12"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left13"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left14"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left15"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_left16"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_chin"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right16"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right15"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right14"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right13"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right12"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right11"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right10"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right9"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right8"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right7"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right6"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right5"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right4"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right3"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right2"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["contour_right1"]; contour.push_back(cv::Point(pos.x, 1024 - pos.y));
+
+	contours.push_back(contour);
+	cv::Mat contourmask(1024, 1024, CV_8UC3, cv::Scalar(0, 0, 0));
+	cv::Scalar colorwhite = cv::Scalar(1, 1, 1);
+	drawContours(contourmask, contours, -1, colorwhite, CV_FILLED);
+	cv::Mat faceimg;
+	cv::multiply(src, contourmask, faceimg);
+
+	Rect box = boundingRect(contour);
 	int count = 0;
 	Vec3f meanColor;
 
@@ -893,10 +985,13 @@ void ImageOptimizedUtility::DetectSkinStatus(Mat src, vector<Point> contours, Js
 		}
 	}
 	meanColor = meanColor / count;
+	meanEyeUnderColor = meanEyeUnderColor / eyeunderCount;
 
-	Vec3f HSVMean;
+	Mat rgbMeanMat(1, 1, CV_32FC3,meanColor);
+	Mat hsvMeanMat;
+	cvtColor(rgbMeanMat, hsvMeanMat, CV_RGB2HSV);
 
-	cvtColor(meanColor, HSVMean, CV_RGB2HSV);
+	Vec3f HSVMean = hsvMeanMat.at<Vec3f>(0, 0);
 
 	map<SKINCOLORTYPE, Vec3f> RGBMap;
 	RGBMap[SCT_WHITE] = Vec3f(250, 230, 217);
@@ -907,10 +1002,14 @@ void ImageOptimizedUtility::DetectSkinStatus(Mat src, vector<Point> contours, Js
 	RGBMap[SCT_BLACK] = Vec3f(105, 73, 65);
 
 	map<SKINCOLORTYPE, Vec3f> HSVMap;
-	for (int i = 0 ; i < SCT_MAX;i++)
+	for (int i = 0; i < SCT_MAX; i++)
 	{
-		HSVMap[(SKINCOLORTYPE)i] = Vec3b();
-		cvtColor(RGBMap[(SKINCOLORTYPE)i], HSVMap[(SKINCOLORTYPE)i], CV_RGB2HSV);
+
+		Mat rgbM(1, 1, CV_32FC3, RGBMap[(SKINCOLORTYPE)i]);
+		Mat hsvM;
+		cvtColor(rgbM, hsvM, CV_RGB2HSV);
+
+		HSVMap[(SKINCOLORTYPE)i] = hsvM.at<Vec3f>(0, 0);
 	}
 
 	int minIndex = 0;//皮肤最接近的颜色
@@ -929,12 +1028,66 @@ void ImageOptimizedUtility::DetectSkinStatus(Mat src, vector<Point> contours, Js
 
 
 	Vec3f HSVEyeUnderMean;
-	cvtColor(meanEyeUnderColor, HSVEyeUnderMean, CV_RGB2HSV);
+	Mat rgbM(1, 1, CV_32FC3, meanEyeUnderColor);
+	Mat hsvM;
+	cvtColor(rgbM, hsvM, CV_RGB2HSV);
+	HSVEyeUnderMean = hsvM.at<Vec3f>(0, 0);
+
 	double hsvEyeDist = 0;//眼袋部分颜色与平均肤色的距离值
-	hsvEyeDist = norm(HSVMean, meanEyeUnderColor);
+	hsvEyeDist = norm(HSVMean, HSVEyeUnderMean);
+
+
+	findPimples(faceimg);
+}
 
 
 
 
+bool ImageOptimizedUtility::findPimples(Mat img)
+{
+	vector<vector<Point> > contours;
+	vector<Point> pts;
+	Mat bw, bgr[3];
+	split(img, bgr);
+	bw = bgr[0];
+	int pimplescount = 0;
 
+	adaptiveThreshold(bw, bw, 255, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, 15, 5);
+	dilate(bw, bw, Mat(), Point(-1, -1), 1);
+
+	contours.clear();
+	findContours(bw, contours, RETR_LIST, CHAIN_APPROX_SIMPLE);
+
+	for (size_t i = 0; i < contours.size(); i++)
+	{
+
+		if (contourArea(contours[i]) > 20 & contourArea(contours[i]) < 150)
+		{
+			Rect minRect = boundingRect(Mat(contours[i]));
+			Mat imgroi(img, minRect);
+
+			cvtColor(imgroi, imgroi, COLOR_BGR2HSV);
+			Scalar color = mean(imgroi);
+			cvtColor(imgroi, imgroi, COLOR_HSV2BGR);
+
+
+			rectangle(img, minRect, Scalar(0, 255, 0));
+
+			if (color[0] < 10 && color[1] > 70 && color[2] > 50)
+			{
+				Point2f center, vtx[4];
+				float radius = 0;
+				minEnclosingCircle(Mat(contours[i]), center, radius);
+
+				if (radius < 20)
+				{
+					rectangle(img, minRect, Scalar(0, 255, 0));
+					pimplescount++;
+				}
+			}
+		}
+	}
+	putText(img, format("%d", pimplescount), Point(50, 30), FONT_HERSHEY_SIMPLEX, 0.8, Scalar(255, 255, 0), 2);
+	imwrite("data/export/pimples.jpg",img);
+	return true;
 }

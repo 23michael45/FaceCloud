@@ -29,16 +29,25 @@ Tutorial 13 - Camera Space
 #include "ogldev_pipeline.h"
 #include "FaceCloudLib.h"
 #include "OSMesaContext.h"
+#include "ImageOptimizedUtility.h"
 
 FaceCloudLib lib;
 string currentModelID = "10002";
 string outJsonModelOut = "";
-string jsonfacepath = "data/face/photojson_raw_server.json";
-string photopath = "data/face/photoface_raw_server.jpg";
+//string jsonfacepath = "data/face/photojson_raw_server.json";
+//string photopath = "data/face/photoface_raw_server.jpg";
+string jsonfacepath = "data/skindetect/color/color_white_org.json";
+string photopath = "data/skindetect/color/color_white_org.jpg";
+//string jsonfacepath = "data/skindetect/color/color_nature _org.json";
+//string photopath = "data/skindetect/color/color_nature _org.jpg";
+//string jsonfacepath = "data/skindetect/color/color_dark_org.json";
+//string photopath = "data/skindetect/color/color_dark_org.jpg";
+
 string jsonfacestring;
 
 string outPhotoPath = "data/export/outphoto.jpg";
-string outjsonoffsetpath = "data/export/outjson.json";
+string outjsonoffsetpath = "data/export/outjsonoffset.json";
+string outjsonskinpath = "data/export/outjsonskin.json";
 
 
 
@@ -140,7 +149,36 @@ static void SpecialKeyboardCB(int Key, int x, int y)
 		break;
 	}
 }
+
+void LoadFaceImgAndJson(string tname, string lname, string& photopath, string& jsonstr)
+{
+	string path = "data/skindetect/";
+	string imgpath = path + tname + "/" + lname + "_org.jpg";
+	string jsonpath = path + tname + "/" + lname + "_org.json";
+
+	jsonstr = LoadJsonStringFromFile(jsonpath);
+	photopath = imgpath;
+}
+
+void FaceSkinStatusDetect(string tname, string lname)
+{
+	string photopath;
+	string jsonFace;
+	LoadFaceImgAndJson(tname, lname, photopath, jsonFace);
+
+	string jsonModelOut;
+	string s = lib.DetectSkinStatus(photopath, jsonFace, jsonModelOut);	
+	SaveFile(s, outjsonskinpath);
+
+}
 int main(int argc, char** argv)
+{
+	FaceSkinStatusDetect("color", "color_white");
+	return 0;
+}
+
+
+int main_(int argc, char** argv)
 {
 	bool bRenderToTarget = true;
 
@@ -220,7 +258,7 @@ int main(int argc, char** argv)
 	{
 		getchar();
 		lib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath, outJsonModelOut);
-	
+
 	}
 	return 0;
 }

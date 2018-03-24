@@ -465,7 +465,7 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 
 
 			OSMesa::Log("\nStart CombineTexture");
-			CombineTexture(m_RenderTexture, m_ColorTextureMap[modelID], &automasktex, photoPathOut);
+			CombineTexture(m_RenderTexture, refmat, &automasktex, photoPathOut);
 			//CombineTexture(m_RenderTexture, m_ColorTextureMap[modelID], m_pMaskTexture, photoPathOut);
 
 
@@ -501,6 +501,30 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 
 }
 
+string FaceCloudLib::DetectSkinStatus(string photoPath, string jsonFace, string &jsonModelOut)
+{
+	Mat img = imread(photoPath);
+	JsonFaceInfo jsonfaceinfo;
+	if (jsonfaceinfo.LoadFromString(jsonFace, true))
+	{
+		JsonSkinStatus jsonSkin;
+
+		ImageOptimizedUtility iou;
+		iou.DetectSkinStatus(img, jsonfaceinfo,jsonSkin);
+
+		jsonSkin.gender = jsonfaceinfo.gender;
+		jsonSkin.beauty_female = jsonfaceinfo.beauty_female;
+		jsonSkin.beauty_male = jsonfaceinfo.beauty_male;
+		jsonSkin.age = jsonfaceinfo.age;
+		jsonSkin.dark_circle = jsonfaceinfo.dark_circle;
+		jsonSkin.stain = jsonfaceinfo.stain;
+		jsonSkin.acne = jsonfaceinfo.acne;
+		jsonSkin.health = jsonfaceinfo.health;
+
+		jsonModelOut = jsonSkin.ToString();
+	}
+	return jsonModelOut;
+}
 cv::Mat FaceCloudLib::AutoMask(cv::Mat srcMask,cv::Point& center)
 {
 
@@ -551,7 +575,7 @@ cv::Mat FaceCloudLib::AutoMask(cv::Mat srcMask,cv::Point& center)
 	cv::Mat outputContourMat(srcMask.size(),CV_16UC3,cv::Scalar(0,0,0));
 	drawContours(outputContourMat, contours, largestindex, cv::Scalar(255, 255, 255), 5, 8);
 
-	cv::imwrite("data/export/contours.jpg", outputContourMat);
+	//cv::imwrite("data/export/contours.jpg", outputContourMat);
 	return outputContourMat;
 	//cv::Rect box = cv::boundingRect(contours[largestindex]);
 	//int boardwidth = 20;
@@ -661,25 +685,25 @@ pWhole 美术做好的颜色贴图
 pMask  自动生成的MASK图(脸部轮廓)
 photoPathOut 输出文件路径
 */
-void FaceCloudLib::CombineTexture(GLuint FaceTexure, Texture* pWhole, Texture* pMask,string& photoPathOut)
+void FaceCloudLib::CombineTexture(GLuint FaceTexure, Mat bgColor, Texture* pMask,string& photoPathOut)
 {
 	unsigned char* faceptr;
 	unsigned char* maskptr;
-	unsigned char* colorptr;
+	//unsigned char* colorptr;
 
 
 	//分别取MAT
 	cv::Mat facemat = GLTextureToMat(FaceTexure, faceptr);
 	cv::Mat maskmat = GLTextureToMat(pMask->GetTextureObj(), maskptr);
-	cv::Mat colormat = GLTextureToMat(pWhole->GetTextureObj(), colorptr);
+	cv::Mat colormat = bgColor;// GLTextureToMat(pWhole->GetTextureObj(), colorptr);
 
 
 	//统一尺寸
 	cv::Mat maskmat2;
 	cv::resize(maskmat, maskmat2, cv::Size(m_Width, m_Height));
+	
 	cv::Mat colormat2;
-	cv::resize(colormat, colormat2, cv::Size(m_Width, m_Height));
-
+	cv::resize(colormat, colormat2, cv::Size(800, 800));
 
 	//统一格式类型
 	cv::Mat facemat2;
@@ -703,7 +727,7 @@ void FaceCloudLib::CombineTexture(GLuint FaceTexure, Texture* pWhole, Texture* p
 
 	facemat2 = facemat2(startRg, endRg);
 	maskmat2 = maskmat2(startRg, endRg);
-	colormat2 = colormat2(startRg, endRg);
+	//colormat2 = colormat2(startRg, endRg);
 
 	//自动生成一个线条轮廓MASK
 	cv::Point maskcenter;
@@ -847,9 +871,13 @@ void FaceCloudLib::CombineTexture(GLuint FaceTexure, Texture* pWhole, Texture* p
 	facemat2.convertTo(facemat2, CV_16UC3);
 	maskmat2.convertTo(maskmat2, CV_16UC3);
 	colormat2.convertTo(colormat2, CV_16UC3);
-	dst.convertTo(dst, CV_16UC3);
-	//计算每一下像素值
 
+
+	dst.convertTo(dst, CV_16UC3);
+
+
+
+	//计算每一下像素值,变暗融合
 	for (int j = 0; j < facemat2.rows; j++)
 	{
 		for (int i = 0; i < facemat2.cols; i++)
@@ -876,11 +904,13 @@ void FaceCloudLib::CombineTexture(GLuint FaceTexure, Texture* pWhole, Texture* p
 			//融合
 			else
 			{
-				float darker = 0.75f;
+				float darkerR = 0.75f;
+				float darkerG = 0.7f;
+				float darkerB = 0.75f;
 
-				facemat2.at<cv::Vec3s>(j, i)[0] = 1.0f / 255 * (clone[0] * mb[0] * darker + c[0] * (255 - mb[0]));// +e[0];
-				facemat2.at<cv::Vec3s>(j, i)[1] = 1.0f / 255 * (clone[1] * mb[1] * darker + c[1] * (255 - mb[1]));// +e[1];
-				facemat2.at<cv::Vec3s>(j, i)[2] = 1.0f / 255 * (clone[2] * mb[2] * darker + c[2] * (255 - mb[2]));// +e[2];
+				facemat2.at<cv::Vec3s>(j, i)[0] = 1.0f / 255 * (clone[0] * mb[0] * darkerR + c[0] * (255 - mb[0]));// +e[0];
+				facemat2.at<cv::Vec3s>(j, i)[1] = 1.0f / 255 * (clone[1] * mb[1] * darkerG + c[1] * (255 - mb[1]));// +e[1];
+				facemat2.at<cv::Vec3s>(j, i)[2] = 1.0f / 255 * (clone[2] * mb[2] * darkerB + c[2] * (255 - mb[2]));// +e[2];
 
 				/*facemat2.at<cv::Vec3s>(j, i)[0] = 1.0f / 255 * f[0] * m[0];
 				facemat2.at<cv::Vec3s>(j, i)[1] = 1.0f / 255 * f[1] * m[1];
@@ -889,6 +919,7 @@ void FaceCloudLib::CombineTexture(GLuint FaceTexure, Texture* pWhole, Texture* p
 
 		}
 	}
+	//计算每一下像素值,变暗融合
 
 
 	//cv::blur(facemat2, facemat2, cv::Size(10, 10));
@@ -900,7 +931,7 @@ void FaceCloudLib::CombineTexture(GLuint FaceTexure, Texture* pWhole, Texture* p
 	//清理内存
 	SAFE_DELETE(faceptr);
 	SAFE_DELETE(maskptr);
-	SAFE_DELETE(colorptr);
+	//SAFE_DELETE(colorptr);
 }
 
 

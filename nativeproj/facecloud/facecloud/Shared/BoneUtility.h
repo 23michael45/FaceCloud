@@ -266,6 +266,19 @@ public:
 
 			gender = froot["attributes"]["gender"]["value"].asString();
 
+
+			age = froot["attributes"]["age"]["value"].asDouble();
+
+			beauty_male = froot["attributes"]["beauty"]["male_score"].asDouble();
+			beauty_female = froot["attributes"]["beauty"]["female_score"].asDouble();
+
+
+			dark_circle = froot["attributes"]["skinstatus"]["dark_circle"].asDouble();
+			stain = froot["attributes"]["skinstatus"]["stain"].asDouble();
+			acne = froot["attributes"]["skinstatus"]["acne"].asDouble();
+			health = froot["attributes"]["skinstatus"]["health"].asDouble();
+
+
 			Json::Value landmarkdataValue = froot["landmark"];
 			vector<string> namesvec = landmarkdataValue.getMemberNames();
 			for (vector<string>::iterator it = namesvec.begin(); it != namesvec.end(); it++)
@@ -333,7 +346,18 @@ public:
 
 	string gender;
 
+	float beauty_female;
+	float beauty_male;
+	float age;
+	float dark_circle;
+	float stain;
+	float acne;
+	float health;
+
+
 	map<string, Vector2f> landmarkdata;
+
+
 };
 
 class KP

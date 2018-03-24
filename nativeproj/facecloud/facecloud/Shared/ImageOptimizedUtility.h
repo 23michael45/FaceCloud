@@ -35,6 +35,103 @@ enum SKINCOLORTYPE {
 	SCT_MAX,
 };
 
+class  JsonSkinStatus
+{
+public:
+	JsonSkinStatus()
+	{
+
+	};
+	~JsonSkinStatus()
+	{
+
+	};
+	void SetValue(string key, float value)
+	{
+		root[key] = value;
+	}
+	void SetValue(string key, string value)
+	{
+		root[key] = value;
+	}
+	void Save(string& path)
+	{
+		SaveJsonFile(root, path);
+	}
+	string ToString()
+	{
+		Update();
+		Json::StreamWriterBuilder  builder;
+		builder.settings_["commentStyle"] = "All";
+		std::string s = Json::writeString(builder, root);
+		return s;
+	}
+
+	//变量值写入JSON
+	void Update()
+	{
+		SetValue("gender", gender);
+		SetValue("beauty_female", beauty_female);
+		SetValue("beauty_male", beauty_male);
+		SetValue("age", age);
+		SetValue("dark_circle", dark_circle);
+		SetValue("stain", stain);
+		SetValue("acne", acne);
+		SetValue("health", health);
+
+
+		SetValue("blackhead", blackhead);
+		SetValue("skincolor", skincolor);
+	}
+
+	//性别 Male Female
+	string gender;
+
+	//颜值识别结果 女 范围 [0,100]，小数点后 3 位有效数字
+	float beauty_female;
+
+
+	//颜值识别结果 男 范围 [0,100]，小数点后 3 位有效数字
+	float beauty_male;
+
+	//年龄 岁
+	float age;
+
+	//黑眼圈 范围 [0,100]，小数点后 3 位有效数字
+	float dark_circle;
+
+	//色斑 范围 [0,100]，小数点后 3 位有效数字
+	float stain;
+
+	//青春痘 范围 [0,100]，小数点后 3 位有效数字
+	float acne;
+
+	//健康 范围 [0,100]，小数点后 3 位有效数字
+	float health;
+
+	//黑头 范围 [0,100]，小数点后 3 位有效数字
+	float blackhead;
+
+	//肤色 6种颜色INDEX值 0 - 5
+	SKINCOLORTYPE skincolor;
+private:
+	void SaveFile(string& s, string& path)
+	{
+		ofstream write;
+		write.open(path.c_str(), ios::out | ios::binary);
+		write.write(s.c_str(), s.length());
+		write.close();
+	}
+	void SaveJsonFile(Json::Value jvalue, string& path)
+	{
+		string s = ToString();
+		SaveFile(s, path);
+	}
+
+	Json::Value root;
+	
+
+};
 class ImageOptimizedUtility
 {
 
@@ -55,8 +152,8 @@ public:
 	Mat FacePhotoProcess(JsonFaceInfo& faceinfo, JsonRole bonedef, Mat src32);
 	
 
-	void DetectSkinStatus(Mat src,vector<Point> contours, JsonFaceInfo faceinfo);
-
+	void DetectSkinStatus(Mat src, JsonFaceInfo faceinfo, JsonSkinStatus& skinjson);
+	bool findPimples(Mat img);
 
 	void SaveTextureToFile(cv::Mat imag, int format, string path, bool flip = false)
 	{

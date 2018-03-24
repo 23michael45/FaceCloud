@@ -50,13 +50,15 @@ public:
 	string Calculate(string modelID, string photoPath, string jsonFace, string& photoPathOut, string& jsonModelOut);
 	string CalculateReal(string modelID, string photoPath, string jsonFace, string& photoPathOut, string& jsonModelOut);
 
+	string DetectSkinStatus(string photoPath, string jsonFace, string &jsonModelOut);
+
 
 	void CalculateBone(string modelID, JsonFaceInfo jsonfaceinfo, string& photoPathOut, string& jsonModelOut, Vector3f& centerpos, Vector2f& uvsize, float& yOffset);
 	bool DrawOnce(string modelID, Vector3f& center, Vector2f& uvsize);
 
 	bool DrawMaskOnce(string modelID, Vector3f& center, Vector2f& uvsize);
 
-	void CombineTexture(GLuint FaceTexture, Texture* pWhole, Texture* pMask, string& photoPathOut);
+	void CombineTexture(GLuint FaceTexture,cv::Mat bgColor, Texture* pMask, string& photoPathOut);
 	cv::Mat GLTextureToMat(GLuint texture, unsigned char*& outimagptr);
 	Camera * GetCamera() {
 		return m_pGameCamera;
