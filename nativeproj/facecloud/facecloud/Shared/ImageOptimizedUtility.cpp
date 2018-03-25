@@ -1052,14 +1052,14 @@ void ImageOptimizedUtility::DetectSkinStatus(Mat src, JsonFaceInfo faceinfo,Json
 	float blackhead = 0;
 
 
-	Mat gray;
+	/*Mat gray;
 	faceimg.convertTo(gray, CV_RGB2GRAY);
 
 	cv::threshold(gray, gray, 30, 255, THRESH_BINARY);
 
 
 	gray.convertTo(tmp, CV_GRAY2BGR);
-	imwrite("data/export/skindetectgray.jpg", tmp);
+	imwrite("data/export/skindetectgray.jpg", tmp);*/
 	
 	skinjson.blackhead = blackhead;
 }
