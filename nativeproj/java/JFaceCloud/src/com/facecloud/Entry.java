@@ -40,10 +40,14 @@ public class Entry {
 				outJsonModelOut = fclib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath);
 				fclib.SaveFile(outJsonModelOut, outjsonoffsetpath);
 				
+				System.out.println("Finish Calculate");
 				
 				outJsonModelOut = fclib.DetectSkinStatus(photopath, jsonfacestring);
 				fclib.SaveFile(outJsonModelOut, outjsonskinpath);
 				i++;
+				
+				
+				System.out.println("Finish DetectSkinStatus");
 			}
 
 

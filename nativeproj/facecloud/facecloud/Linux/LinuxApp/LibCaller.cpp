@@ -39,10 +39,17 @@ string currentModelID = "10002";
 string outJsonModelOut = "";
 string jsonfacepath = "/root/jni/data/face/photojson_raw.json";
 string photopath = "/root/jni/data/face/photoface_raw.jpg";
+//string jsonfacepath = "/root/jni/data/skindetect/color/color_white_org.json";
+//string photopath = "/root/jni/data/skindetect/color/color_white_org.jpg";
+//string jsonfacepath = "/root/jni/data/skindetect/color/color_nature _org.json";
+//string photopath = "/root/jni/data/skindetect/color/color_nature _org.jpg";
+//string jsonfacepath = "/root/jni/data/skindetect/color/color_dark_org.json";
+//string photopath = "/root/jni/data/skindetect/color/color_dark_org.jpg";
 string jsonfacestring;
 
 string outPhotoPath = "/root/jni/data/export/outphoto.jpg";
-string outjsonoffsetpath = "/root/jni/data/export/outjson.json";
+string outjsonoffsetpath = "/root/jni/data/export/outjsonoffset.json";
+string outjsonskinpath = "/root/jni/data/export/outjsonskin.json";
 
 
 
@@ -144,27 +151,59 @@ static void SpecialKeyboardCB(int Key, int x, int y)
 		break;
 	}
 }
+void LoadFaceImgAndJson(string tname, string lname, string& photopath, string& jsonstr)
+{
+	string path = "data/skindetect/";
+	string imgpath = path + tname + "/" + lname + "_org.jpg";
+	string jsonpath = path + tname + "/" + lname + "_org.json";
+
+	jsonstr = LoadJsonStringFromFile(jsonpath);
+	photopath = imgpath;
+}
+
+void FaceSkinStatusDetect(string tname, string lname)
+{
+	string photopath;
+	string jsonFace;
+	LoadFaceImgAndJson(tname, lname, photopath, jsonFace);
+
+	string jsonModelOut;
+	string s = lib.DetectSkinStatus(photopath, jsonFace, jsonModelOut);	
+	SaveFile(s, outjsonskinpath);
+
+}
 int main(int argc, char** argv)
 {
+	FaceSkinStatusDetect("color", "color_white");
+	FaceSkinStatusDetect("color", "color_nature");
+	FaceSkinStatusDetect("color", "color_dark");
+	return 0;
+}
+
+
+int main_(int argc, char** argv)
+{
 	bool bRenderToTarget = true;
-
-	if (!lib.Init(false))
-	{
-		printf("Face Cloud Lib Init Failed");
-		return -1;
-	}
-
 
 
 	jsonfacestring = LoadJsonStringFromFile(jsonfacepath);
 
 	if (bRenderToTarget)
 	{
+		if (!lib.Init(false))
+		{
+			printf("Face Cloud Lib Init Failed");
+			return -1;
+		}
 		//glutSpecialFunc(SpecialKeyboardCB);
-
 	}
 	else
 	{
+		if (!lib.InitReal(false))
+		{
+			printf("Face Cloud Lib Init Failed");
+			return -1;
+		}
 		glutDisplayFunc(RenderSceneCB);
 		glutIdleFunc(RenderSceneCB);
 		glutSpecialFunc(SpecialKeyboardCB);
@@ -179,10 +218,17 @@ int main(int argc, char** argv)
 
 	if (bRenderToTarget)
 	{
+		lib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath, outJsonModelOut);
+		SaveFile(outJsonModelOut, outjsonoffsetpath);
+
 		int i = 0;
 
-		string basepath = "/tmp/outPhotoPath%d.jpg";
-		string baseoffsetpath = "/tmp/outJsonPath%d.json";
+		string basepath = "/tmp/outPhotoPath";
+		string baseoffsetpath = "/tmp/outJsonPath";
+
+
+
+
 		while (true)
 		{
 			stringstream s1;
@@ -198,10 +244,11 @@ int main(int argc, char** argv)
 			SaveFile(outJsonModelOut, outjsonoffsetpath);
 			i++;
 		}
-		
+
+
 		//glutMainLoop();
 
-		//ʵ�ʷ������������ļ���ֻ����STRING�Ϳ���
+		//实际服务器不生成文件，只返回STRING就可以
 		//jsonfacestring = LoadJsonStringFromFile("data/face/photojson_raw.json");
 	}
 	else
@@ -210,6 +257,11 @@ int main(int argc, char** argv)
 		glutMainLoop();
 	}
 
-	getchar();
+	while (true)
+	{
+		getchar();
+		lib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath, outJsonModelOut);
+
+	}
 	return 0;
 }
