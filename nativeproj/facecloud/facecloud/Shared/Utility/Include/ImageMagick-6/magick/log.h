@@ -29,7 +29,7 @@ extern "C" {
 # define GetMagickModule()  __FILE__,__func__,(unsigned long) __LINE__
 #endif
 
-#define MagickLogFilename  "Log.xml"
+#define MagickLogFilename  "log.xml"
 
 typedef enum
 {

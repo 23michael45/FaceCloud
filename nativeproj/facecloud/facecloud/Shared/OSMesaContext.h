@@ -11,7 +11,7 @@
 #endif // !WIN32
 
 
-#define LOGFILE	"facelog.OSMesa::Log"     // all OSMesa::Log(); messages will be appended to this file
+#define LOGFILE	"facelog.log"     // all OSMesa::Log(); messages will be appended to this file
 
 
 namespace OSMesa

@@ -22,7 +22,7 @@
 extern "C" {
 #endif
 
-#include "magick/Log.h"
+#include "magick/log.h"
 #include "magick/string_.h"
 
 #define ThrowBinaryException(severity,tag,context) \

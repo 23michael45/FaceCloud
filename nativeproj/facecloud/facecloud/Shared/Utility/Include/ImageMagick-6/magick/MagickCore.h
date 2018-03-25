@@ -103,7 +103,7 @@ extern "C" {
 #include "magick/layer.h"
 #include "magick/list.h"
 #include "magick/locale_.h"
-#include "magick/Log.h"
+#include "magick/log.h"
 #include "magick/magic.h"
 #include "magick/magick.h"
 #include "magick/matrix.h"

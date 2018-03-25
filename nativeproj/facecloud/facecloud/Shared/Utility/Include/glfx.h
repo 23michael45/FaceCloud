@@ -64,10 +64,10 @@ int glfxGenerateSampler(int effect, const char* sampler);
 * glfxGetEffectLog
 * Input:
 *   effect  -- GLFX effect id
-*   Log     -- Destination address
+*   log     -- Destination address
 *   bufSize -- Size of the buffer
 **************************************************/
-void glfxGetEffectLog(int effect, char* Log, int bufSize);
+void glfxGetEffectLog(int effect, char* log, int bufSize);
 
 /**************************************************
 * glfxDeleteEffect
