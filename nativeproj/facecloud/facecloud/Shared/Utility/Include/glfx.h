@@ -64,10 +64,10 @@ int glfxGenerateSampler(int effect, const char* sampler);
 * glfxGetEffectLog
 * Input:
 *   effect  -- GLFX effect id
-*   OSMesa::Log     -- Destination address
+*   Log     -- Destination address
 *   bufSize -- Size of the buffer
 **************************************************/
-void glfxGetEffectLog(int effect, char* OSMesa::Log, int bufSize);
+void glfxGetEffectLog(int effect, char* Log, int bufSize);
 
 /**************************************************
 * glfxDeleteEffect
@@ -86,7 +86,7 @@ void glfxDeleteEffect(int effect);
 * glfxGetEffectLog
 * Input:
 *   effect  -- GLFX effect id
-* Return value: OSMesa::Log string
+* Return value: Log string
 **************************************************/
 std::string glfxGetEffectLog(int effect);
 #endif
