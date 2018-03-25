@@ -1048,14 +1048,20 @@ void ImageOptimizedUtility::DetectSkinStatus(Mat src, JsonFaceInfo faceinfo,Json
 	double hsvEyeDist = 0;//眼袋部分颜色与平均肤色的距离值
 	hsvEyeDist = norm(HSVMean, HSVEyeUnderMean);
 
-	//设置输出黑色程度值 【0，100】
+	//设置输出黑头程度值 【0，100】
 	float blackhead = 0;
+
+
+	Mat gray;
+	faceimg.convertTo(gray, CV_RGB2GRAY);
+
+	cv::threshold(gray, gray, 30, 255, THRESH_BINARY);
+
+
+	gray.convertTo(tmp, CV_GRAY2BGR);
+	imwrite("data/export/skindetectgray.jpg", tmp);
+	
 	skinjson.blackhead = blackhead;
-
-
-
-
-	//findPimples(faceimg);
 }
 
 

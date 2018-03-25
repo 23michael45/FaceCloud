@@ -21,7 +21,8 @@ public class Entry {
 	        String jsonfacestring = "";
 
 	        String outPhotoPath = "/root/jni/data/export/outphoto.jpg";
-	        String outjsonoffsetpath = "/root/jni/data/export/outjson.json";
+	        String outjsonoffsetpath = "/root/jni/data/export/outjsonoffset.json";
+	        String outjsonskinpath = "/root/jni/data/export/outjsonskin.json";
 	        
 	        jsonfacestring = fclib.LoadJsonStringFromFile(jsonfacepath);
 			
@@ -38,6 +39,10 @@ public class Entry {
 
 				outJsonModelOut = fclib.Calculate(currentModelID, photopath, jsonfacestring, outPhotoPath);
 				fclib.SaveFile(outJsonModelOut, outjsonoffsetpath);
+				
+				
+				outJsonModelOut = fclib.DetectSkinStatus(photopath, jsonfacestring);
+				fclib.SaveFile(outJsonModelOut, outjsonskinpath);
 				i++;
 			}
 

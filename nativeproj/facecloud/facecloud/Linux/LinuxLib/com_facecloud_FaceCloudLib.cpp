@@ -68,6 +68,22 @@ JNIEXPORT jstring JNICALL Java_com_facecloud_FaceCloudLib_Calculate
 
 /*
  * Class:     com_facecloud_FaceCloudLib
+ * Method:    DetectSkinStatus
+ * Signature: (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_com_facecloud_FaceCloudLib_DetectSkinStatus
+  (JNIEnv * env, jobject jobj, jstring jphotoPath, jstring jjsonFace)
+{
+	string finalPathout;
+	string ret;
+	ret = gFaceCloudLib.DetectSkinStatus(jstring2string(env, jphotoPath), jstring2string(env, jjsonFace),finalPathout);
+	return env->NewStringUTF(ret.c_str());
+	  
+}
+  
+  
+/*
+ * Class:     com_facecloud_FaceCloudLib
  * Method:    LoadJsonStringFromFile
  * Signature: (Ljava/lang/String;)Ljava/lang/String;
  */
