@@ -173,9 +173,10 @@ void FaceSkinStatusDetect(string tname, string lname)
 }
 int main(int argc, char** argv)
 {
-	FaceSkinStatusDetect("color", "color_white");
-	FaceSkinStatusDetect("color", "color_nature");
-	FaceSkinStatusDetect("color", "color_dark");
+	FaceSkinStatusDetect("blackhead", "blackhead_severe");
+	//FaceSkinStatusDetect("color", "color_white");
+	//FaceSkinStatusDetect("color", "color_nature");
+	//FaceSkinStatusDetect("color", "color_dark");
 	return 0;
 }
 

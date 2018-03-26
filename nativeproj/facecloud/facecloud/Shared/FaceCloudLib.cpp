@@ -503,27 +503,34 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 
 string FaceCloudLib::DetectSkinStatus(string photoPath, string jsonFace, string &jsonModelOut)
 {
-	Mat img = imread(photoPath);
-	JsonFaceInfo jsonfaceinfo;
-	if (jsonfaceinfo.LoadFromString(jsonFace, true))
+	try
 	{
-		JsonSkinStatus jsonSkin;
+		Mat img = imread(photoPath);
+		JsonFaceInfo jsonfaceinfo;
+		if (jsonfaceinfo.LoadFromString(jsonFace, true))
+		{
+			JsonSkinStatus jsonSkin;
 
-		ImageOptimizedUtility iou;
-		iou.DetectSkinStatus(img, jsonfaceinfo,jsonSkin);
+			ImageOptimizedUtility iou;
+			iou.DetectSkinStatus(img, jsonfaceinfo, jsonSkin);
 
-		jsonSkin.gender = jsonfaceinfo.gender;
-		jsonSkin.beauty_female = jsonfaceinfo.beauty_female;
-		jsonSkin.beauty_male = jsonfaceinfo.beauty_male;
-		jsonSkin.age = jsonfaceinfo.age;
-		jsonSkin.dark_circle = jsonfaceinfo.dark_circle;
-		jsonSkin.stain = jsonfaceinfo.stain;
-		jsonSkin.acne = jsonfaceinfo.acne;
-		jsonSkin.health = jsonfaceinfo.health;
+			jsonSkin.gender = jsonfaceinfo.gender;
+			jsonSkin.beauty_female = jsonfaceinfo.beauty_female;
+			jsonSkin.beauty_male = jsonfaceinfo.beauty_male;
+			jsonSkin.age = jsonfaceinfo.age;
+			jsonSkin.dark_circle = jsonfaceinfo.dark_circle;
+			jsonSkin.stain = jsonfaceinfo.stain;
+			jsonSkin.acne = jsonfaceinfo.acne;
+			jsonSkin.health = jsonfaceinfo.health;
 
-		jsonModelOut = jsonSkin.ToString();
+			jsonModelOut = jsonSkin.ToString();
+		}
+		return jsonModelOut;
 	}
-	return jsonModelOut;
+	catch (...)
+	{
+		return "error";
+	}
 }
 cv::Mat FaceCloudLib::AutoMask(cv::Mat srcMask,cv::Point& center)
 {

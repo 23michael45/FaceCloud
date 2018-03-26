@@ -154,6 +154,7 @@ public:
 
 	void DetectSkinStatus(Mat src, JsonFaceInfo faceinfo, JsonSkinStatus& skinjson);
 	bool findPimples(Mat img);
+	float findBlackHead(Mat img);
 
 	void SaveTextureToFile(cv::Mat imag, int format, string path, bool flip = false)
 	{

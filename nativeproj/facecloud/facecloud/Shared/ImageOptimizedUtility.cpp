@@ -1049,7 +1049,7 @@ void ImageOptimizedUtility::DetectSkinStatus(Mat src, JsonFaceInfo faceinfo,Json
 	hsvEyeDist = norm(HSVMean, HSVEyeUnderMean);
 
 	//设置输出黑头程度值 【0，100】
-	float blackhead = 0;
+	float blackhead = findBlackHead(faceimg);
 
 
 	/*Mat gray;
@@ -1063,7 +1063,22 @@ void ImageOptimizedUtility::DetectSkinStatus(Mat src, JsonFaceInfo faceinfo,Json
 	
 	skinjson.blackhead = blackhead;
 }
+float ImageOptimizedUtility::findBlackHead(Mat img)
+{
+	//img = imread("G:/DevelopProj/FaceCloud/nativeproj/facecloud/facecloud/data/skindetect/blackhead/blackhead1_severe_org.jpg");
 
+	//Mat gray,grayscaled;
+	////img.convertTo(gray, CV_RGB2GRAY);
+	//cv::cvtColor(img, gray, CV_RGB2GRAY);
+
+	//threshold(gray, grayscaled, 150,255, CV_THRESH_BINARY);
+
+
+	//cv::Mat tmp;
+	//grayscaled.convertTo(tmp, CV_GRAY2BGR);
+	//imwrite("data/export/grayscaled.jpg", grayscaled);
+	return 0;
+}
 
 
 
