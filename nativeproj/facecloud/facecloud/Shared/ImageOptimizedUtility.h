@@ -147,7 +147,7 @@ public:
 	void UpdateRef_RGB(JsonFaceInfo& faceinfo,Mat img, Vector3f refcolor, float value, Mat& outputimg, Vector2f leftpoint, Vector2f rightpoint);
 
 
-	void ColorTransfer(Mat src, Mat ref, Mat& outputimg, JsonFaceInfo &faceinfo);
+	void ColorTransfer(Mat src, Mat ref, Mat& outputimg, JsonFaceInfo &faceinfo ,bool isFrontOrBg = true);
 	Mat FacePhotoProcess_(JsonFaceInfo& faceinfo, JsonRole bonedef, Mat src32);
 	Mat FacePhotoProcess(JsonFaceInfo& faceinfo, JsonRole bonedef, Mat src32);
 	

@@ -204,7 +204,7 @@ Vector2f Bezier2(Vector2f p0, Vector2f p1, Vector2f p2 ,float t)
 }
 
 
-Texture* BoneUtility::CalculateSkin(GLuint texture, cv::Mat& refmat, bool isman, JsonRole bonedef, JsonFaceInfo& faceinfo)
+Texture* BoneUtility::CalculateSkin(GLuint texture, cv::Mat& refMat, bool isman, JsonRole bonedef, JsonFaceInfo& faceinfo,bool isFrontOrBg)
 {
 	glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -268,15 +268,29 @@ Texture* BoneUtility::CalculateSkin(GLuint texture, cv::Mat& refmat, bool isman,
 	/*Vector2f leftpoint = (faceinfo.landmarkdata["contour_left9"] + faceinfo.landmarkdata["nose_left_contour2"]) * 0.5;
 	Vector2f rightpoint = (faceinfo.landmarkdata["contour_right3"] + faceinfo.landmarkdata["nose_right_contour2"])* 0.5;*/
 
-	Mat rtrefmat;
 
 
 	/////////////////////////////////////////////////////////肤色处理
 	OSMesa::Log("\nStart ColorTransfer");
 	
 	//使用肤色处理
-	iou.ColorTransfer(rgbimg, refmat, rtrefmat, faceinfo);
-	rtrefmat.copyTo(refmat);
+
+	if (isFrontOrBg)
+	{
+		Mat rtmat;
+		iou.ColorTransfer(rgbimg, refMat, rtmat, faceinfo, isFrontOrBg);
+		rtmat.copyTo(rgbimg);
+
+		
+	}
+	else
+	{
+		Mat rtrefmat;
+		iou.ColorTransfer(rgbimg, refMat, rtrefmat, faceinfo, isFrontOrBg);
+		rtrefmat.copyTo(refMat);
+
+	}
+
 
 	//不用肤色处理
 	//rgbimg.copyTo(rtmat);

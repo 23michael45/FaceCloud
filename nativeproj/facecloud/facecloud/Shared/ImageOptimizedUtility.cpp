@@ -185,8 +185,8 @@ Mat ColorTransferBlend(Mat src, Mat ref, Scalar srcmean, Scalar refmean)
 	return rt;
 }
 
-
-void ImageOptimizedUtility::ColorTransfer(Mat src, Mat ref, Mat& outputimg, JsonFaceInfo &faceinfo)
+//isFrontOrBg   前景调色 OR 背景调色
+void ImageOptimizedUtility::ColorTransfer(Mat src, Mat ref, Mat& outputimg, JsonFaceInfo &faceinfo, bool isFrontOrBg)
 {
 
 	//原始图变LAB空间
@@ -214,14 +214,28 @@ void ImageOptimizedUtility::ColorTransfer(Mat src, Mat ref, Mat& outputimg, Json
 	pos = faceinfo.landmarkdata["left_eye_bottom"]; leftfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
 	meanleft = GetMeanColorInContour(srcimg2, leftfaceContour);
 
+
+
+
 	vector<Point> rightfaceContour;
 	pos = faceinfo.landmarkdata["contour_right5"]; rightfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
 	pos = faceinfo.landmarkdata["contour_right10"]; rightfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["mouth_right_corner"]; leftfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["mouth_right_corner"]; rightfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
 	pos = faceinfo.landmarkdata["nose_right_contour3"]; rightfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
-	pos = faceinfo.landmarkdata["nose_bridge2"]; leftfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
+	pos = faceinfo.landmarkdata["nose_bridge2"]; rightfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
 	pos = faceinfo.landmarkdata["right_eye_bottom"]; rightfaceContour.push_back(cv::Point(pos.x, 1024 - pos.y));
 	meanright = GetMeanColorInContour(srcimg2, rightfaceContour);
+
+
+	//vector<vector<Point>> contourstmp;
+	//contourstmp.push_back(leftfaceContour);
+	//contourstmp.push_back(rightfaceContour);
+	//Mat tmp;
+	//src.copyTo(tmp);
+	//drawContours(tmp, contourstmp, -1, Scalar(255, 0, 0));
+	//cv::cvtColor(tmp, tmp, CV_RGB2BGR);
+	//imwrite("data/export/contourtmp.jpg", tmp);
+
 
 	int lx = 270 / 2;
 	int rx = 1070 / 2;
@@ -234,49 +248,93 @@ void ImageOptimizedUtility::ColorTransfer(Mat src, Mat ref, Mat& outputimg, Json
 	Scalar mean2 = cv::mean(subrefimg);
 
 
-	//调前景色方案
-	//Mat leftmat = ColorTransferBlend(srcimg2, refimg2, meanleft, mean2);
-	//Mat rightmat = ColorTransferBlend(srcimg2, refimg2, meanright, mean2);
-	Mat subrefimg2 = refimg2(cv::Range(lx , rx ), cv::Range(ty , by ));
-	//调背景色方案
-	Mat leftbgmat = ColorTransferBlend(subrefimg2, srcimg2, mean2, meanleft);
-	Mat rightbgmat = ColorTransferBlend(subrefimg2, srcimg2, mean2, meanright);
+	bool isfrontorbg = true;
 
-
-	Mat leftbgtmp;
-	cv::cvtColor(leftbgmat, leftbgtmp, CV_Lab2BGR);
-	imwrite("data/export/leftbg.jpg", leftbgtmp);
-
-
-	Mat rightbgtmp;
-	cv::cvtColor(rightbgmat, rightbgtmp, CV_Lab2BGR);
-	imwrite("data/export/rightbg.jpg", rightbgtmp);
-
-	subrefimg2.copyTo(outputimg);
-	for (int i = 0; i < outputimg.rows; i++)
+	if (isFrontOrBg)
 	{
-		for (int j = 0; j < outputimg.cols; j++)
+		//调前景色方案
+		Mat leftmat = ColorTransferBlend(srcimg2, refimg2, meanleft, mean2);
+		Mat rightmat = ColorTransferBlend(srcimg2, refimg2, meanright, mean2);
+
+		/*Mat tmp;
+		cv::cvtColor(leftmat, tmp, CV_Lab2BGR);
+		imwrite("data/export/lefttransfer.jpg", tmp);
+		cv::cvtColor(rightmat, tmp, CV_Lab2BGR);
+		imwrite("data/export/righttransfer.jpg", tmp);*/
+
+
+		srcimg2.copyTo(outputimg);
+		for (int i = 0; i < outputimg.rows; i++)
 		{
-			;
-			Vec3b l = leftbgmat.at<Vec3b>(i, j);
-			Vec3b r = rightbgmat.at<Vec3b>(i, j);
-			Vec3b s;
+			for (int j = 0; j < outputimg.cols; j++)
+			{
+				;
+				Vec3b l = leftmat.at<Vec3b>(i, j);
+				Vec3b r = rightmat.at<Vec3b>(i, j);
+				Vec3b s;
 
-			float blend = (float)(j) / outputimg.cols;
+				float blend = (float)(j) / outputimg.cols;
 
-			s.val[0] = l.val[0] * (1 - blend) + r.val[0] * blend;
-			s.val[1] = l.val[1] * (1 - blend) + r.val[1] * blend;
-			s.val[2] = l.val[2] * (1 - blend) + r.val[2] * blend;
+				s.val[0] = l.val[0] * (1 - blend) + r.val[0] * blend;
+				s.val[1] = l.val[1] * (1 - blend) + r.val[1] * blend;
+				s.val[2] = l.val[2] * (1 - blend) + r.val[2] * blend;
 
-			outputimg.at<Vec3b>(i, j) = s;
+				outputimg.at<Vec3b>(i, j) = s;
+			}
 		}
+
+		cv::cvtColor(outputimg, outputimg, CV_Lab2RGB);
+
+	}
+	else
+	{
+		//调背景色方案
+		Mat subrefimg2 = refimg2(cv::Range(lx, rx), cv::Range(ty, by));
+		Mat leftbgmat = ColorTransferBlend(subrefimg2, srcimg2, mean2, meanleft);
+		Mat rightbgmat = ColorTransferBlend(subrefimg2, srcimg2, mean2, meanright);
+
+		/*Mat tmp;
+		cv::cvtColor(leftbgmat, tmp, CV_Lab2BGR);
+		imwrite("data/export/lefttransferbg.jpg", tmp);
+		cv::cvtColor(leftbgmat, tmp, CV_Lab2BGR);
+		imwrite("data/export/righttransferbg.jpg", tmp);*/
+
+
+
+
+		subrefimg2.copyTo(outputimg);
+		for (int i = 0; i < outputimg.rows; i++)
+		{
+			for (int j = 0; j < outputimg.cols; j++)
+			{
+				;
+				Vec3b l = leftbgmat.at<Vec3b>(i, j);
+				Vec3b r = rightbgmat.at<Vec3b>(i, j);
+				Vec3b s;
+
+				float blend = (float)(j) / outputimg.cols;
+
+				s.val[0] = l.val[0] * (1 - blend) + r.val[0] * blend;
+				s.val[1] = l.val[1] * (1 - blend) + r.val[1] * blend;
+				s.val[2] = l.val[2] * (1 - blend) + r.val[2] * blend;
+
+				outputimg.at<Vec3b>(i, j) = s;
+			}
+		}
+
+		cv::cvtColor(outputimg, outputimg, CV_Lab2RGB);
+
+
+
+		//	Mat  outtmp;
+		//	cv::cvtColor(outputimg, outtmp, CV_RGB2BGR);
+		//	imwrite("data/export/blendbg.jpg", outtmp);
 	}
 
-	cv::cvtColor(outputimg, outputimg, CV_Lab2RGB);
 
-	Mat  outtmp;
-	cv::cvtColor(outputimg, outtmp, CV_RGB2BGR);
-	imwrite("data/export/blendbg.jpg", outtmp);
+	
+
+	
 }
 
 void ImageOptimizedUtility::UpdateRef_RGB(JsonFaceInfo& faceinfo,Mat img, Vector3f refcolor, float value, Mat& outputimg, Vector2f leftpoint, Vector2f rightpoint)
@@ -940,9 +998,9 @@ void ImageOptimizedUtility::DetectSkinStatus(Mat src, JsonFaceInfo faceinfo,Json
 	cv::Mat faceimg;
 	cv::multiply(src, contourmask, faceimg);
 
-	cv::Mat tmp;
-	faceimg.convertTo(tmp, CV_RGB2BGR);
-	imwrite("data/export/skindetecttmp.jpg",tmp);
+	//cv::Mat tmp;
+	//faceimg.convertTo(tmp, CV_RGB2BGR);
+	//imwrite("data/export/skindetecttmp.jpg",tmp);
 
 
 
@@ -1127,6 +1185,6 @@ bool ImageOptimizedUtility::findPimples(Mat img)
 		}
 	}
 	putText(img, format("%d", pimplescount), Point(50, 30), FONT_HERSHEY_SIMPLEX, 0.8, Scalar(255, 255, 0), 2);
-	imwrite("data/export/pimples.jpg",img);
+	//imwrite("data/export/pimples.jpg",img);
 	return true;
 }

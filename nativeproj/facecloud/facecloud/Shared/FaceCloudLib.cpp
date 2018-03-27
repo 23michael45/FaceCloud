@@ -283,6 +283,7 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 {
 	try
 	{
+		bool isFrontColorTrans = true;
 		OSMesa::Log("\n\nStarting timer...");
 		int start = OSMesa::getMilliCount();
 
@@ -358,7 +359,7 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 
 
 			OSMesa::Log("\nStart CalculateSkin");
-			Texture* paftertex = m_BoneUtility.CalculateSkin(ptexture->GetTextureObj(),refmat, isman, m_JsonRoles.roles[modelID], jsonfaceinfo);
+			Texture* paftertex = m_BoneUtility.CalculateSkin(ptexture->GetTextureObj(),refmat, isman, m_JsonRoles.roles[modelID], jsonfaceinfo, isFrontColorTrans);
 			m_pCurrentSkinTexture = paftertex;
 
 
@@ -397,7 +398,6 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 
 
 
-			SAFE_DELETE(refptr);
 			Vector3f center;
 			Vector2f uvsize;
 			float yoffset = 0;
@@ -465,9 +465,10 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 
 
 			OSMesa::Log("\nStart CombineTexture");
-			CombineTexture(m_RenderTexture, refmat, &automasktex, photoPathOut);
+			CombineTexture(m_RenderTexture, refmat, &automasktex, photoPathOut, isFrontColorTrans);
 			//CombineTexture(m_RenderTexture, m_ColorTextureMap[modelID], m_pMaskTexture, photoPathOut);
 
+			SAFE_DELETE(refptr);
 
 
 			if (m_bRenderToTexture)
@@ -680,8 +681,9 @@ void SeamlessT()
 	Mat output;
 	seamlessClone(src, dst, src_mask, center, output, NORMAL_CLONE);
 
+
 	// Save result
-	imwrite("data/export/opencv-seamless-cloning-example.jpg", output);
+	//imwrite("data/export/opencv-seamless-cloning-example.jpg", output);
 
 
 }
@@ -692,7 +694,7 @@ pWhole 美术做好的颜色贴图
 pMask  自动生成的MASK图(脸部轮廓)
 photoPathOut 输出文件路径
 */
-void FaceCloudLib::CombineTexture(GLuint FaceTexure, Mat bgColor, Texture* pMask,string& photoPathOut)
+void FaceCloudLib::CombineTexture(GLuint FaceTexure, Mat bgColor, Texture* pMask,string& photoPathOut,bool frontTrans)
 {
 	unsigned char* faceptr;
 	unsigned char* maskptr;
@@ -710,7 +712,16 @@ void FaceCloudLib::CombineTexture(GLuint FaceTexure, Mat bgColor, Texture* pMask
 	cv::resize(maskmat, maskmat2, cv::Size(m_Width, m_Height));
 	
 	cv::Mat colormat2;
-	cv::resize(colormat, colormat2, cv::Size(800, 800));
+	if (frontTrans)
+	{
+		colormat.copyTo(colormat2);
+	}
+	else
+	{
+		cv::resize(colormat, colormat2, cv::Size(800, 800));
+
+	}
+
 
 	//统一格式类型
 	cv::Mat facemat2;
@@ -734,7 +745,12 @@ void FaceCloudLib::CombineTexture(GLuint FaceTexure, Mat bgColor, Texture* pMask
 
 	facemat2 = facemat2(startRg, endRg);
 	maskmat2 = maskmat2(startRg, endRg);
-	//colormat2 = colormat2(startRg, endRg);
+
+	if (frontTrans)
+	{
+		colormat2 = colormat2(startRg, endRg);
+
+	}
 
 	//自动生成一个线条轮廓MASK
 	cv::Point maskcenter;

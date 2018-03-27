@@ -516,7 +516,7 @@ public:
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
-			SaveTextureToFile(m_RenderTexture,1024,1024);
+			//SaveTextureToFile(m_RenderTexture,1024,1024);
 
 			return true;
 		}
@@ -590,7 +590,7 @@ public:
 		rawfile.open("data/rendertexture.raw");
 		rawfile.write((const char*)output_image, size);
 		rawfile.close();*/
-		WriteTGA((char*)"data/rendertexture.tga", wtex, htex, output_image);
+		//WriteTGA((char*)"data/rendertexture.tga", wtex, htex, output_image);
 		
 		cv::Mat  img = cv::Mat(wtex ,htex , CV_8UC3, (unsigned*)output_image);
 		cv::Mat flipimg;

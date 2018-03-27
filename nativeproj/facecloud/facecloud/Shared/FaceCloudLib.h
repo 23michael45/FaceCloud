@@ -58,7 +58,7 @@ public:
 
 	bool DrawMaskOnce(string modelID, Vector3f& center, Vector2f& uvsize);
 
-	void CombineTexture(GLuint FaceTexture,cv::Mat bgColor, Texture* pMask, string& photoPathOut);
+	void CombineTexture(GLuint FaceTexture,cv::Mat bgColor, Texture* pMask, string& photoPathOut,bool frontTrans = true);
 	cv::Mat GLTextureToMat(GLuint texture, unsigned char*& outimagptr);
 	Camera * GetCamera() {
 		return m_pGameCamera;
