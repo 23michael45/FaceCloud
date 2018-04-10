@@ -210,6 +210,12 @@ bool FaceCloudLib::InitReal (bool offscreen)
 		OSMesa::Log("\nInitMesh Failed");
 		return false;
 	}
+	rt = InitMat();
+	if (rt == false)
+	{
+		OSMesa::Log("\nInitMat Failed");
+		return false;
+	}
 	if (!InitJson())
 	{
 		OSMesa::Log("\nInitJson Failed");
@@ -1066,14 +1072,7 @@ void FaceCloudLib::CombineTextureMaskBlend(Mat bgColor, Texture* pforeColor, str
 	//MASK与FACE 渲染时是头向下的，所以FLIP一次
 	cv::flip(foreColorMat, foreColorMat, 0);
 
-	Mat _Facemap_left_Mask = cv::imread("data/facecloud/face_mask_left.jpg");
-	Mat _Facemap_right_Mask = cv::imread("data/facecloud/face_mask_right.jpg");
-	Mat _BG_left_Mask = cv::imread("data/facecloud/mask_left.jpg");
-	Mat _BG_right_Mask = cv::imread("data/facecloud/mask_right.jpg");
-	Mat _sampling_LF_mask = cv::imread("data/facecloud/samplface_LF.jpg");
-	Mat _sampling_RT_mask = cv::imread("data/facecloud/samplface_RT.jpg");
-	Mat _SampleButtom_LF_mask = cv::imread("data/facecloud/samplbuttom_LF.jpg");
-	Mat _SampleButtom_RT_mask = cv::imread("data/facecloud/samplbuttom_RT.jpg");
+
 
 
 	//取小块脸部区域
@@ -1340,7 +1339,19 @@ bool FaceCloudLib::InitJson()
 
 	return true;
 }
+bool FaceCloudLib::InitMat()
+{
+	_Facemap_left_Mask = cv::imread(RES_PATH + "facecloud/face_mask_left.jpg");
+	_Facemap_right_Mask = cv::imread(RES_PATH + "facecloud/face_mask_right.jpg");
+	_BG_left_Mask = cv::imread(RES_PATH + "facecloud/mask_left.jpg");
+	_BG_right_Mask = cv::imread(RES_PATH + "facecloud/mask_right.jpg");
+	_sampling_LF_mask = cv::imread(RES_PATH + "facecloud/samplface_LF.jpg");
+	_sampling_RT_mask = cv::imread(RES_PATH + "facecloud/samplface_RT.jpg");
+	_SampleButtom_LF_mask = cv::imread(RES_PATH + "facecloud/samplbuttom_LF.jpg");
+	_SampleButtom_RT_mask = cv::imread(RES_PATH + "facecloud/samplbuttom_RT.jpg");
 
+	return true;
+}
 
 
 

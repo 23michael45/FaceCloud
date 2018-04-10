@@ -44,6 +44,7 @@ public:
 	~FaceCloudLib();
 	bool Init(bool offscreen = true);
 	bool InitReal(bool offscreen);
+	bool InitMat();
 	bool Finalize();
 
 
@@ -118,6 +119,16 @@ private:
 
 	int m_Width;
 	int m_Height;
+
+
+	cv::Mat _Facemap_left_Mask;
+	cv::Mat _Facemap_right_Mask;
+	cv::Mat _BG_left_Mask;
+	cv::Mat _BG_right_Mask;
+	cv::Mat _sampling_LF_mask;
+	cv::Mat _sampling_RT_mask;
+	cv::Mat _SampleButtom_LF_mask;
+	cv::Mat _SampleButtom_RT_mask;
 
 	bool InitCamera();
 	bool InitMesh();
