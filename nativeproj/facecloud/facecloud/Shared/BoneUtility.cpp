@@ -241,6 +241,11 @@ Texture* BoneUtility::CalculateSkin(GLuint texture, cv::Mat& refMat, bool isman,
 	cv::Mat img = iou.FacePhotoProcess(faceinfo, bonedef, srcimg32);
 
 
+	/*Mat bgr;
+	cv::cvtColor(img, bgr, CV_RGBA2BGR);
+	cv::imwrite("data/export/preprocess.jpg", bgr);*/
+
+
 	Mat rgbimg;
 	cv::cvtColor(img, rgbimg, CV_RGBA2RGB);
 
@@ -380,12 +385,16 @@ Texture* BoneUtility::CalculateSkin(GLuint texture, cv::Mat& refMat, bool isman,
 
 
 
-
-	cv::multiply(rgbimg, contourmask, rgbimg);
+	//暂时不用轮廓
+	//cv::multiply(rgbimg, contourmask, rgbimg);
 
 	/////////////////////////////////////////////////////////按特征点画轮廓
 
 
+
+	/*Mat bgr;
+	cv::cvtColor(rgbimg, bgr, CV_RGB2BGR);
+	cv::imwrite("data/export/preprocesscontour.jpg", bgr);*/
 
 	//convert to opengl texture
 	Texture *ptexture = new Texture();

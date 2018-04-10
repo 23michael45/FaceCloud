@@ -436,10 +436,6 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 					DrawOnce(modelID, center, uvsize);
 					rendertex.CloneFromTexture(m_RenderTexture);
 
-				
-
-
-
 					EndRenderTexture();
 				}
 			}
@@ -465,7 +461,8 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 
 
 			OSMesa::Log("\nStart CombineTexture");
-			CombineTexture(m_RenderTexture, refmat, &automasktex, photoPathOut, isFrontColorTrans);
+			//CombineTexture(m_RenderTexture, refmat, &automasktex, photoPathOut, isFrontColorTrans);
+			CombineTextureMaskBlend( refmat, &automasktex, photoPathOut);
 			//CombineTexture(m_RenderTexture, m_ColorTextureMap[modelID], m_pMaskTexture, photoPathOut);
 
 			SAFE_DELETE(refptr);
@@ -957,6 +954,294 @@ void FaceCloudLib::CombineTexture(GLuint FaceTexure, Mat bgColor, Texture* pMask
 	//SAFE_DELETE(colorptr);
 }
 
+
+
+float getvalue(cv::Vec3s rgb) {
+
+	float value;
+
+	float r = rgb[0];
+	float g = rgb[1];
+	float b = rgb[2];
+
+	if (r + g + b <= 1.5) {
+
+		value = (r + g + b) / 1.5;
+
+	}
+	else {
+		value = (3 - r - g - b) / 1.5;
+	}
+
+	return value;
+}
+
+void getMean(Mat img, cv::Vec3s& left , cv::Vec3s& right)
+{
+	cv::Vec3s targetcolor(200, 169, 140);
+	cv::Vec3s basecolor(205, 175, 142);
+
+	int n = 0;
+	int m = 0;
+	float mix_r_left = 0;
+	float mix_g_left = 0;
+	float mix_b_left = 0;
+
+	float mix_r_right = 0;
+	float mix_g_right = 0;
+	float mix_b_right = 0;
+	for (int j = 0; j < img.rows; j++)
+	{
+		for (int i = 0; i < img.cols; i++)
+		{
+			cv::Vec3s f = img.at<cv::Vec3s>(j, i);
+
+
+			if (i < img.cols / 2)
+			{
+				if (f[0] + f[1] + f[2] >= 0.3f)
+				{
+					mix_r_left += f[0];
+					mix_g_left += f[1];
+					mix_b_left += f[2];
+					n += 1;
+
+				}
+			}
+			else
+			{
+				if (f[0] + f[1] + f[2] >= 0.3f)
+				{
+					mix_r_right += f[0];
+					mix_g_right += f[1];
+					mix_b_right += f[2];
+					m += 1;
+
+				}
+			}
+		}
+	}
+
+
+	//左右脸色彩平均值计算
+	cv::Vec3s meancolorvalue_left(mix_r_left / n, mix_g_left / n, mix_b_left / n);
+	cv::Vec3s meancolorvalue_right(mix_r_right / m, mix_g_right / m, mix_b_right / m);
+
+
+	cv::Vec3s offset_left = targetcolor - meancolorvalue_left;
+	cv::Vec3s outcolor_left = offset_left + cv::Vec3s(255, 255, 255) / 2;
+
+
+	cv::Vec3s offset_right = targetcolor - meancolorvalue_right;
+	cv::Vec3s outcolor_right = offset_right + cv::Vec3s(255, 255, 255) / 2;
+
+
+	left = outcolor_left;
+	right = outcolor_right;
+}
+
+cv::Vec3s lerp(cv::Vec3f start, cv::Vec3f end, cv::Vec3f rate)
+{
+	cv::Vec3f rt;
+	rt = start + (end - start).mul(rate);
+	return rt;
+}
+
+
+void FaceCloudLib::CombineTextureMaskBlend(Mat bgColor, Texture* pforeColor, string& photoPathOut)
+{
+	Mat bgr;
+	unsigned char* forecolorptr;
+
+	cv::Mat foreColorMat = GLTextureToMat(pforeColor->GetTextureObj(), forecolorptr);
+	cv::Mat bgColormat = bgColor;
+	cv::Mat bgfull;
+	bgColor.copyTo(bgfull);
+
+	bgfull.convertTo(bgfull, CV_16UC3);
+	foreColorMat.convertTo(foreColorMat, CV_16UC3);
+	bgColormat.convertTo(bgColormat, CV_16UC3);
+
+
+	//MASK与FACE 渲染时是头向下的，所以FLIP一次
+	cv::flip(foreColorMat, foreColorMat, 0);
+
+	Mat _Facemap_left_Mask = cv::imread("data/facecloud/face_mask_left.jpg");
+	Mat _Facemap_right_Mask = cv::imread("data/facecloud/face_mask_right.jpg");
+	Mat _BG_left_Mask = cv::imread("data/facecloud/mask_left.jpg");
+	Mat _BG_right_Mask = cv::imread("data/facecloud/mask_right.jpg");
+	Mat _sampling_LF_mask = cv::imread("data/facecloud/samplface_LF.jpg");
+	Mat _sampling_RT_mask = cv::imread("data/facecloud/samplface_RT.jpg");
+	Mat _SampleButtom_LF_mask = cv::imread("data/facecloud/samplbuttom_LF.jpg");
+	Mat _SampleButtom_RT_mask = cv::imread("data/facecloud/samplbuttom_RT.jpg");
+
+
+	//取小块脸部区域
+	cv::Range rowRg(270, 1070);
+	cv::Range colRg(624, 1424);
+
+
+	foreColorMat = foreColorMat(rowRg, colRg);
+	bgColormat = bgColormat(rowRg, colRg);
+	
+	_Facemap_left_Mask = _Facemap_left_Mask(rowRg, colRg);
+	_Facemap_right_Mask = _Facemap_right_Mask(rowRg, colRg);
+	_BG_left_Mask = _BG_left_Mask(rowRg, colRg); 
+	_BG_right_Mask = _BG_right_Mask(rowRg, colRg);
+	_sampling_LF_mask = _sampling_LF_mask(rowRg, colRg); 
+	_sampling_RT_mask = _sampling_RT_mask(rowRg, colRg); 
+	_SampleButtom_LF_mask = _SampleButtom_LF_mask(rowRg, colRg); 
+	_SampleButtom_RT_mask = _SampleButtom_RT_mask(rowRg, colRg);
+
+	_Facemap_left_Mask.convertTo(_Facemap_left_Mask, CV_16UC3);
+	_Facemap_right_Mask.convertTo(_Facemap_right_Mask, CV_16UC3);
+	_BG_left_Mask.convertTo(_BG_left_Mask, CV_16UC3);
+	_BG_right_Mask.convertTo(_BG_right_Mask, CV_16UC3);
+	_sampling_LF_mask.convertTo(_sampling_LF_mask, CV_16UC3);
+	_sampling_RT_mask.convertTo(_sampling_RT_mask, CV_16UC3);
+	_SampleButtom_LF_mask.convertTo(_SampleButtom_LF_mask, CV_16UC3);
+	_SampleButtom_RT_mask.convertTo(_SampleButtom_RT_mask, CV_16UC3);
+
+
+	//cv::cvtColor(foreColorMat, bgr, CV_RGBA2BGR);
+	//cv::imwrite("data/export/stepn1Mat.jpg", bgr);
+	//Step 0
+	Mat step0Mat;
+	foreColorMat.copyTo(step0Mat);
+
+	for (int j = 0; j < foreColorMat.rows; j++)
+	{
+		for (int i = 0; i < foreColorMat.cols; i++)
+		{
+
+			cv::Vec3s f = foreColorMat.at<cv::Vec3s>(j, i);
+			cv::Vec3s ml = _sampling_LF_mask.at<cv::Vec3s>(j, i) / 255;
+			cv::Vec3s mr = _sampling_RT_mask.at<cv::Vec3s>(j, i) / 255;
+
+		
+
+			Vec3s left = lerp(f, cv::Vec3s(0, 0, 0), ml);
+			Vec3s right = lerp(f, cv::Vec3s(0, 0, 0), mr);
+
+
+			cv::Vec3s c = left + right;
+
+			step0Mat.at<cv::Vec3s>(j, i) = c;
+		}
+	}
+	//cv::cvtColor(step0Mat, bgr, CV_RGBA2BGR);
+	//cv::imwrite("data/export/step0Mat.jpg", bgr); 
+
+
+
+	cv::Vec3s outcolor_left, outcolor_right;
+	getMean(step0Mat, outcolor_left, outcolor_right);
+
+
+	//step1
+	Mat step1Mat;
+	foreColorMat.copyTo(step1Mat);
+	for (int j = 0; j < foreColorMat.rows; j++)
+	{
+		for (int i = 0; i < foreColorMat.cols; i++)
+		{
+
+			cv::Vec3s f = foreColorMat.at<cv::Vec3s>(j, i);
+			cv::Vec3s ml = _SampleButtom_LF_mask.at<cv::Vec3s>(j, i) / 255;
+			cv::Vec3s mr = _SampleButtom_RT_mask.at<cv::Vec3s>(j, i) / 255;
+
+
+			Vec3s left = f + (outcolor_left - cv::Vec3s(255, 255, 255) / 2);
+			left = lerp(left, cv::Vec3s(0, 0, 0), ml);
+
+
+			Vec3s right = f + (outcolor_right - cv::Vec3s(255, 255, 255) / 2);
+			right = lerp(right, cv::Vec3s(0, 0, 0), mr);
+
+			cv::Vec3s c = left + right;
+
+			step1Mat.at<cv::Vec3s>(j, i) = c;
+		}
+	}
+	//cv::cvtColor(step1Mat, bgr, CV_RGBA2BGR);
+	//cv::imwrite("data/export/step1Mat.jpg", bgr);
+
+	//cv::cvtColor(_Facemap_left_Mask, bgr, CV_RGBA2BGR);
+	//cv::imwrite("data/export/_Facemap_left_Mask.jpg", bgr);
+	//cv::cvtColor(_Facemap_right_Mask, bgr, CV_RGBA2BGR);
+	//cv::imwrite("data/export/_Facemap_right_Mask.jpg", bgr);
+	//cv::cvtColor(_BG_left_Mask, bgr, CV_RGBA2BGR);
+	//cv::imwrite("data/export/_BG_left_Mask.jpg", bgr);
+	//cv::cvtColor(_BG_right_Mask, bgr, CV_RGBA2BGR);
+	//cv::imwrite("data/export/_BG_right_Mask.jpg", bgr);
+
+	cv::Vec3s outcolorbg_left, outcolorbg_right;
+	getMean(step1Mat, outcolorbg_left, outcolorbg_right);
+
+	//step2
+	Mat step2Mat;
+	foreColorMat.copyTo(step2Mat);
+	for (int j = 0; j < foreColorMat.rows; j++)
+	{
+		for (int i = 0; i < foreColorMat.cols; i++)
+		{
+
+			cv::Vec4s bg4 = bgColormat.at<cv::Vec4s>(j, i);
+			cv::Vec3s bg(bg4[0], bg4[1], bg4[2]);
+			cv::Vec3s f = foreColorMat.at<cv::Vec3s>(j, i);
+			cv::Vec3f _BG_left_Mask_var = cv::Vec3f(_BG_left_Mask.at<cv::Vec3s>(j, i)) / 255;
+			cv::Vec3f _BG_right_Mask_var = cv::Vec3f(_BG_right_Mask.at<cv::Vec3s>(j, i)) / 255;
+
+			cv::Vec3f _Facemap_left_Mask_var = cv::Vec3f(_Facemap_left_Mask.at<cv::Vec3s>(j, i)) / 255;
+			cv::Vec3f _Facemap_right_Mask_var = cv::Vec3f(_Facemap_right_Mask.at<cv::Vec3s>(j, i)) / 255;
+
+
+			Vec3s _Facemap_left_col = f + (outcolor_left - cv::Vec3s(255, 255, 255) / 2);
+			Vec3s _Facemap_right_col = f + (outcolor_left - cv::Vec3s(255, 255, 255) / 2);
+
+			Vec3s _BG_left_Mrg = bg + (outcolorbg_left - cv::Vec3s(255, 255, 255) / 2);
+			Vec3s _BG_right_Mrg = bg + (outcolorbg_right - cv::Vec3s(255, 255, 255) / 2);
+
+			Vec3s _BG_Mrg_left = lerp(_BG_left_Mrg, bg, _BG_left_Mask_var);
+			Vec3s _BG_Mrgf = lerp(_BG_right_Mrg, _BG_Mrg_left, _BG_right_Mask_var);
+			Vec3s _FACE_Mrg_left = lerp(_Facemap_left_col, _BG_Mrgf, _Facemap_left_Mask_var);
+			Vec3s _FACE_Mrg = lerp(_Facemap_right_col, _FACE_Mrg_left, _Facemap_right_Mask_var);
+
+
+
+			step2Mat.at<cv::Vec3s>(j, i) = _FACE_Mrg;
+		}
+	}
+	//cv::cvtColor(step2Mat, bgr, CV_RGBA2BGR);
+	//cv::imwrite("data/export/step2Mat.jpg", bgr);
+
+
+
+	////测试全图
+	//for (int j = 0; j < bgfull.rows; j++)
+	//{
+	//	for (int i = 0; i < bgfull.cols; i++)
+	//	{
+
+	//		if (i >= colRg.start && i < colRg.end && j >= rowRg.start &&j < rowRg.end)
+	//		{
+	//			cv::Vec3s f = step2Mat.at<cv::Vec3s>(j - rowRg.start, i - colRg.start);
+	//			bgfull.at<cv::Vec4s>(j, i) = cv::Vec4s(f[0],f[1],f[2],255);
+
+	//		}
+
+	//	}
+	//}
+	//cv::cvtColor(bgfull, bgr, CV_RGBA2BGR);
+	//cv::imwrite("data/export/bgfull.jpg", bgr);
+
+	//保存成文件
+	SaveTextureToFile(step2Mat, GL_RGBA, photoPathOut, false);
+
+	//清理内存
+	SAFE_DELETE(forecolorptr);
+	//SAFE_DELETE(colorptr);
+}
 
 bool FaceCloudLib::InitCamera()
 {

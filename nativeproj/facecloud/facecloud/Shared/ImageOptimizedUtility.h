@@ -221,7 +221,9 @@ private:
 		Vector3f cross = fromv3.Cross(tov3);
 
 		angle = from.angle_rad(to);
-		return cross.z > 0 ? -angle : angle;
+
+		angle = 180 / MATH_PI * angle;
+		return cross.z > 0 ? angle : -angle;
 	}
 };
 
