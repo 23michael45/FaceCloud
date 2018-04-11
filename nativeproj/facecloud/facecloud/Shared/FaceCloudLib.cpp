@@ -15,7 +15,7 @@
 
 #include "ImageOptimizedUtility.h"
 #include <opencv2/photo.hpp>
-
+#define max(a, b)  (((a) > (b)) ? (a) : (b))
 bool WriteTGA(char *file, short int width, short int height, unsigned char *outImage)
 {
 	// To save a screen shot is just like reading in a image. All you do
@@ -1057,7 +1057,15 @@ cv::Vec3s lerp(cv::Vec3f start, cv::Vec3f end, cv::Vec3f rate)
 	rt = start + (end - start).mul(rate);
 	return rt;
 }
+bool asequal(short a, short b)
+{
+	if (abs(a - b) < 2)
+	{
+		return true;
+	}
+	return false;
 
+}
 
 void FaceCloudLib::CombineTextureMaskBlend(Mat bgColor, Texture* pforeColor, string& photoPathOut)
 {
@@ -1225,12 +1233,25 @@ void FaceCloudLib::CombineTextureMaskBlend(Mat bgColor, Texture* pforeColor, str
 			Vec3s _FACE_Mrg_left = lerp(_Facemap_left_col, _BG_Mrgf, _Facemap_left_Mask_var);
 			Vec3s _FACE_Mrg = lerp(_Facemap_right_col, _FACE_Mrg_left, _Facemap_right_Mask_var);
 
-			if (_FACE_Mrg[0] == 0 && _FACE_Mrg[1] == 0 && _FACE_Mrg[2] == 0)
+
+			_FACE_Mrg[0] = max(_FACE_Mrg[0], 0);
+			_FACE_Mrg[1] = max(_FACE_Mrg[1], 0);
+			_FACE_Mrg[2] = max(_FACE_Mrg[2], 0);
+
+
+			/*if (asequal(_FACE_Mrg[0] , 138) && asequal(_FACE_Mrg[1] , 199) && asequal(_FACE_Mrg[2] , 200))
 			{
 				int xxx = 0;
 			}
+			if (i == 104 && j == 151)
+			{
+				int xxx = 0;
+
+			}*/
 
 			step2Mat.at<cv::Vec3s>(j, i) = _FACE_Mrg;
+
+			//step2Mat.at<cv::Vec3s>(j, i) = f;
 		}
 	}
 	//cv::cvtColor(step2Mat, bgr, CV_RGBA2BGR);
@@ -1239,7 +1260,7 @@ void FaceCloudLib::CombineTextureMaskBlend(Mat bgColor, Texture* pforeColor, str
 
 
 	//测试全图
-	for (int j = 0; j < bgfull.rows; j++)
+	/*for (int j = 0; j < bgfull.rows; j++)
 	{
 		for (int i = 0; i < bgfull.cols; i++)
 		{
@@ -1254,7 +1275,7 @@ void FaceCloudLib::CombineTextureMaskBlend(Mat bgColor, Texture* pforeColor, str
 		}
 	}
 	cv::cvtColor(bgfull, bgr, CV_RGBA2BGR);
-	cv::imwrite("data/export/bgfull.jpg", bgr);
+	cv::imwrite("data/export/bgfull.jpg", bgr);*/
 
 	//保存成文件
 	SaveTextureToFile(step2Mat, GL_RGBA, photoPathOut, false);
