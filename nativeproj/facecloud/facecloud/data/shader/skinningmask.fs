@@ -46,7 +46,7 @@ void main()
 	else{
 		float dist = sqrt((In.TexCoord.x - 0.5) * (In.TexCoord.x - 0.5) + (In.TexCoord.y - 0.25) * (In.TexCoord.y - 0.25));
 	
-		if(dist < 0.2)
+		if(dist < 0.3)
 		{
 			
 			//FragColor = vec4(1,1,1,1);

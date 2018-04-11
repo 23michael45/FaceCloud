@@ -129,6 +129,9 @@ private:
 	cv::Mat _sampling_RT_mask;
 	cv::Mat _SampleButtom_LF_mask;
 	cv::Mat _SampleButtom_RT_mask;
+	cv::Vec3s m_targetcolor;
+	cv::Vec3s m_basecolor;
+
 
 	bool InitCamera();
 	bool InitMesh();
@@ -142,6 +145,7 @@ private:
 
 	cv::Mat AutoMask(cv::Mat srcMask,cv::Point& center);
 
+	void getMean(cv::Mat img, cv::Vec3s& left, cv::Vec3s& right);
 
 public:
       std::thread m_OpenGLThread;
