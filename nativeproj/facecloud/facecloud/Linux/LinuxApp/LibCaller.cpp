@@ -29,7 +29,7 @@ Tutorial 13 - Camera Space
 #include "ogldev_pipeline.h"
 #include "FaceCloudLib.h"
 #include "OSMesaContext.h"
-#include "glContext.hpp"
+#include "glContext.h"
 
 #define OUTPUT_DEBUG_JPG 1
 
