@@ -1069,6 +1069,7 @@ bool asequal(short a, short b)
 
 void FaceCloudLib::CombineTextureMaskBlend(Mat bgColor, Texture* pforeColor, string& photoPathOut)
 {
+	OSMesa::Log("\nStart CombineTextureMaskBlend");
 	Mat bgr;
 	unsigned char* forecolorptr;
 
@@ -1087,6 +1088,7 @@ void FaceCloudLib::CombineTextureMaskBlend(Mat bgColor, Texture* pforeColor, str
 
 
 
+	OSMesa::Log("\nStart CombineTextureMaskBlend Range Deal");
 
 	//取小块脸部区域
 	cv::Range rowRg(270, 1070);
@@ -1114,6 +1116,8 @@ void FaceCloudLib::CombineTextureMaskBlend(Mat bgColor, Texture* pforeColor, str
 	_SampleButtom_LF_mask.convertTo(_SampleButtom_LF_mask, CV_16UC3);
 	_SampleButtom_RT_mask.convertTo(_SampleButtom_RT_mask, CV_16UC3);
 
+
+	OSMesa::Log("\nStart CombineTextureMaskBlend Step0");
 
 	/*cv::cvtColor(foreColorMat, bgr, CV_RGBA2BGR);
 	cv::imwrite("data/export/stepn1Mat.jpg", bgr);*/
@@ -1156,6 +1160,7 @@ void FaceCloudLib::CombineTextureMaskBlend(Mat bgColor, Texture* pforeColor, str
 	cv::Vec3s offset_right = m_targetcolor - outcolor_right;
 	outcolor_right = offset_right + cv::Vec3s(255, 255, 255) / 2;
 
+	OSMesa::Log("\nStart CombineTextureMaskBlend Step1");
 	//step1
 	Mat step1Mat;
 	foreColorMat.copyTo(step1Mat);
@@ -1204,6 +1209,9 @@ void FaceCloudLib::CombineTextureMaskBlend(Mat bgColor, Texture* pforeColor, str
 	cv::Vec3s offsetbg_right = outcolorbg_right - m_basecolor;
 	outcolorbg_right = offsetbg_right + cv::Vec3s(255, 255, 255) / 2;
 
+
+
+	OSMesa::Log("\nStart CombineTextureMaskBlend Step2");
 	//step2
 	Mat step2Mat;
 	foreColorMat.copyTo(step2Mat);
@@ -1277,6 +1285,8 @@ void FaceCloudLib::CombineTextureMaskBlend(Mat bgColor, Texture* pforeColor, str
 	cv::cvtColor(bgfull, bgr, CV_RGBA2BGR);
 	cv::imwrite("data/export/bgfull.jpg", bgr);*/
 
+
+	OSMesa::Log("\nStart CombineTextureMaskBlend SaveTextureToFile");
 	//保存成文件
 	SaveTextureToFile(step2Mat, GL_RGBA, photoPathOut, false);
 

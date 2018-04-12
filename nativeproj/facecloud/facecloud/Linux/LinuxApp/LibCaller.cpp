@@ -172,7 +172,7 @@ void FaceSkinStatusDetect(string tname, string lname)
 	SaveFile(s, outjsonskinpath);
 
 }
-int main(int argc, char** argv)
+int main_(int argc, char** argv)
 {
 	FaceSkinStatusDetect("color", "color_white");
 	FaceSkinStatusDetect("color", "color_nature");
@@ -181,7 +181,7 @@ int main(int argc, char** argv)
 }
 
 
-int main_(int argc, char** argv)
+int main(int argc, char** argv)
 {
 	bool bRenderToTarget = true;
 
