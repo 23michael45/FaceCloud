@@ -1093,28 +1093,9 @@ void FaceCloudLib::CombineTextureMaskBlend(Mat bgColor, Texture* pforeColor, str
 	//取小块脸部区域
 	cv::Range rowRg(270, 1070);
 	cv::Range colRg(624, 1424);
-
-
 	foreColorMat = foreColorMat(rowRg, colRg);
 	bgColormat = bgColormat(rowRg, colRg);
 	
-	_Facemap_left_Mask = _Facemap_left_Mask(rowRg, colRg);
-	_Facemap_right_Mask = _Facemap_right_Mask(rowRg, colRg);
-	_BG_left_Mask = _BG_left_Mask(rowRg, colRg); 
-	_BG_right_Mask = _BG_right_Mask(rowRg, colRg);
-	_sampling_LF_mask = _sampling_LF_mask(rowRg, colRg); 
-	_sampling_RT_mask = _sampling_RT_mask(rowRg, colRg); 
-	_SampleButtom_LF_mask = _SampleButtom_LF_mask(rowRg, colRg); 
-	_SampleButtom_RT_mask = _SampleButtom_RT_mask(rowRg, colRg);
-
-	_Facemap_left_Mask.convertTo(_Facemap_left_Mask, CV_16UC3);
-	_Facemap_right_Mask.convertTo(_Facemap_right_Mask, CV_16UC3);
-	_BG_left_Mask.convertTo(_BG_left_Mask, CV_16UC3);
-	_BG_right_Mask.convertTo(_BG_right_Mask, CV_16UC3);
-	_sampling_LF_mask.convertTo(_sampling_LF_mask, CV_16UC3);
-	_sampling_RT_mask.convertTo(_sampling_RT_mask, CV_16UC3);
-	_SampleButtom_LF_mask.convertTo(_SampleButtom_LF_mask, CV_16UC3);
-	_SampleButtom_RT_mask.convertTo(_SampleButtom_RT_mask, CV_16UC3);
 
 
 	OSMesa::Log("\nStart CombineTextureMaskBlend Step0");
@@ -1405,7 +1386,27 @@ bool FaceCloudLib::InitMat()
 
 
 
+	//取小块脸部区域
+	cv::Range rowRg(270, 1070);
+	cv::Range colRg(624, 1424);
+	
+	_Facemap_left_Mask = _Facemap_left_Mask(rowRg, colRg);
+	_Facemap_right_Mask = _Facemap_right_Mask(rowRg, colRg);
+	_BG_left_Mask = _BG_left_Mask(rowRg, colRg);
+	_BG_right_Mask = _BG_right_Mask(rowRg, colRg);
+	_sampling_LF_mask = _sampling_LF_mask(rowRg, colRg);
+	_sampling_RT_mask = _sampling_RT_mask(rowRg, colRg);
+	_SampleButtom_LF_mask = _SampleButtom_LF_mask(rowRg, colRg);
+	_SampleButtom_RT_mask = _SampleButtom_RT_mask(rowRg, colRg);
 
+	_Facemap_left_Mask.convertTo(_Facemap_left_Mask, CV_16UC3);
+	_Facemap_right_Mask.convertTo(_Facemap_right_Mask, CV_16UC3);
+	_BG_left_Mask.convertTo(_BG_left_Mask, CV_16UC3);
+	_BG_right_Mask.convertTo(_BG_right_Mask, CV_16UC3);
+	_sampling_LF_mask.convertTo(_sampling_LF_mask, CV_16UC3);
+	_sampling_RT_mask.convertTo(_sampling_RT_mask, CV_16UC3);
+	_SampleButtom_LF_mask.convertTo(_SampleButtom_LF_mask, CV_16UC3);
+	_SampleButtom_RT_mask.convertTo(_SampleButtom_RT_mask, CV_16UC3);
 	return true;
 }
 

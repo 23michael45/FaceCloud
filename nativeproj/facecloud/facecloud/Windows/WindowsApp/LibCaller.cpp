@@ -246,7 +246,6 @@ int main(int argc, char** argv)
 			SaveFile(outJsonModelOut, outjsonoffsetpath);
 			i++;
 
-			break;
 		}
 
 
