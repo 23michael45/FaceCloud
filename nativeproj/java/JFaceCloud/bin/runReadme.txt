@@ -15,6 +15,7 @@ exit 0
 
 设置/etc/profile
 mkdir /tmp/yuji
+chmod +x /tmp/yuji
 export DISPLAY=:0
 ./face/apache-tomcat-8.0.36/bin/startup.sh
 

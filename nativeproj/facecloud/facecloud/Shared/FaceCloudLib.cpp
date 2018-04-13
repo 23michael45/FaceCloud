@@ -1419,10 +1419,12 @@ bool FaceCloudLib::CreateRenderTarget()
 	glGenFramebuffers(1, &m_FramebufferName);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_FramebufferName);
 
+	OSMesa::Log(OSMesa::format("\nCreateRenderTarget m_FramebufferName %i :", m_FramebufferName));
 
 	// The texture we're going to render to
 	glGenTextures(1, &m_RenderTexture);
 
+	OSMesa::Log(OSMesa::format("\nCreateRenderTarget m_RenderTexture %i :", m_RenderTexture));
 	// "Bind" the newly created texture : all future texture functions will modify this texture
 	glBindTexture(GL_TEXTURE_2D, m_RenderTexture);
 
@@ -1645,6 +1647,7 @@ cv::Mat FaceCloudLib::GLTextureToMat(GLuint texture, unsigned char*& outimagptr)
 	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_BLUE_SIZE, &bs);
 	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_ALPHA_SIZE, &as);
 
+	OSMesa::Log(OSMesa::format("\nGLTextureToMat %i %i :", wtex,htex));
 	long size = 0;
 
 	if (comp == GL_RGB)

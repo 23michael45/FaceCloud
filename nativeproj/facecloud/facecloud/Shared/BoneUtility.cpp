@@ -218,6 +218,7 @@ Texture* BoneUtility::CalculateSkin(GLuint texture, cv::Mat& refMat, bool isman,
 	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_ALPHA_SIZE, &as);
 
 
+	OSMesa::Log(OSMesa::format("\nCalculateSkin Input Texture %i %i:", wtex,htex));
 	long size = wtex * htex * 4;
 	unsigned char* output_image = new unsigned char[size];
 
