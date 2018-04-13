@@ -122,7 +122,7 @@
 
 
 "offset_face_eyeBall_Lf_joint1":{"x":0.03,"y":-0.42,"z":0.04},
-"offset_face_eyeBall_Rt_joint1":{"x":0.04,"y":-0.46,"z":-0.03},
+"offset_face_eyeBall_Rt_joint1":{"x":0.03,"y":-0.42,"z":-0.04},
 "offset_face_bridge_joint1":{"x":-0.27,"y":0.08,"z":0.02},
 "offset_face_bridge_joint2":{"x":-0.14,"y":0.04,"z":-0.01},
 "offset_face_bridge_Lf_joint1":{"x":-0.32,"y":0.09,"z":-0.02},
@@ -335,8 +335,8 @@
 
 
 
-"offset_face_eyeBall_Lf_joint1":{"x":0.00,"y":-0.17,"z":-0.03},
-"offset_face_eyeBall_Rt_joint1":{"x":0.00,"y":-0.18,"z":-0.03},
+"offset_face_eyeBall_Lf_joint1":{"x":0.15,"y":0.0,"z":0.0},
+"offset_face_eyeBall_Rt_joint1":{"x":0.15,"y":0.0,"z":0.0},
 "offset_face_bridge_joint1":{"x":-0.37,"y":0.10,"z":0.11},
 "offset_face_bridge_joint2":{"x":-0.14,"y":0.04,"z":0.07},
 "offset_face_bridge_Lf_joint1":{"x":-0.68,"y":0.18,"z":-0.08},
