@@ -447,6 +447,7 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 				m_pGameCamera->SetPos(Vector3f(0, 0, 0));
 				if (BeginRenterTexture())
 				{
+					OSMesa::Log("\nBeginRenterTexture");
 					DrawMaskOnce(modelID, center, uvsize);
 					automasktex.CloneFromTexture(m_RenderTexture);
 
@@ -454,6 +455,11 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 					rendertex.CloneFromTexture(m_RenderTexture);
 
 					EndRenderTexture();
+				}
+				else
+				{
+
+					OSMesa::Log("\nBeginRenterTexture Failed");
 				}
 			}
 			else
@@ -1459,7 +1465,9 @@ bool FaceCloudLib::CreateRenderTarget()
 
 bool FaceCloudLib::BeginRenterTexture()
 {
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE)
+	int status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	OSMesa::Log(OSMesa::format("\nBeginRenterTexture glCheckFramebufferStatus : %i", status));
+	if (status == GL_FRAMEBUFFER_COMPLETE)
 	{
 		// Render to our framebuffer
 		glBindFramebuffer(GL_FRAMEBUFFER, m_FramebufferName);
