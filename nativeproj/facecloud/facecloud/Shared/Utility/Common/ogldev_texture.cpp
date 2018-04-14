@@ -151,6 +151,9 @@ void Texture::CloneFromTexture(GLuint tex)
 	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_GREEN_SIZE, &gs);
 	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_BLUE_SIZE, &bs);
 	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_ALPHA_SIZE, &as);
+
+
+	OSMesa::Log(OSMesa::format("\nCloneFromTexture c r : %i %i:", wtex, htex));
 	long size = 0;
 	if (comp == GL_RGB)
 	{

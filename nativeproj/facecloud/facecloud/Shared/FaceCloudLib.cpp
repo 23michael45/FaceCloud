@@ -1090,6 +1090,8 @@ void FaceCloudLib::CombineTextureMaskBlend(Mat bgColor, Texture* pforeColor, str
 
 	OSMesa::Log("\nStart CombineTextureMaskBlend Range Deal");
 
+	OSMesa::Log(OSMesa::format("\nCombineTextureMaskBlend foreColorMat c r : %i %i:", foreColorMat.cols, foreColorMat.rows));
+	OSMesa::Log(OSMesa::format("\nCombineTextureMaskBlend bgColormat c r : %i %i:", bgColormat.cols, bgColormat.rows));
 	//取小块脸部区域
 	cv::Range rowRg(270, 1070);
 	cv::Range colRg(624, 1424);
