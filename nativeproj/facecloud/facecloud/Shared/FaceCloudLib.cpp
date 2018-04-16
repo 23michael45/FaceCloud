@@ -500,7 +500,7 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 
 
 			int milliSecondsElapsed = OSMesa::getMilliSpan(start);
-			OSMesa::Log(OSMesa::format("\njsonModelOut:%s", jsonModelOut.c_str()));
+			//OSMesa::Log(OSMesa::format("\njsonModelOut:%s", jsonModelOut.c_str()));
 			OSMesa::Log(OSMesa::format("\n\nElapsed time = %u milliseconds", milliSecondsElapsed));
 			printf("\n\nElapsed time = %u milliseconds", milliSecondsElapsed);
 			return "success";
