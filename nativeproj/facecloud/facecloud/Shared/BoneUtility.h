@@ -60,6 +60,8 @@ public:
 	vector<Vector3f> verts;
 	map<string,node> nodemap;
 
+	float eyescalmap;
+
 };
 
 class JsonRole
@@ -468,6 +470,8 @@ class BoneUtility
 {
 public:
 	JsonModelFormat jsonModelFormat;
+	JsonModelFormat jsonModelFormatMan;
+	JsonModelFormat jsonModelFormatWoman;
 	JsonKeyPointBonePairs pairs;
 	Json::Value rtjson;
 
@@ -477,7 +481,7 @@ public:
 	int ReadJsonFromFile(const char* filename);
 
 	Texture* CalculateSkin(GLuint texture, cv::Mat& refMat, bool isman, JsonRole bonedef, JsonFaceInfo& faceinfo,bool isFrontOrBg = true);
-	void CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonfdef, JsonFaceInfo faceinfo, string& outOffsetJson, Vector3f& centerpos, Vector2f& uvsize,float& yOffset);
+	void CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonfdef, JsonFaceInfo faceinfo, string& outOffsetJson, Vector3f& centerpos, Vector2f& uvsize,float& yOffset,bool isman);
 
 	void ResetBone();
 	void MoveBone(SkinnedMesh* pmesh, string bonename, JsonFaceInfo faceinfo, string facekeypoint, JsonRole bonedef, string boneoffsetname, Vector3f headCenter, float offsetrate = 0.01f);

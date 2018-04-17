@@ -130,6 +130,12 @@ string JsonModelFormat::ToString()
 
 
 
+	Json::Value jeyescalmapnode;
+	jeyescalmapnode["name"] = "eyescalmap";
+	jeyescalmapnode["value"] = eyescalmap;
+	nodes.append(jeyescalmapnode);
+
+
 	//Json Value to String
 	Json::StreamWriterBuilder  builder;
 	builder.settings_["commentStyle"] = "None";
@@ -157,8 +163,10 @@ JsonModelFormat::~JsonModelFormat()
 void BoneUtility::Init()
 {
 	hasMoveBones = false;
-	pairs.LoadFromFile(RES_PATH + string("face/kp.json"));
-	jsonModelFormat.LoadFromFile(RES_PATH + string("face/women_head_fix.JD"));
+	pairs.LoadFromFile(RES_PATH + string("face/kp.json")); 
+
+	jsonModelFormatMan.LoadFromFile(RES_PATH + string("face/man_head.JD"));
+	jsonModelFormatWoman.LoadFromFile(RES_PATH + string("face/women_head_fix.JD"));
 }
 
 int BoneUtility::ReadJsonFromFile(const char* filename)
@@ -405,8 +413,16 @@ Texture* BoneUtility::CalculateSkin(GLuint texture, cv::Mat& refMat, bool isman,
 	return ptexture;
 }
 
-void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFaceInfo faceinfo,string& outOffsetJson,Vector3f& centerpos,Vector2f& uvsize,float& yoffset)
+void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFaceInfo faceinfo,string& outOffsetJson,Vector3f& centerpos,Vector2f& uvsize,float& yoffset,bool isman)
 {
+	if (isman)
+	{
+		jsonModelFormat = jsonModelFormatMan;
+	}
+	else
+	{
+		jsonModelFormat = jsonModelFormatWoman;
+	}
 
 	Matrix4f tooth_MID = pmesh->GetBoneNode("face_mouthLip_up_joint2");
 	Matrix4f toothup_Lf = pmesh->GetBoneNode("face_mouthLip_Lf_joint1");
@@ -483,7 +499,6 @@ void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFa
 	
 	//MoveUV(pmesh, bonedef);
 
-	outOffsetJson = jsonModelFormat.ToString();
 	yoffset = bonedef.offset_y / 100;
 	centerpos = headCenter;
 	uvsize = Vector2f(bonedef.uvsize, bonedef.uvsize);
@@ -510,6 +525,11 @@ void BoneUtility::CalculateFaceBone(SkinnedMesh* pmesh, JsonRole bonedef, JsonFa
 
 	float eyescalmap = (Eye_Rt_dis2 / Eye_Rt_dis + Eye_LF_dis2 / Eye_LF_dis) / 2;
 	eyemapscale(eyescalmap);
+	jsonModelFormat.eyescalmap = eyescalmap;
+
+
+	outOffsetJson = jsonModelFormat.ToString();
+
 
 	Vector3f brow_LF02_pos2 = brow_LF02.ExtractTranslation();
 	Vector3f brow_LF03_pos2 = brow_LF03.ExtractTranslation();

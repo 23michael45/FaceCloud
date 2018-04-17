@@ -54,7 +54,7 @@ public:
 	string DetectSkinStatus(string photoPath, string jsonFace, string &jsonModelOut);
 
 
-	void CalculateBone(string modelID, JsonFaceInfo jsonfaceinfo, string& photoPathOut, string& jsonModelOut, Vector3f& centerpos, Vector2f& uvsize, float& yOffset);
+	void CalculateBone(string modelID, JsonFaceInfo jsonfaceinfo, string& photoPathOut, string& jsonModelOut, Vector3f& centerpos, Vector2f& uvsize, float& yOffset,bool isman);
 	bool DrawOnce(string modelID, Vector3f& center, Vector2f& uvsize);
 
 	bool DrawMaskOnce(string modelID, Vector3f& center, Vector2f& uvsize);
