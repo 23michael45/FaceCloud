@@ -13,7 +13,7 @@
     [
         "face_eyeBall_Lf_joint1",
         "left_eye_center",
-        "offset_face_chin_joint1"
+        "offset_face_eyeBall_Lf_joint1"
     ],
     [
         "face_eyeBall_Rt_joint1",
