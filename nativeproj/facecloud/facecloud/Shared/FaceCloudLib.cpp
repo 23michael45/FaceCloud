@@ -342,12 +342,12 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 		if (isman)
 		{
 			m_targetcolor = cv::Vec3s(210, 165, 120);
-			m_basecolor = cv::Vec3s(210, 165, 120);
+			m_basecolor = cv::Vec3s(200, 155, 110);
 		}
 		else
 		{
-			m_targetcolor = cv::Vec3s(210, 172, 138);
-			m_basecolor = cv::Vec3s(208, 170, 136);
+			m_targetcolor = cv::Vec3s(205, 165, 132);
+			m_basecolor = cv::Vec3s(200, 160, 128);
 		}
 
 		JsonFaceInfo jsonfaceinfo;
