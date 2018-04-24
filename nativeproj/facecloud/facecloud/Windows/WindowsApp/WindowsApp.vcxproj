@@ -159,6 +159,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\Shared\BoneUtility.h" />
     <ClInclude Include="..\..\Shared\CommonTechnique.h" />
+    <ClInclude Include="..\..\Shared\DLib\FaceKeyPointParser.h" />
     <ClInclude Include="..\..\Shared\FaceCloudLib.h" />
     <ClInclude Include="..\..\Shared\FacePlusWrapper.h" />
     <ClInclude Include="..\..\Shared\FBXImportUtility.h" />
@@ -212,7 +213,6 @@
     <ClInclude Include="..\..\Shared\Utility\Include\ogldev_win32_control.h" />
     <ClInclude Include="..\..\Shared\Utility\Include\ogldev_xcb_control.h" />
     <ClInclude Include="..\..\Shared\Utility\Include\technique.h" />
-    <ClInclude Include="FaceKeyPointParser.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -220,8 +220,8 @@
     <ClCompile Include="..\..\Linux\LinuxApp\OffScreenCaller.cpp" />
     <ClCompile Include="..\..\Shared\BoneUtility.cpp" />
     <ClCompile Include="..\..\Shared\CommonTechnique.cpp" />
+    <ClCompile Include="..\..\Shared\DLib\FaceKeyPointParser.cpp" />
     <ClCompile Include="..\..\Shared\FaceCloudLib.cpp" />
-    <ClCompile Include="..\..\Shared\FacePlusWrapper.cpp" />
     <ClCompile Include="..\..\Shared\FBXImportUtility.cpp" />
     <ClCompile Include="..\..\Shared\FBXLoader\FBXLoader.cpp" />
     <ClCompile Include="..\..\Shared\FBXLoader\targa.cpp" />
@@ -257,7 +257,6 @@
     <ClCompile Include="..\..\Shared\Utility\Common\pipeline.cpp" />
     <ClCompile Include="..\..\Shared\Utility\Common\random_texture.cpp" />
     <ClCompile Include="..\..\Shared\Utility\Common\technique.cpp" />
-    <ClCompile Include="FaceKeyPointParser.cpp" />
     <ClCompile Include="LoadFBXMain.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

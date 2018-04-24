@@ -216,8 +216,8 @@
     <ClInclude Include="..\..\Shared\MaskSkinningTechnique.h">
       <Filter>Shared</Filter>
     </ClInclude>
-    <ClInclude Include="FaceKeyPointParser.h">
-      <Filter>Shared</Filter>
+    <ClInclude Include="..\..\Shared\DLib\FaceKeyPointParser.h">
+      <Filter>Shared\DLib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -240,9 +240,6 @@
       <Filter>Shared\JsonCpp\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Shared\BoneUtility.cpp">
-      <Filter>Shared</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Shared\FacePlusWrapper.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Shared\FBXImportUtility.cpp">
@@ -353,8 +350,8 @@
     <ClCompile Include="..\..\Shared\MaskSkinningTechnique.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
-    <ClCompile Include="FaceKeyPointParser.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\Shared\DLib\FaceKeyPointParser.cpp">
+      <Filter>Shared\DLib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

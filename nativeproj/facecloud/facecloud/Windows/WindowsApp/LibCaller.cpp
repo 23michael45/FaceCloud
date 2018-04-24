@@ -30,7 +30,7 @@ Tutorial 13 - Camera Space
 #include "FaceCloudLib.h"
 #include "OSMesaContext.h"
 #include "ImageOptimizedUtility.h"
-#include "FaceKeyPointParser.h"
+#include "DLib/FaceKeyPointParser.h"
 
 FaceCloudLib lib;
 string currentModelID = "10001";
