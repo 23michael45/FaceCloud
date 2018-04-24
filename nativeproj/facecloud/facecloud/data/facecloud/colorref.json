@@ -1,0 +1,14 @@
+{
+	"manBaseColor_b" : 200,
+	"manBaseColor_g" : 155,
+	"manBaseColor_r" : 110,
+	"manTargetColor_b" : 210,
+	"manTargetColor_g" : 165,
+	"manTargetColor_r" : 120,
+	"womanBaseColor_b" : 200,
+	"womanBaseColor_g" : 160,
+	"womanBaseColor_r" : 128,
+	"womanTargetColor_b" : 205,
+	"womanTargetColor_g" : 165,
+	"womanTargetColor_r" : 132
+}
