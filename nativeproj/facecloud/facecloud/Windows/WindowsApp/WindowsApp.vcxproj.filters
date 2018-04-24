@@ -40,6 +40,9 @@
     <Filter Include="Shared\Utility\Include">
       <UniqueIdentifier>{4948afb9-e488-4f06-b2dd-de74880676a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shared\DLib">
+      <UniqueIdentifier>{c34f61fe-bddb-4bd7-852e-99f208271704}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Shared\ImageOptimizedUtility.h">
@@ -213,6 +216,9 @@
     <ClInclude Include="..\..\Shared\MaskSkinningTechnique.h">
       <Filter>Shared</Filter>
     </ClInclude>
+    <ClInclude Include="FaceKeyPointParser.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -346,6 +352,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Shared\MaskSkinningTechnique.cpp">
       <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="FaceKeyPointParser.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

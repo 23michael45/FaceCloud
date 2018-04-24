@@ -339,15 +339,16 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 			isman = false;
 		}
 
+
 		if (isman)
 		{
-			m_targetcolor = cv::Vec3s(210, 165, 120);
-			m_basecolor = cv::Vec3s(200, 155, 110);
+			m_targetcolor = m_ColorRef.manTargetColor;
+			m_basecolor = m_ColorRef.manBaseColor;
 		}
 		else
 		{
-			m_targetcolor = cv::Vec3s(205, 165, 132);
-			m_basecolor = cv::Vec3s(200, 160, 128);
+			m_targetcolor = m_ColorRef.womanTargetColor;
+			m_basecolor = m_ColorRef.womanBaseColor;
 		}
 
 		JsonFaceInfo jsonfaceinfo;
@@ -1415,6 +1416,10 @@ bool FaceCloudLib::InitMat()
 	_sampling_RT_mask.convertTo(_sampling_RT_mask, CV_16UC3);
 	_SampleButtom_LF_mask.convertTo(_SampleButtom_LF_mask, CV_16UC3);
 	_SampleButtom_RT_mask.convertTo(_SampleButtom_RT_mask, CV_16UC3);
+
+
+	m_ColorRef.LoadFromFile(RES_PATH + "facecloud/colorref.json");
+
 	return true;
 }
 

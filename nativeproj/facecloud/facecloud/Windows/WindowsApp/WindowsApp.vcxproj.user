@@ -4,4 +4,8 @@
     <LocalDebuggerWorkingDirectory>G:\DevelopProj\FaceCloud\nativeproj\facecloud\facecloud</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerWorkingDirectory>G:\DevelopProj\FaceCloud\nativeproj\facecloud\facecloud</LocalDebuggerWorkingDirectory>
+  </PropertyGroup>
 </Project>

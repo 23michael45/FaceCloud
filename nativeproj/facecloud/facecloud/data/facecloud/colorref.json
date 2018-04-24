@@ -1,14 +1,14 @@
 {
-	"manBaseColor_b" : 200,
+	"manBaseColor_r" : 200,
 	"manBaseColor_g" : 155,
-	"manBaseColor_r" : 110,
-	"manTargetColor_b" : 210,
+	"manBaseColor_b" : 110,
+	"manTargetColor_r" : 210,
 	"manTargetColor_g" : 165,
-	"manTargetColor_r" : 120,
-	"womanBaseColor_b" : 200,
+	"manTargetColor_b" : 120,
+	"womanBaseColor_r" : 200,
 	"womanBaseColor_g" : 160,
-	"womanBaseColor_r" : 128,
-	"womanTargetColor_b" : 205,
+	"womanBaseColor_b" : 128,
+	"womanTargetColor_r" : 205,
 	"womanTargetColor_g" : 165,
-	"womanTargetColor_r" : 132
+	"womanTargetColor_b" : 132
 }

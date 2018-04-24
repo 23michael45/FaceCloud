@@ -185,7 +185,103 @@ public:
 
 	map<string,JsonRole> roles;
 };
+class JsonColorRef
+{
+public:
+	bool LoadFromFile(string filename)
+	{
+		try
+		{
 
+			Json::CharReaderBuilder rbuilder;
+			rbuilder["collectComments"] = false;
+			std::string errs;
+			Json::Value root;
+			std::ifstream ifs;
+			ifs.open(filename);
+			bool ok = Json::parseFromStream(rbuilder, ifs, &root, &errs);
+			ifs.close();
+
+			Load(root);
+			return true;
+		}
+		catch (...)
+		{
+			return false;
+		}
+	}
+
+	bool Load(Json::Value& root)
+	{
+		try
+		{
+			manBaseColor[0] = root["manBaseColor_r"].asFloat();
+			manBaseColor[1] = root["manBaseColor_g"].asFloat();
+			manBaseColor[2] = root["manBaseColor_b"].asFloat();
+
+
+			manTargetColor[0] = root["manTargetColor_r"].asFloat();
+			manTargetColor[1] = root["manTargetColor_g"].asFloat();
+			manTargetColor[2] = root["manTargetColor_b"].asFloat();
+
+			womanBaseColor[0] = root["womanBaseColor_r"].asFloat();
+			womanBaseColor[1] = root["womanBaseColor_g"].asFloat();
+			womanBaseColor[2] = root["womanBaseColor_b"].asFloat();
+
+
+			womanTargetColor[0] = root["womanTargetColor_r"].asFloat();
+			womanTargetColor[1] = root["womanTargetColor_g"].asFloat();
+			womanTargetColor[2] = root["womanTargetColor_b"].asFloat();
+		
+			return true;
+		}
+		catch (...)
+		{
+			return false;
+		}
+
+	}
+
+
+	void SaveFile(string& s, string& path)
+	{
+		ofstream write;
+
+		write.open(path.c_str(), ios::out | ios::binary);
+		write.write(s.c_str(), s.length());
+		write.close();
+	}
+	void SaveJsonFile(string& path)
+	{
+		Json::Value jvalue;
+		jvalue["manBaseColor_r"] = manBaseColor[0];
+		jvalue["manBaseColor_g"] = manBaseColor[1];
+		jvalue["manBaseColor_b"] = manBaseColor[2];
+		jvalue["manTargetColor_r"] = manTargetColor[0];
+		jvalue["manTargetColor_g"] = manTargetColor[1];
+		jvalue["manTargetColor_b"] = manTargetColor[2];
+		jvalue["womanBaseColor_r"] = womanBaseColor[0];
+		jvalue["womanBaseColor_g"] = womanBaseColor[1];
+		jvalue["womanBaseColor_b"] = womanBaseColor[2];
+		jvalue["womanTargetColor_r"] = womanTargetColor[0];
+		jvalue["womanTargetColor_g"] = womanTargetColor[1];
+		jvalue["womanTargetColor_b"] = womanTargetColor[2];
+
+
+
+
+
+		Json::StreamWriterBuilder  builder;
+		builder.settings_["commentStyle"] = "All";
+		std::string s = Json::writeString(builder, jvalue);
+
+		SaveFile(s, path);
+	}
+	cv::Vec3s manBaseColor;
+	cv::Vec3s manTargetColor;
+	cv::Vec3s womanBaseColor;
+	cv::Vec3s womanTargetColor;
+};
 class JsonFaceInfo
 {
 public:

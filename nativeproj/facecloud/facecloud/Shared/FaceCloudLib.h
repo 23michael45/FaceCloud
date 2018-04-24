@@ -153,6 +153,8 @@ public:
 	  bool m_Running;
 
 	  queue<CalculateData*> m_RunningQueue;
+
+	  JsonColorRef m_ColorRef;
 };
 
 

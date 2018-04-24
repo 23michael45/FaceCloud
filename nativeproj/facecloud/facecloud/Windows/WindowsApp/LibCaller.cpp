@@ -30,6 +30,7 @@ Tutorial 13 - Camera Space
 #include "FaceCloudLib.h"
 #include "OSMesaContext.h"
 #include "ImageOptimizedUtility.h"
+#include "FaceKeyPointParser.h"
 
 FaceCloudLib lib;
 string currentModelID = "10001";
@@ -176,10 +177,19 @@ void FaceSkinStatusDetect(string tname, string lname)
 }
 int main_(int argc, char** argv)
 {
-	FaceSkinStatusDetect("blackhead", "blackhead_severe");
+	//FaceSkinStatusDetect("blackhead", "blackhead_severe");
 	//FaceSkinStatusDetect("color", "color_white");
 	//FaceSkinStatusDetect("color", "color_nature");
 	//FaceSkinStatusDetect("color", "color_dark");
+
+
+	/*FaceKeyPointParser kpparser;
+	kpparser.Calculate();*/
+
+	JsonColorRef colorref;
+	std::string file = "data/export/colorref.json";
+	colorref.SaveJsonFile(file);
+
 	return 0;
 }
 
