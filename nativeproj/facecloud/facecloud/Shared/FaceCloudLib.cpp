@@ -302,7 +302,7 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 		OSMesa::Log(OSMesa::format("\nmodelID:%s \nphotoPath:%s \njsonFace:%s \nphotoPathOut:%s \njsonModelOut:%s \n \n",
 			modelID.c_str(),
 			photoPath.c_str(),
-			"",// jsonFace.c_str(),
+			jsonFace.c_str(),
 			photoPathOut.c_str(),
 			""));
 
