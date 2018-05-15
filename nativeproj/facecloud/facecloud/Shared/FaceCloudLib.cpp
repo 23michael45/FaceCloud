@@ -509,7 +509,7 @@ string FaceCloudLib::CalculateReal(string modelID, string photoPath, string json
 		else
 		{
 
-			SAFE_DELETE(ptexture);
+			SAFE_DELETE(ptexture); 
 		}
 	}
 	catch (...)

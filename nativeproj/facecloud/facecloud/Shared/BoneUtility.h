@@ -345,6 +345,11 @@ public:
 	{
 		try
 		{
+			if (root["faces"].size() <= 0)
+			{
+				return false;
+			}
+
 			Json::Value froot = root["faces"][0];
 			face_token = froot["face_token"].asString();
 
